@@ -11,8 +11,8 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
 
-    public FeedbackService(FeedbackRepository feedbackRepository) {
-        this.feedbackRepository = feedbackRepository;
+    public FeedbackService() {
+        this.feedbackRepository = new FeedbackRepository();
     }
 
     public Feedback createFeedback(
