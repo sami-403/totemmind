@@ -12,6 +12,7 @@ public class UserRepository {
 
     // tudo responsavel consultar a existencia de usuários
 
+    @SuppressWarnings("null")
     public Optional<User> findByCpf(String cpf) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -31,6 +32,7 @@ public class UserRepository {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
+            @SuppressWarnings("null")
             Long count = em.createQuery(
                     "SELECT COUNT(u) FROM User u WHERE u.cpf = :cpf",
                     Long.class)
@@ -44,6 +46,7 @@ public class UserRepository {
     }
 
     // usa o uuid para pegar algum user
+    @SuppressWarnings("null")
     public Optional<User> findById(UUID id) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -55,6 +58,7 @@ public class UserRepository {
 
     // pega todos os users que existir
 
+    @SuppressWarnings("null")
     public List<User> findAll() {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -75,6 +79,7 @@ public class UserRepository {
 
     public void delete(UUID id) {
         executeInsideTransaction(em -> {
+            @SuppressWarnings("null")
             User user = em.find(User.class, id);
             if (user != null) {
                 em.remove(user);

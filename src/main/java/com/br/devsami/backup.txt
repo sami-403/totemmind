@@ -1,0 +1,62 @@
+package com.br.devsami;
+
+import javafx.application.Application;
+// import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+// import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class App extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        try {
+            // carregar um template de imagem de tela
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/PrimeiraCena.fxml"));
+            boolean isTelaCerta = false;
+            Parent parent = loader.load();
+
+            if (!isTelaCerta) {
+                parent = new FXMLLoader(getClass().getResource("/LoginSimples.fxml")).load();
+            }
+            // Cria o layout da tela
+
+            // BorderPane root = new BorderPane();
+
+            Scene cena = new Scene(parent); // carrega seu modelo de tela
+
+            primaryStage.setScene(cena); // setar a cena desejada para aparecer.
+            primaryStage.setTitle("TotemMind"); // colocar titulo.
+            primaryStage.show(); // mostrar a cena
+            // Atribui o CSS à cena (usando o caminho absoluto do classpath, já que o css
+            // está na raiz de resources)
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+---------------------
+
+
+
+
+package com.br.devsami;
+
+import javafx.application.Application;
+
+public class Launcher {
+    public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            com.br.devsami.utils.HibernateUtil.close();
+        })); // fechar o h2
+        Application.launch(App.class, args);
+    }
+
+}
