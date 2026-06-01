@@ -1,5 +1,8 @@
 package com.br.devsami.model.service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.repository.EmployeeRepository;
 import com.br.devsami.utils.enums.EmployeeType;
@@ -8,19 +11,31 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    // instancia, coloquei com injeção de dependencia, mas poderia ser:
-
     /*
-
+     * Injeção de dependência do repository.
+     * Alternativa simples (sem DI):
+     *
+     * public EmployeeService() {
+     * this.employeeRepository = new EmployeeRepository();
+     * }
+     *
+     * Aqui estamos preferindo injeção para manter o serviço desacoplado
+     * e facilitar testes e manutenção.
+     */
     public EmployeeService() {
         this.employeeRepository = new EmployeeRepository();
     }
-    */
-    
-    public EmployeeService(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
-    }
 
+    /*
+     * Criação de um novo funcionário.
+     *
+     * Regras de negócio:
+     * - Nome não pode ser vazio
+     * - CPF não pode ser vazio
+     * - CPF deve ser único no sistema
+     *
+     * Responsabilidade: validar dados + orquestrar persistência.
+     */
     public Employee createEmployee(String name, String cpf, EmployeeType type) {
 
         if (name == null || name.isBlank()) {
@@ -43,5 +58,16 @@ public class EmployeeService {
         employeeRepository.save(employee);
 
         return employee;
+    }
+
+    /*
+     * Busca funcionário pelo ID.
+     *
+     * Apenas delega para o repository.
+     * O Optional é retornado para o chamador decidir o que fazer
+     * caso não exista.
+     */
+    public Optional<Employee> findById(UUID id) {
+        return employeeRepository.findById(id);
     }
 }
