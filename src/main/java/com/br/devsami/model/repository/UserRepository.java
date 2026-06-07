@@ -1,12 +1,13 @@
 package com.br.devsami.model.repository;
 
-import com.br.devsami.model.entity.User;
-import com.br.devsami.utils.HibernateUtil;
-import jakarta.persistence.EntityManager;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.br.devsami.model.entity.User;
+import com.br.devsami.utils.HibernateUtil;
+
+import jakarta.persistence.EntityManager;
 
 public class UserRepository {
 

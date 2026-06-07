@@ -1,10 +1,10 @@
 package com.br.devsami.model.service;
 
-import com.br.devsami.model.entity.User;
-import com.br.devsami.model.repository.UserRepository;
-
 import java.time.LocalDate;
 import java.util.Optional;
+
+import com.br.devsami.model.entity.User;
+import com.br.devsami.model.repository.UserRepository;
 
 public class UserService {
 
@@ -38,7 +38,7 @@ public class UserService {
             throw new IllegalArgumentException("CPF já cadastrado");
         }
 
-        User user = new User();
+        var user = new User();
         user.setName(name);
         user.setCpf(cpf);
         user.setBirthDate(birthDate);

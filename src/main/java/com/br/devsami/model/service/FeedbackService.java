@@ -30,7 +30,7 @@ public class FeedbackService {
             throw new IllegalArgumentException("Employee obrigatório");
         }
 
-        Feedback feedback = new Feedback();
+        var feedback = new Feedback(); // var infere o tipo, não precisa repetir o "Feedback".
         feedback.setUser(user);
         feedback.setEmployee(employee);
         feedback.setFeelling(feeling);
