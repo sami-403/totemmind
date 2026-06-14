@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.br.totemmind</groupId>
@@ -75,17 +74,17 @@
 
         <!-- LangChain4j Core -->
         <dependency>
-    <groupId>dev.langchain4j</groupId>
-    <artifactId>langchain4j</artifactId>
-    <version>1.15.1</version>
-</dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>1.16.2</version>
+        </dependency>
 
-        <!-- LangChain4j Google AI Gemini -->
-       <dependency>
-    <groupId>dev.langchain4j</groupId>
-    <artifactId>langchain4j-google-ai-gemini</artifactId>
-    <version>1.15.1</version>
-</dependency>
+        <!-- LangChain4j Para o Ollama -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama</artifactId>
+            <version>1.16.2</version>            <!-- Or 1.15.1 if available and you don't want to upgrade core -->
+        </dependency>
 
         <!-- Logger para evitar avisos no console -->
         <dependency>
@@ -106,6 +105,13 @@
             <version>2.0.1</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

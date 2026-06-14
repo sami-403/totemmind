@@ -3,6 +3,10 @@ package com.br.devsami.model.entity;
 import com.br.devsami.utils.enums.FeedbackCategory;
 import com.br.devsami.utils.enums.Feelling;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,7 +15,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "feedbacks")
-public class Feedback {
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class Feedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

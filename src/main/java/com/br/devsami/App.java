@@ -36,7 +36,6 @@ public class App {
                                 Feelling.SATISFIED,
                                 FeedbackCategory.SERVICE_QUALITY,
                                 "Atendimento muito bom");
-
                 System.out.println("Feedback salvo com sucesso: " + feedback.getId());
         }
 }
