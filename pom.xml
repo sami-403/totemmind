@@ -80,12 +80,12 @@
     <version>1.15.1</version>
 </dependency>
 
-        <!-- LangChain4j Google AI Gemini -->
-       <dependency>
-    <groupId>dev.langchain4j</groupId>
-    <artifactId>langchain4j-google-ai-gemini</artifactId>
-    <version>1.15.1</version>
-</dependency>
+        <!-- LangChain4j Ollama  -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama</artifactId>
+            <version>1.15.1</version>
+        </dependency>
 
         <!-- Logger para evitar avisos no console -->
         <dependency>
