@@ -79,11 +79,11 @@
             <version>1.16.2</version>
         </dependency>
 
-        <!-- LangChain4j Para o Ollama -->
+        <!-- LangChain4j Ollama  -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
-            <version>1.16.2</version>            <!-- Or 1.15.1 if available and you don't want to upgrade core -->
+            <version>1.15.1</version>
         </dependency>
 
         <!-- Logger para evitar avisos no console -->

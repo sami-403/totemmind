@@ -46,7 +46,7 @@ public class FeedbackAppService {
      * tenha que lidar com múltiplos services diretamente.
      */
     public Feedback registerFeedback(String cpf,
-            UUID employeeId,
+            long employeeId,
             Feelling feeling,
             FeedbackCategory category,
             String text) {

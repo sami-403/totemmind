@@ -7,7 +7,8 @@ import java.util.UUID;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.utils.HibernateUtil;
 
-import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 
 /*
  * Repository responsável exclusivamente pelo acesso ao banco de dados
@@ -81,7 +82,7 @@ public class EmployeeRepository {
      *
      * Retorna Optional para evitar null e forçar o tratamento explícito.
      */
-    public Optional<Employee> findById(UUID id) {
+    public Optional<Employee> findById(long id) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
@@ -97,8 +98,8 @@ public class EmployeeRepository {
 
         try {
             return em.createQuery(
-                    "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
-                    Employee.class)
+                            "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
+                            Employee.class)
                     .setParameter("name", "%" + name.trim() + "%")
                     .getResultList();
         } finally {
