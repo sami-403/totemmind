@@ -35,6 +35,7 @@ public class FeedbackService {
         feedback.setCategory(category);
         feedback.setText(text);
 
+        // se não há texto, assume o sentimento do botão clicado para economizar processamento
         if (text == null || text.isBlank()) {
             feedback.setFeelling(feeling);
             feedback.setConfidence(100);
@@ -42,12 +43,14 @@ public class FeedbackService {
             feedback.setReasoning("Voto direto sem texto");
         } else {
             try {
+                // Envia para a IA analisar possível sarcasmo ou contradição no texto
                 String inputIa = "Original Feeling: " + feeling.name() + "\nText: " + text;
                 String iaResponse = aiService.processMessage(inputIa).trim();
 
                 feedback.setFeelling(Feelling.valueOf(iaResponse));
                 feedback.setReasoning("Analisado via IA");
             } catch (Exception e) {
+                // Fallback de segurança: se a IA falhar (timeout/erro), garante que o totem não trave e salva o voto original
                 feedback.setFeelling(feeling);
                 feedback.setReasoning("Fallback: Erro na IA. Voto original mantido.");
             }
