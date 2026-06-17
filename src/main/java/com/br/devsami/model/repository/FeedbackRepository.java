@@ -4,6 +4,7 @@ import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.utils.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class FeedbackRepository {
         }
     }
 
+    // O Feedback em si usa UUID
     public Optional<Feedback> findById(UUID id) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -39,6 +41,38 @@ public class FeedbackRepository {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             return em.createQuery("SELECT f FROM Feedback f", Feedback.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    // Busca os feedbacks pelo ID do funcionário (que é Long)
+    public List<Feedback> findByEmployeeId(Long employeeId) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT f FROM Feedback f WHERE f.employee.id = :employeeId", Feedback.class)
+                    .setParameter("employeeId", employeeId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    // Busca os feedbacks por funcionário (Long) dentro de um período
+    public List<Feedback> findByEmployeeAndPeriod(Long employeeId, LocalDateTime start, LocalDateTime end) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            """
+                            SELECT f FROM Feedback f 
+                            WHERE f.employee.id = :employeeId 
+                            AND f.createdAt BETWEEN :start AND :end
+                            """, Feedback.class)
+                    .setParameter("employeeId", employeeId)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
                     .getResultList();
         } finally {
             em.close();
