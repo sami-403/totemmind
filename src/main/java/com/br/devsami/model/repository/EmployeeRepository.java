@@ -4,8 +4,8 @@ import com.br.devsami.model.entity.Employee;
 import com.br.devsami.utils.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /*
  * Repository responsável exclusivamente pelo acesso ao banco de dados
@@ -79,11 +79,26 @@ public class EmployeeRepository {
      *
      * Retorna Optional para evitar null e forçar o tratamento explícito.
      */
-    public Optional<Employee> findById(UUID id) {
+    public Optional<Employee> findById(long id) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
             return Optional.ofNullable(em.find(Employee.class, id));
+        } finally {
+            em.close();
+        }
+    }
+
+    // buscar por nome (Devolve uma lista dos funcionários com aquele nome)
+    public List<Employee> findByName(String name) {
+        EntityManager em = HibernateUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                            "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
+                            Employee.class)
+                    .setParameter("name", "%" + name.trim() + "%")
+                    .getResultList();
         } finally {
             em.close();
         }
