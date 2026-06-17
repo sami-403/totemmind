@@ -52,7 +52,7 @@ public class EmployeeService {
             throw new IllegalArgumentException("CPF já cadastrado");
         }
 
-        Employee employee = new Employee();
+        var employee = new Employee();
         employee.setName(name);
         employee.setCpf(cpf);
         employee.setTipo(type);
