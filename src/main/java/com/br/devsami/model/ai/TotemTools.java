@@ -62,7 +62,12 @@ public class TotemTools {
                 .map(Employee::getName)
                 .orElse("Desconhecido");
 
-        // Retorna o comando final formatado
+        // Adiciona saida para auxiliar no desenvolvimento
+        System.out.println("Satisfeitos: " + percentagens[0]);
+        System.out.println("Insatisfeitos: " + percentagens[1]);
+        System.out.println("Neutro: " + percentagens[2]);
+
+        // Retorna o comando final formatado (Futuramente será alterada para a tool real com o comportamento na webview)
         return String.format("[COMANDO_GRAFICO] TIPO: %s | FUNCIONARIO: %s | DADOS: S:%.2f N:%.2f I:%.2f",
                 tipoGrafico, nomeFuncionario, percentagens[0], percentagens[1], percentagens[2]);
     }
