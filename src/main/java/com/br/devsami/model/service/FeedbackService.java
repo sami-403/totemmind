@@ -43,16 +43,17 @@ public class FeedbackService {
             feedback.setReasoning("Voto direto sem texto");
         } else {
             try {
-                // Envia para a IA analisar possível sarcasmo ou contradição no texto
-                String inputIa = "Original Feeling: " + feeling.name() + "\nText: " + text;
-                String iaResponse = aiService.processMessage(inputIa).trim();
+                // Tipa direto para o enum para melhorar a velocidade e leitura
+                Feelling trueSentiment = aiService.classificarSentimento(feeling, text);
 
-                feedback.setFeelling(Feelling.valueOf(iaResponse));
+                feedback.setFeelling(trueSentiment);
                 feedback.setReasoning("Analisado via IA");
             } catch (Exception e) {
-                // Fallback de segurança: se a IA falhar (timeout/erro), garante que o totem não trave e salva o voto original
+                // Fallback seguro caso a IA caia (Ollama fora do ar, etc)
                 feedback.setFeelling(feeling);
-                feedback.setReasoning("Fallback: Erro na IA. Voto original mantido.");
+                feedback.setReasoning("Fallback: Erro de conexão com a IA.");
+                System.out.println("❌ ERRO REAL DA IA: " + e.getMessage());
+                e.printStackTrace();
             }
         }
 
