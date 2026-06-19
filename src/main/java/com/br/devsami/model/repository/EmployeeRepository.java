@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.utils.HibernateUtil;
+import jakarta.persistence.EntityManager;
 
 import java.util.List;
 import java.util.Optional;
