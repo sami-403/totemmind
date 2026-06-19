@@ -19,7 +19,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 
-    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public class User extends Person {
@@ -42,5 +41,41 @@ import java.util.UUID;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-// Lombok @Data provides getters and setters for all fields
+
+    public UUID getId() {
+        return id;
+    }
+
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public List<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

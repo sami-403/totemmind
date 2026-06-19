@@ -53,10 +53,7 @@ public class UserService {
 
         Optional<User> existing = userRepository.findByCpf(cpf);
 
-        if (existing.isPresent()) {
-            return existing.get();
-        }
+        return existing.orElseGet(() -> createUser(name, cpf, birthDate));
 
-        return createUser(name, cpf, birthDate);
     }
 }
