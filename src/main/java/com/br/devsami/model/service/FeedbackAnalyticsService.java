@@ -4,6 +4,7 @@ import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.utils.enums.Feelling;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,21 +16,18 @@ public class FeedbackAnalyticsService {
         this.feedbackRepository = new FeedbackRepository();
     }
 
-    /**
-     * Calcula as porcentagens dos sentimentos associados a um funcionário.
-     * Retorna um vetor numérico: [0] = Satisfeito, [1] = Neutro, [2] = Insatisfeito
-     */
+    // Calcula a porcentagem de cada sentimento no formato: [Satisfeito, Neutro, Insatisfeito]
     public double[] calcularPercentagens(Long employeeId, LocalDateTime start, LocalDateTime end) {
         List<Feedback> feedbacks;
 
-        // Se o utilizador especificar datas, faz a pesquisa por período. Caso contrário, devolve tudo.
+        // Filtra pelo período apenas se ambas as datas forem informadas
         if (start != null && end != null) {
             feedbacks = feedbackRepository.findByEmployeeAndPeriod(employeeId, start, end);
         } else {
             feedbacks = feedbackRepository.findByEmployeeId(employeeId);
         }
 
-        // Array zerado para tornar o comportamento previsivel em caso de falha
+        // Previne ArithmeticException (divisão por zero)
         if (feedbacks.isEmpty()) {
             return new double[]{0.0, 0.0, 0.0};
         }
@@ -44,11 +42,28 @@ public class FeedbackAnalyticsService {
 
         int total = feedbacks.size();
 
-        // O casting para (double) assegura as casas decimais na divisão
         double pctSatisfied = ((double) satisfeitos / total) * 100;
         double pctNeutral = ((double) neutros / total) * 100;
         double pctDissatisfied = ((double) insatisfeitos / total) * 100;
 
         return new double[]{pctSatisfied, pctNeutral, pctDissatisfied};
+    }
+
+    // Retorna a data do feedback mais antigo do funcionário
+    public LocalDate buscarPrimeiraData(Long employeeId) {
+        return feedbackRepository.findByEmployeeId(employeeId).stream()
+                .map(Feedback::getCreatedAt)
+                .min(LocalDateTime::compareTo)
+                .map(LocalDateTime::toLocalDate)
+                .orElse(null);
+    }
+
+    // Retorna a data do feedback mais recente do funcionário
+    public LocalDate buscarUltimaData(Long employeeId) {
+        return feedbackRepository.findByEmployeeId(employeeId).stream()
+                .map(Feedback::getCreatedAt)
+                .max(LocalDateTime::compareTo)
+                .map(LocalDateTime::toLocalDate)
+                .orElse(null);
     }
 }
