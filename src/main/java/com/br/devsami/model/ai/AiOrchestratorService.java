@@ -8,7 +8,6 @@ import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
-import io.github.cdimascio.dotenv.Dotenv;
 import com.br.devsami.utils.enums.Feelling;
 
 import java.io.IOException;
@@ -19,21 +18,23 @@ import java.util.Properties;
 
 public class AiOrchestratorService {
 
-
-
     private String baseUrl = "http://localhost:11434";
     private String modelBase = "hf.co/unsloth/gemma-4-E4B-it-qat-GGUF:UD-Q4_K_XL";
-    private String modelFeedback = "nemotron-3-nano:4b";
+    private String modelFeedback = "hf.co/ozgurpolat/gemma-4-E4B-it-text-only-GGUF:Q4_K_M";
 
-    // 1. Interface para feedbacks rápidos (Sem memória, sem ferramentas, resposta determinística
-    // Esse carinha só vai analisar um texto e ver se faz sentido ele ter a classificação do feedback que tem
+    // 1. Interface para feedbacks rápidos (Sem memória, sem ferramentas, resposta
+    // determinística
+    // Esse carinha só vai analisar um texto e ver se faz sentido ele ter a
+    // classificação do feedback que tem
     public interface SentimentValidatorAi {
         @SystemMessage(SentimentEspecialist.SentimentPrompt)
         @UserMessage("Sentimento original: {{originalFeeling}}. Texto do feedback: {{feedbackText}}")
-        Feelling validateSentiment(@V("originalFeeling") String originalFeeling, @V("feedbackText") String feedbackText);
+        Feelling validateSentiment(@V("originalFeeling") String originalFeeling,
+                @V("feedbackText") String feedbackText);
     }
 
-    // 2. Interface para geração de gráficos e B.I (Com memória e ferramentas, focada em Chat/BI)
+    // 2. Interface para geração de gráficos e B.I (Com memória e ferramentas,
+    // focada em Chat/BI)
     public interface TotemAssistant {
         @SystemMessage(SystemPrompt.PROMPT) // O prompt agora foca SÓ em BI
         String chat(@V("dataAtual") String dataAtual, @UserMessage String userMessage);
@@ -60,7 +61,8 @@ public class AiOrchestratorService {
             throw new RuntimeException(e);
         }
 
-        // Modelo 1: Focado em Chat e BI (Temperatura 0.2 para ter respostas mais fluidas, mas controladas)
+        // Modelo 1: Focado em Chat e BI (Temperatura 0.2 para ter respostas mais
+        // fluidas, mas controladas)
         OllamaChatModel biModel = OllamaChatModel.builder()
                 .baseUrl(baseUrl).modelName(modelBase).temperature(0.2).timeout(Duration.ofMinutes(5)).build();
 
@@ -70,13 +72,14 @@ public class AiOrchestratorService {
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10)) // Mantém o contexto da conversa
                 .build();
 
-        // Modelo 2: Focado em Classificação Rápida (Temperatura 0.0 para ser estritamente determinístico e não alucinar)
+        // Modelo 2: Focado em Classificação Rápida (Temperatura 0.0 para ser
+        // estritamente determinístico e não alucinar)
         OllamaChatModel classificationModel = OllamaChatModel.builder()
                 .baseUrl(baseUrl).modelName(modelFeedback).temperature(0.0).timeout(Duration.ofMinutes(5)).build();
 
         this.sentimentValidator = AiServices.builder(SentimentValidatorAi.class)
                 .chatModel(classificationModel)
-                // NOTA: Sem .tools() e sem .chatMemory() aqui para garantir máxima performance e menor custo de tokens
+                // NOTA: Sem .tools() e sem .chatMemory() aqui para garantir máxima performance com menor custo de tokens
                 .build();
     }
 
