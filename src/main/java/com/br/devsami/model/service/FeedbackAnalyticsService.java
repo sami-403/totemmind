@@ -1,5 +1,6 @@
 package com.br.devsami.model.service;
 
+import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.utils.enums.Feelling;
@@ -16,7 +17,8 @@ public class FeedbackAnalyticsService {
         this.feedbackRepository = new FeedbackRepository();
     }
 
-    // Calcula a porcentagem de cada sentimento no formato: [Satisfeito, Neutro, Insatisfeito]
+    // Calcula a porcentagem de cada sentimento no formato: [Satisfeito, Neutro,
+    // Insatisfeito]
     public double[] calcularPercentagens(Long employeeId, LocalDateTime start, LocalDateTime end) {
         List<Feedback> feedbacks;
 
@@ -29,15 +31,18 @@ public class FeedbackAnalyticsService {
 
         // Previne ArithmeticException (divisão por zero)
         if (feedbacks.isEmpty()) {
-            return new double[]{0.0, 0.0, 0.0};
+            return new double[] { 0.0, 0.0, 0.0 };
         }
 
         int satisfeitos = 0, neutros = 0, insatisfeitos = 0;
 
         for (Feedback feedback : feedbacks) {
-            if (feedback.getFeelling() == Feelling.SATISFIED) satisfeitos++;
-            else if (feedback.getFeelling() == Feelling.NEUTRAL) neutros++;
-            else if (feedback.getFeelling() == Feelling.DISSATISFIED) insatisfeitos++;
+            if (feedback.getFeelling() == Feelling.SATISFIED)
+                satisfeitos++;
+            else if (feedback.getFeelling() == Feelling.NEUTRAL)
+                neutros++;
+            else if (feedback.getFeelling() == Feelling.DISSATISFIED)
+                insatisfeitos++;
         }
 
         int total = feedbacks.size();
@@ -46,7 +51,7 @@ public class FeedbackAnalyticsService {
         double pctNeutral = ((double) neutros / total) * 100;
         double pctDissatisfied = ((double) insatisfeitos / total) * 100;
 
-        return new double[]{pctSatisfied, pctNeutral, pctDissatisfied};
+        return new double[] { pctSatisfied, pctNeutral, pctDissatisfied };
     }
 
     // Retorna a data do feedback mais antigo do funcionário
@@ -65,5 +70,21 @@ public class FeedbackAnalyticsService {
                 .max(LocalDateTime::compareTo)
                 .map(LocalDateTime::toLocalDate)
                 .orElse(null);
+    }
+
+    // obtem o employee com maior taxa de um determinado enum.
+    public String obterMaiorTaxa(List<Employee> funcionarios, int indice, LocalDateTime start, LocalDateTime end) {
+        Employee campeao = null;
+        double maiorTaxa = -1;
+
+        for (Employee e : funcionarios) {
+            double[] taxas = calcularPercentagens(e.getId(), start, end);
+            if (taxas[indice] > maiorTaxa) {
+                maiorTaxa = taxas[indice];
+                campeao = e;
+            }
+        }
+
+        return campeao != null ? String.format("%s com %.2f%%", campeao.getName(), maiorTaxa) : "[SEM_DADOS]";
     }
 }
