@@ -17,19 +17,15 @@ public class FeedbackAnalyticsService {
         this.feedbackRepository = new FeedbackRepository();
     }
 
-    // Calcula a porcentagem de cada sentimento no formato: [Satisfeito, Neutro,
-    // Insatisfeito]
     public double[] calcularPercentagens(Long employeeId, LocalDateTime start, LocalDateTime end) {
         List<Feedback> feedbacks;
 
-        // Filtra pelo período apenas se ambas as datas forem informadas
         if (start != null && end != null) {
             feedbacks = feedbackRepository.findByEmployeeAndPeriod(employeeId, start, end);
         } else {
             feedbacks = feedbackRepository.findByEmployeeId(employeeId);
         }
 
-        // Previne ArithmeticException (divisão por zero)
         if (feedbacks.isEmpty()) {
             return new double[] { 0.0, 0.0, 0.0 };
         }
@@ -47,14 +43,13 @@ public class FeedbackAnalyticsService {
 
         int total = feedbacks.size();
 
-        double pctSatisfied = ((double) satisfeitos / total) * 100;
-        double pctNeutral = ((double) neutros / total) * 100;
-        double pctDissatisfied = ((double) insatisfeitos / total) * 100;
+        double pctSatisfied = Math.round(((double) satisfeitos / total) * 10000.0) / 100.0;
+        double pctNeutral = Math.round(((double) neutros / total) * 10000.0) / 100.0;
+        double pctDissatisfied = Math.round(((double) insatisfeitos / total) * 10000.0) / 100.0;
 
         return new double[] { pctSatisfied, pctNeutral, pctDissatisfied };
     }
 
-    // Retorna a data do feedback mais antigo do funcionário
     public LocalDate buscarPrimeiraData(Long employeeId) {
         return feedbackRepository.findByEmployeeId(employeeId).stream()
                 .map(Feedback::getCreatedAt)
@@ -63,7 +58,6 @@ public class FeedbackAnalyticsService {
                 .orElse(null);
     }
 
-    // Retorna a data do feedback mais recente do funcionário
     public LocalDate buscarUltimaData(Long employeeId) {
         return feedbackRepository.findByEmployeeId(employeeId).stream()
                 .map(Feedback::getCreatedAt)
@@ -72,10 +66,9 @@ public class FeedbackAnalyticsService {
                 .orElse(null);
     }
 
-    // obtem o employee com maior taxa de um determinado enum.
     public String obterMaiorTaxa(List<Employee> funcionarios, int indice, LocalDateTime start, LocalDateTime end) {
         Employee campeao = null;
-        double maiorTaxa = -1;
+        double maiorTaxa = 0.0; // Mude de -1 para 0.0
 
         for (Employee e : funcionarios) {
             double[] taxas = calcularPercentagens(e.getId(), start, end);
@@ -85,6 +78,11 @@ public class FeedbackAnalyticsService {
             }
         }
 
-        return campeao != null ? String.format("%s com %.2f%%", campeao.getName(), maiorTaxa) : "[SEM_DADOS]";
+        String[] nomesSentimentos = { "Satisfação", "Neutralidade", "Insatisfação" };
+
+        // Se campeao continuar nulo, significa que ninguém teve taxa maior que 0%
+        return campeao != null
+                ? String.format("%s com %.2f%% de %s", campeao.getName(), maiorTaxa, nomesSentimentos[indice])
+                : "[SEM_DADOS]";
     }
 }
