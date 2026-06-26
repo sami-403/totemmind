@@ -69,8 +69,8 @@ public class TotemTools {
 
                 // Adiciona saida para auxiliar no desenvolvimento
                 System.out.println("Satisfeitos: " + percentagens[0]);
-                System.out.println("Insatisfeitos: " + percentagens[1]);
-                System.out.println("Neutro: " + percentagens[2]);
+                System.out.println("Neutro: " + percentagens[1]);
+                System.out.println("Insatisfeitos: " + percentagens[2]);
 
                 // Retorna o comando final formatado (Futuramente será alterada para a tool real
                 // com o comportamento na webview)
