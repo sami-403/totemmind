@@ -8,19 +8,15 @@ import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
+
+import com.br.devsami.utils.ConfigManager;
 import com.br.devsami.utils.enums.Feelling;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Properties;
 
 public class AiOrchestratorService {
-
-    private String baseUrl = "http://localhost:11434";
-    private String modelBase = "hf.co/unsloth/gemma-4-E4B-it-qat-GGUF:UD-Q4_K_XL";
-    private String modelFeedback = "hf.co/ozgurpolat/gemma-4-E4B-it-text-only-GGUF:Q4_K_M";
 
     // 1. Interface para feedbacks rápidos (Sem memória, sem ferramentas, resposta
     // determinística
@@ -44,21 +40,21 @@ public class AiOrchestratorService {
     private final SentimentValidatorAi sentimentValidator; // Novo campo para validação rápida
 
     public AiOrchestratorService() {
+        Properties props = ConfigManager.getInstance();
 
-        Properties props = new Properties();
-        try (InputStream input = getClass().getResourceAsStream("/config.properties");) {
-            if (input != null) {
-                try {
-                    props.load(input);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                baseUrl = props.getProperty("OLLAMA_BASE_URL", baseUrl);
-                modelBase = props.getProperty("AI_MODEL", modelBase);
-                modelFeedback = props.getProperty("AI_FEEDBACK", modelFeedback);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        String baseUrl = props.getProperty("OLLAMA_BASE_URL");
+        if (baseUrl == null || baseUrl.isBlank()) {
+            baseUrl = "http://localhost:11434";
+        }
+
+        String modelBase = props.getProperty("AI_MODEL");
+        if (modelBase == null || modelBase.isBlank()) {
+            modelBase = "hf.co/unsloth/gemma-4-E4B-it-qat-GGUF:UD-Q4_K_XL";
+        }
+
+        String modelFeedback = props.getProperty("AI_FEEDBACK");
+        if (modelFeedback == null || modelFeedback.isBlank()) {
+            modelFeedback = "hf.co/ozgurpolat/gemma-4-E4B-it-text-only-GGUF:Q4_K_M";
         }
 
         // Modelo 1: Focado em Chat e BI (Temperatura 0.2 para ter respostas mais
@@ -79,7 +75,8 @@ public class AiOrchestratorService {
 
         this.sentimentValidator = AiServices.builder(SentimentValidatorAi.class)
                 .chatModel(classificationModel)
-                // NOTA: Sem .tools() e sem .chatMemory() aqui para garantir máxima performance com menor custo de tokens
+                // NOTA: Sem .tools() e sem .chatMemory() aqui para garantir máxima performance
+                // com menor custo de tokens
                 .build();
     }
 
@@ -88,7 +85,8 @@ public class AiOrchestratorService {
         return assistant.chat(LocalDate.now().toString(), message);
     }
 
-    // Novo metodo exposto para a classificação rápida (usado na hora de salvar o feedback no banco)
+    // Novo metodo exposto para a classificação rápida (usado na hora de salvar o
+    // feedback no banco)
     public Feelling classificarSentimento(Feelling originalFeeling, String text) {
         return sentimentValidator.validateSentiment(originalFeeling.name(), text);
     }
