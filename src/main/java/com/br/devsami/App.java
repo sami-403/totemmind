@@ -1,41 +1,28 @@
 package com.br.devsami;
 
-import java.time.LocalDate;
+import atlantafx.base.theme.CupertinoDark;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import com.br.devsami.model.entity.Employee;
-import com.br.devsami.model.entity.Feedback;
-import com.br.devsami.model.entity.User;
-import com.br.devsami.model.service.EmployeeService;
-import com.br.devsami.model.service.FeedbackService;
-import com.br.devsami.model.service.UserService;
-import com.br.devsami.utils.enums.EmployeeType;
-import com.br.devsami.utils.enums.FeedbackCategory;
-import com.br.devsami.utils.enums.Feelling;
+import java.util.Objects;
 
-public class App {
+public class App extends Application {
+        @Override
+        public void start(Stage primaryStage) throws Exception {
+                Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MenuPrincipal.fxml")));
+                Scene scene = new Scene(root, 800, 600);
+
+                primaryStage.setTitle("TotemMind");
+                primaryStage.setScene(scene);
+                primaryStage.show();
+        }
 
         public static void main(String[] args) {
-
-                UserService userService = new UserService();
-                EmployeeService employeeService = new EmployeeService();
-                FeedbackService feedbackService = new FeedbackService();
-
-                Employee employee = employeeService.createEmployee(
-                                "João",
-                                "12345678900",
-                                EmployeeType.GERENTE);
-
-                User user = userService.findOrCreateUser(
-                                "Carlos",
-                                "11122233344",
-                                LocalDate.now());
-
-                Feedback feedback = feedbackService.createFeedback(
-                                user,
-                                employee,
-                                Feelling.SATISFIED,
-                                FeedbackCategory.SERVICE_QUALITY,
-                                "Atendimento muito bom");
-                System.out.println("Feedback salvo com sucesso: " + feedback.getId());
+                launch(args);
         }
 }

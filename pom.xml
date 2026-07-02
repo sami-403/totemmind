@@ -112,6 +112,13 @@
             <version>1.18.38</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Pacote de ícones Material Design para o Ikonli -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-materialdesign-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>
