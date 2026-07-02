@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.MenuController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="30.0">
+        <padding>
+            <Insets top="60.0" />
+        </padding>
+
+        <ImageView fitHeight="160.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="/images/totemMind_logo.png"/>
+        </ImageView>
+
+        <VBox spacing="15.0" maxWidth="Infinity">
+
+            <Button maxWidth="Infinity" onAction="#abrirTelaFeedbacks" text="Tela de Feedbacks"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-monitor" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+            <Button maxWidth="Infinity" onAction="#abrirTelaFuncionarios" text="Gerenciar Funcionário"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-account-multiple" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+            <Button maxWidth="Infinity" onAction="#abrirAssistente" text="Assistente"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-robot" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+            <Button maxWidth="Infinity" onAction="#abrirConfiguracoesIA" text="Configurações de I.A"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-settings" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+        </VBox>
+    </VBox>
+</StackPane>
