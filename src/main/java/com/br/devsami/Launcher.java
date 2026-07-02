@@ -1,13 +1,10 @@
 package com.br.devsami;
 
-// import javafx.application.Application;
+import com.br.devsami.utils.HibernateUtil;
 
 public class Launcher {
     public static void main(String[] args) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            com.br.devsami.utils.HibernateUtil.close();
-        })); // fechar o h2
-        // Application.launch(App.class, args);
+        Runtime.getRuntime().addShutdownHook(new Thread(HibernateUtil::close));
 
         App.main(args);
     }
