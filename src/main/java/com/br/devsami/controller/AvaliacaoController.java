@@ -37,28 +37,29 @@ public class AvaliacaoController {
     @FXML
     void seguirParaAvaliacao(ActionEvent event) {
         String cpf = txtCpf.getText();
-        if (cpf.isBlank()){
+        if (cpf.isBlank()) {
             return;
         }
 
         UserRepository userRepository = new UserRepository();
 
-        if(userRepository.existsByCpf(cpf)){
-
+        if (userRepository.existsByCpf(cpf)) {
             try {
-                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/FeedbackMenu.fxml")));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FeedbackMenu.fxml"));
+                Parent root = loader.load();
+
+                // Passa o CPF para o próximo Controller
+                FeedbackMenuController controller = loader.getController();
+                controller.setCpfCliente(cpf);
+
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(new Scene(root, 800, 600));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            // Fluxo de Cadastro de Usuário (quando implementar, lembre de passar o CPF gerado adiante)
         }
-
-        // Fluxo:
-        // 1. Validar CPF
-        // 2. userRepository.existsByCpf(cpf)
-        // 3. Se existe -> Tela de Escolha entre Funcionário e produtos (Avaliação)
-        // 4. Se não existe -> Tela de Cadastro de Usuário
     }
 
 }

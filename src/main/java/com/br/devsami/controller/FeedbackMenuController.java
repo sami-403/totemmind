@@ -13,14 +13,30 @@ import java.util.Objects;
 
 public class FeedbackMenuController {
 
+    private String cpfCliente;
+
+    public void setCpfCliente(String cpf) {
+        this.cpfCliente = cpf;
+    }
+
     @FXML
     void abrirFeedbackProdutos(ActionEvent event) {
-
     }
 
     @FXML
     void abrirFeedbackAtendimento(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AvaliacaoFuncionario.fxml"));
+            Parent root = loader.load();
 
+            AvaliacaoFuncionarioController controller = loader.getController();
+            controller.setDadosCliente(this.cpfCliente, false);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
