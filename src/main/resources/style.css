@@ -11,3 +11,83 @@
     -fx-border-width: 2px;
     -fx-border-radius: 5px;
 }
+
+.root {
+    -fx-background-color: #212121;
+}
+
+
+.content-wrapper {
+    -fx-max-width: 850px;
+    -fx-alignment: TOP_CENTER;
+}
+
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 20 0 20 0;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10 0 10 0;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: transparent;
+}
+
+/* Balão da IA (Mais limpo, sem bordas pesadas) */
+.ai-bubble {
+    -fx-background-color: transparent; /* IA no ChatGPT é texto puro ou fundo muito sutil */
+    -fx-text-fill: #ececf1;
+    -fx-font-size: 16px;
+    -fx-line-spacing: 5px;
+}
+
+/* Balão do Usuário (Estilo Pill/Cápsula moderna) */
+.user-bubble {
+    -fx-background-color: #303030;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 10 18;
+    -fx-font-size: 15px;
+}
+
+/* Campo de Input - O "Pill" flutuante */
+.chat-input {
+    -fx-background-color: #2f2f2f;
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-padding: 12 20;
+    -fx-font-size: 15px;
+    -fx-border-color: #424242;
+    -fx-border-radius: 25;
+}
+
+.chat-input:focused {
+    -fx-border-color: #676767;
+}
+
+/* Botão de Enviar */
+.send-button {
+    -fx-background-color: #676767; /* Cinza quando desativado */
+    -fx-background-radius: 50;
+    -fx-cursor: hand;
+}
+
+.send-button:hover {
+    -fx-background-color: #ffffff; /* Branco ao passar o mouse */
+}
+
+/* Botão Voltar */
+.back-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-background-radius: 50;
+}
+
+.back-button:hover {
+    -fx-background-color: #303030;
+}

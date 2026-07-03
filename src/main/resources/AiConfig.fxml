@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AiConfigController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="20.0">
+        <padding>
+            <Insets top="40.0" bottom="40.0"/>
+        </padding>
+
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+            </left>
+            <center>
+                <ImageView fitHeight="120.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                    <Image url="/images/totemMind_logo.png"/>
+                </ImageView>
+            </center>
+            <right>
+                <Region prefWidth="40.0" BorderPane.alignment="CENTER"/>
+            </right>
+        </BorderPane>
+
+        <Label text="CONFIGURE OS&#10;MODELOS DE IA!" textAlignment="CENTER" styleClass="title-2" style="-fx-font-weight: bold;"/>
+
+        <VBox spacing="5.0" maxWidth="Infinity">
+            <Label text="ENDPOINT DA API (OLLAMA)" style="-fx-text-fill: #aaa; -fx-font-size: 12px;"/>
+            <HBox spacing="10.0" maxWidth="Infinity">
+                <TextField fx:id="txtEndpoint" promptText="Ex: http://localhost:11434" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #3a3a3c; -fx-text-fill: white; -fx-padding: 10px;"/>
+
+                <Button onAction="#recarregarModelos" style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 10px;">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-refresh" iconColor="white" iconSize="18"/>
+                    </graphic>
+                </Button>
+            </HBox>
+        </VBox>
+
+        <VBox spacing="5.0" maxWidth="Infinity">
+            <Label text="MODELO CHAT (B.I)" style="-fx-text-fill: #aaa; -fx-font-size: 12px;"/>
+            <ComboBox fx:id="cbModeloChat" promptText="Selecione o modelo de Chat" maxWidth="Infinity" style="-fx-background-color: #3a3a3c; -fx-padding: 5px;"/>
+        </VBox>
+
+        <VBox spacing="5.0" maxWidth="Infinity">
+            <Label text="MODELO FEEDBACK (Classificação rápida)" style="-fx-text-fill: #aaa; -fx-font-size: 12px;"/>
+            <ComboBox fx:id="cbModeloFeedback" promptText="Selecione o modelo de Feedback" maxWidth="Infinity" style="-fx-background-color: #3a3a3c; -fx-padding: 5px;"/>
+        </VBox>
+
+        <Label fx:id="lblStatus" text="" style="-fx-text-fill: #1e9759; -fx-font-weight: bold;"/>
+
+        <Button text="Concluir" onAction="#salvarConfiguracoes" maxWidth="Infinity" style="-fx-background-color: #1e9759; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-padding: 12px; -fx-font-size: 14px;">
+            <graphic>
+                <FontIcon iconLiteral="mdi-content-save" iconColor="white"/>
+            </graphic>
+        </Button>
+
+    </VBox>
+</StackPane>
