@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AvaliacaoFuncionarioController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="25.0">
+        <padding>
+            <Insets top="40.0" />
+        </padding>
+
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="#f39c12" iconSize="20"/>
+                    </graphic>
+                </Button>
+            </left>
+            <center>
+                <ImageView fitHeight="120.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="/images/totemMind_logo.png"/>
+                </ImageView>
+            </center>
+            <right>
+                <Region prefWidth="40.0"/>
+            </right>
+        </BorderPane>
+
+        <VBox spacing="10.0">
+            <Label text="FUNCIONÁRIO" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+            <ComboBox fx:id="cbFuncionarios" maxWidth="Infinity" promptText="Selecione o Funcionário" style="-fx-background-color: #3a3a3c; -fx-padding: 8px;"/>
+        </VBox>
+
+        <HBox alignment="CENTER" spacing="25.0">
+            <ToggleButton fx:id="btnFeliz">
+                <graphic><FontIcon iconLiteral="mdi-emoticon-happy" iconColor="#2ecc71" iconSize="50"/></graphic>
+            </ToggleButton>
+            <ToggleButton fx:id="btnNeutro">
+                <graphic><FontIcon iconLiteral="mdi-emoticon-neutral" iconColor="#f39c12" iconSize="50"/></graphic>
+            </ToggleButton>
+            <ToggleButton fx:id="btnIncomodado">
+                <graphic><FontIcon iconLiteral="mdi-emoticon-sad" iconColor="#e74c3c" iconSize="50"/></graphic>
+            </ToggleButton>
+        </HBox>
+
+        <TextArea fx:id="txtFeedback" promptText="FEEDBACK OPCIONAL" prefHeight="100.0" wrapText="true" style="-fx-control-inner-background: #3a3a3c; -fx-text-fill: white;"/>
+
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Enviar!" onAction="#enviar" style="-fx-background-color: #1e9759; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-padding: 10px 30px;"/>
+        </HBox>
+    </VBox>
+</StackPane>

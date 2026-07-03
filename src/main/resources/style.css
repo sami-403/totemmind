@@ -1,0 +1,13 @@
+/* Estilo base do ToggleButton */
+.toggle-button {
+    -fx-background-color: #333333;
+    -fx-border-color: transparent;
+}
+
+/* Estilo quando selecionado */
+.toggle-button:selected {
+    -fx-background-color: #555555;
+    -fx-border-color: #f39c12;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
