@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AvaliacaoController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="30.0">
+        <padding>
+            <Insets top="60.0" />
+        </padding>
+
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+            </left>
+            <center>
+                <ImageView fitHeight="160.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                    <Image url="/images/totemMind_logo.png"/>
+                </ImageView>
+            </center>
+            <right>
+                <Region prefWidth="40.0" BorderPane.alignment="CENTER"/>
+            </right>
+        </BorderPane>
+
+        <Label text="REGISTRE UMA&#10;AVALIAÇÃO!" textAlignment="CENTER" styleClass="title-2" style="-fx-font-weight: bold;"/>
+
+        <TextField fx:id="txtCpf" promptText="CPF" maxWidth="Infinity" style="-fx-background-color: #3a3a3c; -fx-text-fill: white; -fx-padding: 10px;"/>
+
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Seguir" onAction="#seguirParaAvaliacao" style="-fx-background-color: #1e9759; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-padding: 8px 25px;"/>
+        </HBox>
+    </VBox>
+</StackPane>
