@@ -26,7 +26,7 @@ public class AvaliacaoController {
     @FXML
     void voltar(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MenuPrincipal.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
@@ -45,7 +45,7 @@ public class AvaliacaoController {
 
         if (userRepository.existsByCpf(cpf)) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FeedbackMenu.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FeedbackMenu.fxml"));
                 Parent root = loader.load();
 
                 // Passa o CPF para o próximo Controller

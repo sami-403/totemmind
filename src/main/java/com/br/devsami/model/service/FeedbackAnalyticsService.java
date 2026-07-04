@@ -3,7 +3,7 @@ package com.br.devsami.model.service;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.repository.FeedbackRepository;
-import com.br.devsami.model.enums.Feelling;
+import com.br.devsami.model.enums.Feeling;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,11 +33,11 @@ public class FeedbackAnalyticsService {
         int satisfeitos = 0, neutros = 0, insatisfeitos = 0;
 
         for (Feedback feedback : feedbacks) {
-            if (feedback.getFeelling() == Feelling.SATISFIED)
+            if (feedback.getFeeling() == Feeling.SATISFIED)
                 satisfeitos++;
-            else if (feedback.getFeelling() == Feelling.NEUTRAL)
+            else if (feedback.getFeeling() == Feeling.NEUTRAL)
                 neutros++;
-            else if (feedback.getFeelling() == Feelling.DISSATISFIED)
+            else if (feedback.getFeeling() == Feeling.DISSATISFIED)
                 insatisfeitos++;
         }
 

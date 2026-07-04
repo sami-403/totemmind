@@ -7,7 +7,7 @@ import com.br.devsami.model.service.EmployeeService;
 import com.br.devsami.model.service.FeedbackService;
 import com.br.devsami.model.service.UserService;
 import com.br.devsami.model.enums.FeedbackCategory;
-import com.br.devsami.model.enums.Feelling;
+import com.br.devsami.model.enums.Feeling;
 
 /**
  * Camada de aplicação responsável por orquestrar o fluxo completo de criação de
@@ -45,7 +45,7 @@ public class FeedbackAppService {
      */
     public Feedback registerFeedback(String cpf,
             long employeeId,
-            Feelling feeling,
+            Feeling feeling,
             FeedbackCategory category,
             String text) {
 
