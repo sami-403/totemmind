@@ -1,4 +1,4 @@
-package com.br.devsami.utils.networkservices;
+package com.br.devsami.infrastructure.network;
 
 import java.io.IOException;
 import java.net.URI;

@@ -1,7 +1,7 @@
 package com.br.devsami.controller;
 
-import com.br.devsami.utils.ConfigManager;
-import com.br.devsami.utils.networkservices.ListModels;
+import com.br.devsami.infrastructure.config.ConfigManager;
+import com.br.devsami.infrastructure.network.ListModels;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

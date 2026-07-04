@@ -1,4 +1,4 @@
-package com.br.devsami.utils;
+package com.br.devsami.infrastructure.config;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

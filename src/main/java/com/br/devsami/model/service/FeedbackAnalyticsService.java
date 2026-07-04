@@ -3,7 +3,7 @@ package com.br.devsami.model.service;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.repository.FeedbackRepository;
-import com.br.devsami.utils.enums.Feelling;
+import com.br.devsami.model.enums.Feelling;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -1,14 +1,11 @@
 package com.br.devsami.controller;
 
 import com.br.devsami.model.entity.Employee;
-import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.EmployeeRepository;
-import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.model.repository.UserRepository;
 import com.br.devsami.model.service.FeedbackService;
-import com.br.devsami.utils.enums.FeedbackCategory;
-import com.br.devsami.utils.enums.Feelling;
+import com.br.devsami.model.enums.Feelling;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

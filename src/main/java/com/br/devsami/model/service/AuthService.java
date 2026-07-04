@@ -3,7 +3,7 @@ package com.br.devsami.model.service;
 // classe responsavel pela atenticação do gerente no totem, por meio do cpf
 
 import com.br.devsami.model.entity.Employee;
-import com.br.devsami.utils.enums.EmployeeType;
+import com.br.devsami.model.enums.EmployeeType;
 import com.br.devsami.model.repository.EmployeeRepository;
 
 public class AuthService {

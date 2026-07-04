@@ -1,6 +1,6 @@
 package com.br.devsami.model.entity;
 
-import com.br.devsami.utils.enums.EmployeeType;
+import com.br.devsami.model.enums.EmployeeType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

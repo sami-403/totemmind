@@ -1,7 +1,7 @@
-package com.br.devsami.model.ai;
+package com.br.devsami.ai;
 
-import com.br.devsami.model.ai.systems.SentimentEspecialist;
-import com.br.devsami.model.ai.systems.SystemPrompt;
+import com.br.devsami.ai.systems.SentimentEspecialist;
+import com.br.devsami.ai.systems.SystemPrompt;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
@@ -9,8 +9,8 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
-import com.br.devsami.utils.ConfigManager;
-import com.br.devsami.utils.enums.Feelling;
+import com.br.devsami.infrastructure.config.ConfigManager;
+import com.br.devsami.model.enums.Feelling;
 
 import java.time.Duration;
 import java.time.LocalDate;
