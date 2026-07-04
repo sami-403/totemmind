@@ -10,7 +10,7 @@ import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 import com.br.devsami.infrastructure.config.ConfigManager;
-import com.br.devsami.model.enums.Feelling;
+import com.br.devsami.model.enums.Feeling;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -25,8 +25,8 @@ public class AiOrchestratorService {
     public interface SentimentValidatorAi {
         @SystemMessage(SentimentEspecialist.SentimentPrompt)
         @UserMessage("Sentimento original: {{originalFeeling}}. Texto do feedback: {{feedbackText}}")
-        Feelling validateSentiment(@V("originalFeeling") String originalFeeling,
-                @V("feedbackText") String feedbackText);
+        Feeling validateSentiment(@V("originalFeeling") String originalFeeling,
+                                  @V("feedbackText") String feedbackText);
     }
 
     // 2. Interface para geração de gráficos e B.I (Com memória e ferramentas,
@@ -87,7 +87,7 @@ public class AiOrchestratorService {
 
     // Novo metodo exposto para a classificação rápida (usado na hora de salvar o
     // feedback no banco)
-    public Feelling classificarSentimento(Feelling originalFeeling, String text) {
+    public Feeling classificarSentimento(Feeling originalFeeling, String text) {
         return sentimentValidator.validateSentiment(originalFeeling.name(), text);
     }
 }

@@ -26,7 +26,7 @@ public class FeedbackMenuController {
     @FXML
     void abrirFeedbackAtendimento(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AvaliacaoFuncionario.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AvaliacaoFuncionario.fxml"));
             Parent root = loader.load();
 
             AvaliacaoFuncionarioController controller = loader.getController();
@@ -42,7 +42,7 @@ public class FeedbackMenuController {
     @FXML
     void voltarMenu(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MenuPrincipal.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {

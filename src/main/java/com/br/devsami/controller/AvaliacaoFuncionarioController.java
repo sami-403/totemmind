@@ -5,7 +5,7 @@ import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.EmployeeRepository;
 import com.br.devsami.model.repository.UserRepository;
 import com.br.devsami.model.service.FeedbackService;
-import com.br.devsami.model.enums.Feelling;
+import com.br.devsami.model.enums.Feeling;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -81,9 +81,9 @@ public class AvaliacaoFuncionarioController {
 
         if (funcionario == null || emojiSelecionado == null) return;
 
-        Feelling feelling = emojiSelecionado == btnFeliz ? Feelling.SATISFIED :
-                emojiSelecionado == btnNeutro ? Feelling.NEUTRAL :
-                Feelling.DISSATISFIED;
+        Feeling feeling = emojiSelecionado == btnFeliz ? Feeling.SATISFIED :
+                emojiSelecionado == btnNeutro ? Feeling.NEUTRAL :
+                Feeling.DISSATISFIED;
 
         CompletableFuture.runAsync(() -> {
             UserRepository userRepository = new UserRepository();
@@ -95,7 +95,7 @@ public class AvaliacaoFuncionarioController {
                 feedbackService.createFeedback(
                         optionalUser.get(),
                         funcionario,
-                        feelling,
+                        feeling,
                         null, // Ajuste a categoria conforme a tela
                         feedbackText
                 );
@@ -108,7 +108,7 @@ public class AvaliacaoFuncionarioController {
     @FXML
     void voltar(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MenuPrincipal.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {

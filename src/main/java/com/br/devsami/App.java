@@ -14,7 +14,7 @@ public class App extends Application {
         public void start(Stage primaryStage) throws Exception {
                 Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
-                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MenuPrincipal.fxml")));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
                 Scene scene = new Scene(root, 800, 600);
 
                 primaryStage.setTitle("TotemMind");

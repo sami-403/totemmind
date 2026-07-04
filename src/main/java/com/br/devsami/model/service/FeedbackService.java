@@ -6,7 +6,7 @@ import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.model.enums.FeedbackCategory;
-import com.br.devsami.model.enums.Feelling;
+import com.br.devsami.model.enums.Feeling;
 
 public class FeedbackService {
 
@@ -21,7 +21,7 @@ public class FeedbackService {
     public Feedback createFeedback(
             User user,
             Employee employee,
-            Feelling feeling,
+            Feeling feeling,
             FeedbackCategory category,
             String text) {
 
@@ -37,20 +37,20 @@ public class FeedbackService {
 
         // se não há texto, assume o sentimento do botão clicado para economizar processamento
         if (text == null || text.isBlank()) {
-            feedback.setFeelling(feeling);
+            feedback.setFeeling(feeling);
             feedback.setConfidence(100);
             feedback.setSarcasmDetected(false);
             feedback.setReasoning("Voto direto sem texto");
         } else {
             try {
                 // Tipa direto para o enum para melhorar a velocidade e leitura
-                Feelling trueSentiment = aiService.classificarSentimento(feeling, text);
+                Feeling trueSentiment = aiService.classificarSentimento(feeling, text);
 
-                feedback.setFeelling(trueSentiment);
+                feedback.setFeeling(trueSentiment);
                 feedback.setReasoning("Analisado via IA");
             } catch (Exception e) {
                 // Fallback seguro caso a IA caia (Ollama fora do ar, etc)
-                feedback.setFeelling(feeling);
+                feedback.setFeeling(feeling);
                 feedback.setReasoning("Fallback: Erro de conexão com a IA.");
                 System.out.println("❌ ERRO REAL DA IA: " + e.getMessage());
                 e.printStackTrace();

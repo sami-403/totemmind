@@ -1,7 +1,7 @@
 package com.br.devsami.model.entity;
 
 import com.br.devsami.model.enums.FeedbackCategory;
-import com.br.devsami.model.enums.Feelling;
+import com.br.devsami.model.enums.Feeling;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +30,7 @@ import java.util.UUID;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Feelling feelling;
+    private Feeling feeling;
 
     @Enumerated(EnumType.STRING)
     private FeedbackCategory category;
@@ -78,15 +78,15 @@ import java.util.UUID;
     /**
      * @return Feelling return the feelling
      */
-    public Feelling getFeelling() {
-        return feelling;
+    public Feeling getFeeling() {
+        return feeling;
     }
 
     /**
-     * @param feelling the feelling to set
+     * @param feeling the feelling to set
      */
-    public void setFeelling(Feelling feelling) {
-        this.feelling = feelling;
+    public void setFeeling(Feeling feeling) {
+        this.feeling = feeling;
     }
 
     /**
