@@ -1,4 +1,4 @@
-package com.br.devsami.utils.enums;
+package com.br.devsami.model.enums;
 
 public enum FeedbackCategory {
     DELAY("Demora"),

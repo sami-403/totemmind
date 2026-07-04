@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.repository.EmployeeRepository;
-import com.br.devsami.utils.HibernateUtil;
-import com.br.devsami.utils.enums.EmployeeType;
+import com.br.devsami.infrastructure.persistence.HibernateUtil;
+import com.br.devsami.model.enums.EmployeeType;
 import jakarta.persistence.EntityManager;
 
 public class EmployeeService {

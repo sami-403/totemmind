@@ -1,6 +1,4 @@
-package com.br.devsami.model.application;
-
-import java.util.UUID;
+package com.br.devsami.application;
 
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
@@ -8,8 +6,8 @@ import com.br.devsami.model.entity.User;
 import com.br.devsami.model.service.EmployeeService;
 import com.br.devsami.model.service.FeedbackService;
 import com.br.devsami.model.service.UserService;
-import com.br.devsami.utils.enums.FeedbackCategory;
-import com.br.devsami.utils.enums.Feelling;
+import com.br.devsami.model.enums.FeedbackCategory;
+import com.br.devsami.model.enums.Feelling;
 
 /**
  * Camada de aplicação responsável por orquestrar o fluxo completo de criação de

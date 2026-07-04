@@ -1,18 +1,13 @@
 package com.br.devsami.model.repository;
 
 import com.br.devsami.model.entity.Feedback;
-import com.br.devsami.utils.HibernateUtil;
+import com.br.devsami.infrastructure.persistence.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.br.devsami.model.entity.Feedback;
-import com.br.devsami.utils.HibernateUtil;
-
-import jakarta.persistence.EntityManager;
 
 public class FeedbackRepository {
 

@@ -1,4 +1,4 @@
-package com.br.devsami.utils;
+package com.br.devsami.infrastructure.persistence;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

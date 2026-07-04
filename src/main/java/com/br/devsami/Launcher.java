@@ -1,6 +1,6 @@
 package com.br.devsami;
 
-import com.br.devsami.utils.HibernateUtil;
+import com.br.devsami.infrastructure.persistence.HibernateUtil;
 
 public class Launcher {
     public static void main(String[] args) {

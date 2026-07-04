@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.NonNull;
 
 import com.br.devsami.model.entity.User;
-import com.br.devsami.utils.HibernateUtil;
+import com.br.devsami.infrastructure.persistence.HibernateUtil;
 
 import jakarta.persistence.EntityManager;
 

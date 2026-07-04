@@ -1,4 +1,4 @@
-package com.br.devsami.model.ai;
+package com.br.devsami.ai;
 
 
 // Esse lugar dsefine o comportamento do agente, como ele deve agir, se comportar os valores dele, as limitações explicitas, a explicação minima operacional que ele precisa saber.

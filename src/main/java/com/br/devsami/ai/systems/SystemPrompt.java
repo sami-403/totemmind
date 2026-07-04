@@ -1,4 +1,4 @@
-package com.br.devsami.model.ai.systems;
+package com.br.devsami.ai.systems;
 
 public class SystemPrompt {
   public static final String PROMPT = """

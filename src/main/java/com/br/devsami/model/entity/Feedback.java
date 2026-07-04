@@ -1,7 +1,7 @@
 package com.br.devsami.model.entity;
 
-import com.br.devsami.utils.enums.FeedbackCategory;
-import com.br.devsami.utils.enums.Feelling;
+import com.br.devsami.model.enums.FeedbackCategory;
+import com.br.devsami.model.enums.Feelling;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

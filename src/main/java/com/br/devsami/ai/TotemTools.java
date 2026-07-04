@@ -1,4 +1,4 @@
-package com.br.devsami.model.ai;
+package com.br.devsami.ai;
 
 import dev.langchain4j.agent.tool.Tool;
 import com.br.devsami.model.repository.EmployeeRepository;

@@ -1,12 +1,12 @@
 package com.br.devsami.model.service;
 
-import com.br.devsami.model.ai.AiOrchestratorService;
+import com.br.devsami.ai.AiOrchestratorService;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.FeedbackRepository;
-import com.br.devsami.utils.enums.FeedbackCategory;
-import com.br.devsami.utils.enums.Feelling;
+import com.br.devsami.model.enums.FeedbackCategory;
+import com.br.devsami.model.enums.Feelling;
 
 public class FeedbackService {
 
