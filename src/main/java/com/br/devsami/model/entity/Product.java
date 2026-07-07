@@ -24,13 +24,13 @@ import java.math.BigDecimal;
     private UUID id;
 
     @Column(nullable = false, length = 13, unique = true)
-    private String codigoBarras;
+    private String barCode;
 
     @Column(nullable = false)
-    private String nome;
+    private String name;
 
     @Column(precision = 19, scale = 2, nullable = false)
-    private BigDecimal preco;
+    private BigDecimal price;
 
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
@@ -40,10 +40,10 @@ import java.math.BigDecimal;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Product(String codigoBarras, String nome, BigDecimal preco) {
-        this.codigoBarras = codigoBarras;
-        this.nome = nome;
-        this.preco = preco;
+    public Product(String barCode, String name, BigDecimal price) {
+        this.barCode = barCode;
+        this.name = name;
+        this.price = price;
     }
 
 }
