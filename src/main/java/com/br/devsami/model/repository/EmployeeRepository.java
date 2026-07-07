@@ -7,25 +7,14 @@ import com.br.devsami.model.entity.Employee;
 import com.br.devsami.infrastructure.persistence.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
-/*
- * Repository responsável exclusivamente pelo acesso ao banco de dados
- * relacionado à entidade Employee.
- *
- * Aqui NÃO entram regras de negócio, apenas operações de persistência e consulta.
- */
 public class EmployeeRepository {
 
-    /*
-     * Busca um funcionário pelo CPF.
-     *
-     * Usado principalmente no login e validação de existência.
-     */
     public Optional<Employee> findByCpf(String cpf) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
             return em.createQuery(
-                    "SELECT e FROM Employee e WHERE e.cpf = :cpf", Employee.class)
+                            "SELECT e FROM Employee e WHERE e.cpf = :cpf", Employee.class)
                     .setParameter("cpf", cpf)
                     .getResultStream()
                     .findFirst();
@@ -34,17 +23,12 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Verifica se já existe um funcionário com o CPF informado.
-     *
-     * Evita duplicidade antes de salvar novos registros.
-     */
     public boolean existsByCpf(String cpf) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
             Long count = em.createQuery(
-                    "SELECT COUNT(e) FROM Employee e WHERE e.cpf = :cpf", Long.class)
+                            "SELECT COUNT(e) FROM Employee e WHERE e.cpf = :cpf", Long.class)
                     .setParameter("cpf", cpf)
                     .getSingleResult();
             return count > 0;
@@ -53,9 +37,6 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Persiste um novo funcionário no banco de dados.
-     */
     public void save(Employee employee) {
         EntityManager em = HibernateUtil.getEntityManager();
 
@@ -64,7 +45,6 @@ public class EmployeeRepository {
             em.persist(employee);
             em.getTransaction().commit();
         } catch (Exception e) {
-            // garante rollback em caso de falha para evitar estado inconsistente
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
@@ -74,11 +54,41 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Busca um funcionário pelo ID.
-     *
-     * Retorna Optional para evitar null e forçar o tratamento explícito.
-     */
+    public void update(Employee employee) {
+        EntityManager em = HibernateUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            em.merge(employee);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void delete(Employee employee) {
+        EntityManager em = HibernateUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            Employee managedEmployee = em.contains(employee) ? employee : em.merge(employee);
+            em.remove(managedEmployee);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     public Optional<Employee> findById(long id) {
         EntityManager em = HibernateUtil.getEntityManager();
 
@@ -89,14 +99,13 @@ public class EmployeeRepository {
         }
     }
 
-    // buscar por nome (Devolve uma lista dos funcionários com aquele nome)
     public List<Employee> findByName(String name) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
             return em.createQuery(
-                    "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
-                    Employee.class)
+                            "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
+                            Employee.class)
                     .setParameter("name", "%" + name.trim() + "%")
                     .getResultList();
         } finally {
