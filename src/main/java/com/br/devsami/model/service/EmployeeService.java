@@ -46,17 +46,7 @@ public class EmployeeService {
     }
 
     public List<Employee> findByName(String name) {
-        EntityManager em = HibernateUtil.getEntityManager();
-
-        try {
-            return em.createQuery(
-                            "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
-                            Employee.class)
-                    .setParameter("name", "%" + name.trim() + "%")
-                    .getResultList();
-        } finally {
-            em.close();
-        }
+        return employeeRepository.findByName(name);
     }
 
     public Employee updateEmployee(long id, String newName, EmployeeType newType) {
