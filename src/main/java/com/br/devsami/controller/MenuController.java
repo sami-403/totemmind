@@ -22,8 +22,7 @@ public class MenuController {
     void abrirAssistente(ActionEvent event) {
         System.out.println("Abrindo Assistente (Chat B.I)...");
         try {
-            // Navega para a Tela de Avaliação que fizemos (Página 2)
-            Parent root = FXMLLoader.load(getClass().getResource("/ChatAssistente.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/ChatAssistente.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
@@ -40,7 +39,7 @@ public class MenuController {
     @FXML
     void abrirTelaFeedbacks(ActionEvent event) {
         try {
-            // Navega para a Tela de Avaliação que fizemos (Página 2)
+
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/TelaAvaliacao.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
@@ -52,7 +51,6 @@ public class MenuController {
     @FXML
     void abrirConfiguracoesIA(ActionEvent event) {
         try {
-            // Navega para a Tela de Configurações de IA que fizemos (Página 6)
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AiConfig.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
