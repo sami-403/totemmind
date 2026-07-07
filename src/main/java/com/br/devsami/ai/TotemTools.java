@@ -1,5 +1,6 @@
 package com.br.devsami.ai;
 
+import com.br.devsami.infrastructure.charts.ChartManager;
 import dev.langchain4j.agent.tool.Tool;
 import com.br.devsami.model.repository.EmployeeRepository;
 import com.br.devsami.model.entity.Employee;
@@ -48,8 +49,7 @@ public class TotemTools {
          * 4. IA apenas repassa essa string pro JavaFX interceptar e desenhar o gráfico.
          */
         @Tool("Calcula os dados de satisfação e já gera o comando do gráfico. O employeeId é OBRIGATÓRIO. startDate e endDate são OPCIONAIS (YYYY-MM-DD ou 'null').")
-        public String gerarRelatorioDeSatisfacao(Long employeeId, String startDate, String endDate,
-                        String tipoGrafico) {
+        public String gerarRelatorioDeSatisfacao(Long employeeId, String startDate, String endDate) {
 
                 // Conversão das strings enviadas pela IA para datas válidas
                 LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
@@ -67,15 +67,11 @@ public class TotemTools {
                                 .map(Employee::getName)
                                 .orElse("Desconhecido");
 
-                // Adiciona saida para auxiliar no desenvolvimento
-                System.out.println("Satisfeitos: " + percentagens[0]);
-                System.out.println("Neutro: " + percentagens[1]);
-                System.out.println("Insatisfeitos: " + percentagens[2]);
+                ChartManager.exibirPizza(nomeFuncionario,percentagens);
 
-                // Retorna o comando final formatado (Futuramente será alterada para a tool real
-                // com o comportamento na webview)
-                return String.format("[COMANDO_GRAFICO] TIPO: %s | FUNCIONARIO: %s | DADOS: S:%.2f N:%.2f I:%.2f",
-                                tipoGrafico, nomeFuncionario, percentagens[0], percentagens[1], percentagens[2]);
+
+                return "Gráfico gerado para %s: %.2f%% satisfação, %.2f%% neutralidade e %.2f%% insatisfação."
+                        .formatted(nomeFuncionario, percentagens[0], percentagens[1], percentagens[2]);
         }
 
         // Tool responsavel por pegar o funcionário com maior indece de X sentimento
