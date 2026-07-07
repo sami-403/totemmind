@@ -31,9 +31,14 @@ public class MenuController {
     }
 
     @FXML
-    void abrirTelaFuncionarios(ActionEvent event) {
-        System.out.println("Abrindo tela de gerenciar funcionários...");
-        // Futura lógica de troca para a Tela de Funcionários (Página 5)
+    void abrirTelaFuncionarios(ActionEvent event){
+        try{
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/TelaGerenciaFuncionarios.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

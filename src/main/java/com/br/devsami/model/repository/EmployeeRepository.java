@@ -101,11 +101,8 @@ public class EmployeeRepository {
 
     public List<Employee> findByName(String name) {
         EntityManager em = HibernateUtil.getEntityManager();
-
         try {
-            return em.createQuery(
-                            "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
-                            Employee.class)
+            return em.createQuery("SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name) AND e.ativo = true", Employee.class)
                     .setParameter("name", "%" + name.trim() + "%")
                     .getResultList();
         } finally {
