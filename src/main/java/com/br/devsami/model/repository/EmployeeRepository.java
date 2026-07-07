@@ -25,7 +25,7 @@ public class EmployeeRepository {
 
         try {
             return em.createQuery(
-                    "SELECT e FROM Employee e WHERE e.cpf = :cpf", Employee.class)
+                            "SELECT e FROM Employee e WHERE e.cpf = :cpf", Employee.class)
                     .setParameter("cpf", cpf)
                     .getResultStream()
                     .findFirst();
@@ -44,7 +44,7 @@ public class EmployeeRepository {
 
         try {
             Long count = em.createQuery(
-                    "SELECT COUNT(e) FROM Employee e WHERE e.cpf = :cpf", Long.class)
+                            "SELECT COUNT(e) FROM Employee e WHERE e.cpf = :cpf", Long.class)
                     .setParameter("cpf", cpf)
                     .getSingleResult();
             return count > 0;
@@ -75,6 +75,50 @@ public class EmployeeRepository {
     }
 
     /*
+     * Atualiza os dados de um funcionário existente no banco de dados.
+     */
+    public void update(Employee employee) {
+        EntityManager em = HibernateUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            // merge sincroniza o estado do objeto passado com o banco de dados
+            em.merge(employee);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /*
+     * Remove um funcionário do banco de dados.
+     */
+    public void delete(Employee employee) {
+        EntityManager em = HibernateUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            // Associa a entidade ao contexto de persistência atual antes de remover.
+            // Se já estiver no contexto (contains), usa ela. Se não, faz o merge primeiro.
+            Employee managedEmployee = em.contains(employee) ? employee : em.merge(employee);
+            em.remove(managedEmployee);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /*
      * Busca um funcionário pelo ID.
      *
      * Retorna Optional para evitar null e forçar o tratamento explícito.
@@ -95,8 +139,8 @@ public class EmployeeRepository {
 
         try {
             return em.createQuery(
-                    "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
-                    Employee.class)
+                            "SELECT e FROM Employee e WHERE LOWER(e.name) LIKE LOWER(:name)",
+                            Employee.class)
                     .setParameter("name", "%" + name.trim() + "%")
                     .getResultList();
         } finally {
