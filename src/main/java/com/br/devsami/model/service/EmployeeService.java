@@ -75,10 +75,21 @@ public class EmployeeService {
         return employee;
     }
 
+    /*
+     * Exclusão Lógica (Soft Delete).
+     * Em vez de apagar do banco (o que causaria erro de Chave Estrangeira),
+     * nós desativamos o funcionário.
+     */
     public void deleteEmployee(long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
 
-        employeeRepository.delete(employee);
+        if (!employee.isAtivo()) {
+            throw new IllegalStateException("Este funcionário já está removido/inativo.");
+        }
+
+        // Troca o status para false (inativo) e atualiza no banco
+        employee.setAtivo(false);
+        employeeRepository.update(employee);
     }
 }

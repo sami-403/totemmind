@@ -2,12 +2,7 @@ package com.br.devsami.model.entity;
 
 import com.br.devsami.model.enums.EmployeeType;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -37,5 +32,18 @@ import lombok.*;
 
     public Object getType() {
         return tipo;
+    }
+
+    // O ideal é que por padrão os funcionarios comecem ativos
+    @Column(name = "ativo")
+    private boolean ativo = true;
+
+    // ... gere os getters e setters para este campo
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }
