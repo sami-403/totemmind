@@ -7,19 +7,8 @@ import com.br.devsami.model.entity.Employee;
 import com.br.devsami.infrastructure.persistence.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
-/*
- * Repository responsável exclusivamente pelo acesso ao banco de dados
- * relacionado à entidade Employee.
- *
- * Aqui NÃO entram regras de negócio, apenas operações de persistência e consulta.
- */
 public class EmployeeRepository {
 
-    /*
-     * Busca um funcionário pelo CPF.
-     *
-     * Usado principalmente no login e validação de existência.
-     */
     public Optional<Employee> findByCpf(String cpf) {
         EntityManager em = HibernateUtil.getEntityManager();
 
@@ -34,11 +23,6 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Verifica se já existe um funcionário com o CPF informado.
-     *
-     * Evita duplicidade antes de salvar novos registros.
-     */
     public boolean existsByCpf(String cpf) {
         EntityManager em = HibernateUtil.getEntityManager();
 
@@ -53,9 +37,6 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Persiste um novo funcionário no banco de dados.
-     */
     public void save(Employee employee) {
         EntityManager em = HibernateUtil.getEntityManager();
 
@@ -64,7 +45,6 @@ public class EmployeeRepository {
             em.persist(employee);
             em.getTransaction().commit();
         } catch (Exception e) {
-            // garante rollback em caso de falha para evitar estado inconsistente
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
@@ -74,15 +54,11 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Atualiza os dados de um funcionário existente no banco de dados.
-     */
     public void update(Employee employee) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
             em.getTransaction().begin();
-            // merge sincroniza o estado do objeto passado com o banco de dados
             em.merge(employee);
             em.getTransaction().commit();
         } catch (Exception e) {
@@ -95,16 +71,11 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Remove um funcionário do banco de dados.
-     */
     public void delete(Employee employee) {
         EntityManager em = HibernateUtil.getEntityManager();
 
         try {
             em.getTransaction().begin();
-            // Associa a entidade ao contexto de persistência atual antes de remover.
-            // Se já estiver no contexto (contains), usa ela. Se não, faz o merge primeiro.
             Employee managedEmployee = em.contains(employee) ? employee : em.merge(employee);
             em.remove(managedEmployee);
             em.getTransaction().commit();
@@ -118,11 +89,6 @@ public class EmployeeRepository {
         }
     }
 
-    /*
-     * Busca um funcionário pelo ID.
-     *
-     * Retorna Optional para evitar null e forçar o tratamento explícito.
-     */
     public Optional<Employee> findById(long id) {
         EntityManager em = HibernateUtil.getEntityManager();
 
@@ -133,7 +99,6 @@ public class EmployeeRepository {
         }
     }
 
-    // buscar por nome (Devolve uma lista dos funcionários com aquele nome)
     public List<Employee> findByName(String name) {
         EntityManager em = HibernateUtil.getEntityManager();
 
