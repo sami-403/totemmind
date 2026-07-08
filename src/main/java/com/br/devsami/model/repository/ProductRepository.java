@@ -114,4 +114,17 @@ public class ProductRepository {
         }
     }
 
+    public List<Product> findAll(int pageSize, int page){
+        int zeroBasedPage = page < 1 ? 0: page - 1;
+
+        try(EntityManager em = HibernateUtil.getEntityManager();){
+            return em.createQuery(
+                            "SELECT p FROM Product p",
+                            Product.class)
+                    .setFirstResult(zeroBasedPage*pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        }
+    }
+
 }
