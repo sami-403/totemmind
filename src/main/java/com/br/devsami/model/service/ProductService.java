@@ -4,13 +4,21 @@ import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.repository.ProductRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ProductService {
     private final ProductRepository productRepository;
 
     public ProductService(){
         this.productRepository = new ProductRepository();
+    }
+
+    //Listar Produtos
+    public List<Product> listProducts(int page){
+        return productRepository.findAll(10, page);
     }
 
     //Buscar Produto
@@ -44,5 +52,43 @@ public class ProductService {
         productRepository.save(product);
 
         return product;
+    }
+
+    //Atualiza um Produto
+    public Product updateProduct(UUID id, String newName, String newBarCode, double newPrice){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto com esse ID não encontrado."));
+
+        if (newName == null || newName.isBlank()) {
+            throw new IllegalArgumentException("Nome do Produto obrigatório");
+        }
+
+        if (newBarCode == null || newBarCode.isBlank()) {
+            throw new IllegalArgumentException("Código de Barras obrigatório");
+        }
+
+        if (newPrice < 0) {
+            throw new IllegalArgumentException("Preço do Produto deve ser positivo");
+        }
+
+        if(productRepository.existsByBarCode(newBarCode) && product.getBarCode().equals(newBarCode.strip())){
+            throw new IllegalArgumentException("Já existe um produto com esse código de barras");
+        }
+
+        product.setName(newName);
+        product.setBarCode(newBarCode);
+        product.setPrice(BigDecimal.valueOf(newPrice));
+
+        productRepository.update(product);
+
+        return product;
+    }
+
+    //Remove um produto
+    public void deleteProduct(UUID id){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto com esse ID não encontrado."));
+
+        productRepository.delete(product);
     }
 }
