@@ -76,7 +76,7 @@ public class ProductRepository {
     public Optional<Product> findByBarCode(@NonNull String barCode){
         try(EntityManager em = HibernateUtil.getEntityManager();){
             return em.createQuery(
-                    "SELECT p FROM Product p WHERE e.barCode LIKE :barCode",
+                    "SELECT p FROM Product p WHERE p.barCode LIKE :barCode",
                     Product.class)
                     .setParameter("barCode", barCode.trim())
                     .getResultStream()
@@ -87,7 +87,7 @@ public class ProductRepository {
     public boolean existsByBarCode(@NonNull String barCode){
         try(EntityManager em = HibernateUtil.getEntityManager();){
            Long count = em.createQuery(
-                            "SELECT COUNT(p) FROM Product p WHERE e.barCode LIKE :barCode",
+                            "SELECT COUNT(p) FROM Product p WHERE p.barCode LIKE :barCode",
                             Long.class)
                     .setParameter("barCode", barCode.trim())
                     .getSingleResult();
@@ -98,7 +98,7 @@ public class ProductRepository {
     public List<Product> findByName(@NonNull String name){
         try(EntityManager em = HibernateUtil.getEntityManager();){
             return em.createQuery(
-                            "SELECT p FROM Product p WHERE e.name LIKE :name",
+                            "SELECT p FROM Product p WHERE p.name LIKE :name",
                             Product.class)
                     .setParameter("name", name.trim())
                     .getResultList();
