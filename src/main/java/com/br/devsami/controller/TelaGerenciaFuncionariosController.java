@@ -38,16 +38,18 @@ public class TelaGerenciaFuncionariosController {
             passwordField.setManaged(isGerente);
         });
     }
+
     @FXML
     void voltar(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
+            stage.setScene(new Scene(root, 800, 600)); // Ajuste as dimensões se necessário
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     @FXML public void setModeAdd() { configureForm("ADD", "Adicionar Funcionário", false, true, true, true, "#1A9347", "Cadastrar"); }
     @FXML public void setModeEdit() { configureForm("EDIT", "Editar Funcionário", true, true, true, true, "#1A9347", "Salvar"); }
     @FXML public void setModeRemove() { configureForm("REMOVE", "Remover Funcionário", true, false, false, false, "#D32F2F", "Excluir (Inativar)"); }
@@ -57,6 +59,8 @@ public class TelaGerenciaFuncionariosController {
         formContainer.setVisible(true);
         formContainer.setManaged(true);
         formTitle.setText(title);
+
+        limparCampos(); // Limpa dados antigos ao trocar de modo
 
         // Aplica visibilidade
         idField.setVisible(showId); idField.setManaged(showId);
@@ -68,35 +72,51 @@ public class TelaGerenciaFuncionariosController {
         passwordField.setVisible(false); passwordField.setManaged(false);
 
         actionButton.setText(btnText);
-        actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px;");
+        actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
     }
 
     @FXML
     private void handleAction() {
         try {
+            // Pega a senha caso o campo esteja visível (ou seja, caso seja Gerente)
+            String senha = passwordField.isVisible() ? passwordField.getText() : null;
+
             switch (currentMode) {
                 case "ADD" -> {
-                    service.createEmployee(nameField.getText(), cpfField.getText(), typeComboBox.getValue());
-                    showAlert("Sucesso", "Funcionário cadastrado!");
+                    // ATENÇÃO: Verifique se o seu service aceita o 4º parâmetro (senha)
+                    service.createEmployee(nameField.getText(), cpfField.getText(), typeComboBox.getValue(), senha);
+                    showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário cadastrado!");
                 }
                 case "EDIT" -> {
                     long id = Long.parseLong(idField.getText());
-                    service.updateEmployee(id, nameField.getText(), typeComboBox.getValue());
-                    showAlert("Sucesso", "Funcionário atualizado!");
+                    // ATENÇÃO: Verifique se o seu service aceita a senha na edição também
+                    service.updateEmployee(id, nameField.getText(), typeComboBox.getValue(), senha);
+                    showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário atualizado!");
                 }
                 case "REMOVE" -> {
                     long id = Long.parseLong(idField.getText());
                     service.deleteEmployee(id); // Soft Delete
-                    showAlert("Sucesso", "Funcionário inativado!");
+                    showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário inativado!");
                 }
             }
+            limparCampos(); // Limpa os campos depois do sucesso
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Erro de Validação", "O ID deve ser um número válido.");
         } catch (Exception e) {
-            showAlert("Erro", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
         }
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void limparCampos() {
+        idField.clear();
+        nameField.clear();
+        cpfField.clear();
+        passwordField.clear();
+        typeComboBox.setValue(null);
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
