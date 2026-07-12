@@ -8,6 +8,8 @@ import com.br.devsami.model.enums.Feeling;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class FeedbackAnalyticsService {
 
@@ -84,5 +86,23 @@ public class FeedbackAnalyticsService {
         return campeao != null
                 ? String.format("%s com %.2f%% de %s", campeao.getName(), maiorTaxa, nomesSentimentos[indice])
                 : "[SEM_DADOS]";
+    }
+
+    public Map<String, int[]> evolucaoSatisfacao(Long employeeId, LocalDateTime start, LocalDateTime end) {
+        List<Feedback> feedbacks = (start != null && end != null)
+                ? feedbackRepository.findByEmployeeAndPeriod(employeeId, start, end)
+                : feedbackRepository.findByEmployeeId(employeeId);
+
+        Map<String, int[]> evolucao = new TreeMap<>();
+
+        for (Feedback f : feedbacks) {
+            String data = f.getCreatedAt().toLocalDate().toString();
+            evolucao.putIfAbsent(data, new int[]{0, 0, 0});
+
+            if (f.getFeeling() == Feeling.SATISFIED) evolucao.get(data)[0]++;
+            else if (f.getFeeling() == Feeling.NEUTRAL) evolucao.get(data)[1]++;
+            else if (f.getFeeling() == Feeling.DISSATISFIED) evolucao.get(data)[2]++;
+        }
+        return evolucao;
     }
 }
