@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 public class TotemTools {
 
@@ -87,5 +88,18 @@ public class TotemTools {
                                 : null;
 
                 return analyticsService.obterMaiorTaxa(todos, indice, start, end);
+        }
+
+        @Tool("Gera gráfico de LINHAS de evolução temporal. employeeId é OBRIGATÓRIO. startDate e endDate são OPCIONAIS.")
+        public String gerarGraficoEvolucaoTemporal(Long employeeId, String startDate, String endDate) {
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null")) ? LocalDate.parse(startDate).atStartOfDay() : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null")) ? LocalDate.parse(endDate).atTime(LocalTime.MAX) : null;
+
+                Map<String, int[]> dados = analyticsService.evolucaoSatisfacao(employeeId, start, end);
+                String nome = employeeRepository.findById(employeeId).map(Employee::getName).orElse("Desconhecido");
+
+                ChartManager.exibirLinhas("Evolução Temporal - " + nome, dados);
+
+                return String.format("Gráfico de linhas gerado na tela com sucesso para %s.", nome);
         }
 }

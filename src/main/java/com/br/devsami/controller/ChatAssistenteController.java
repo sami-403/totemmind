@@ -13,7 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -21,6 +21,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class ChatAssistenteController implements ChartCallback {
 
@@ -93,10 +95,45 @@ public class ChatAssistenteController implements ChartCallback {
         });
     }
 
+    @Override
+    public void exibirGraficoLinhas(String titulo, Map<String, int[]> dados) {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setPadding(new javafx.geometry.Insets(0, 0, 20, 12));
+        NumberAxis yAxis = new NumberAxis();
+        LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
+        chart.setTitle(titulo);
+
+        chart.setCreateSymbols(true);
+        chart.setAnimated(true);
+
+        XYChart.Series<String, Number> sIns = new XYChart.Series<>();
+        sIns.setName("Insatisfeito");
+
+
+        XYChart.Series<String, Number> sNeu = new XYChart.Series<>();
+        sNeu.setName("Neutro");
+
+        XYChart.Series<String, Number> sSat = new XYChart.Series<>();
+        sSat.setName("Satisfeito");
+
+        dados.forEach((data, valores) -> {
+            sIns.getData().add(new XYChart.Data<>(data, valores[2]));
+            sNeu.getData().add(new XYChart.Data<>(data, valores[1]));
+            sSat.getData().add(new XYChart.Data<>(data, valores[0]));
+        });
+
+        chart.getData().addAll(sIns, sNeu, sSat);
+
+        Platform.runLater(() -> {
+            painelGrafico.getChildren().clear();
+            painelGrafico.getChildren().add(chart);
+        });
+    }
+
     @FXML
     void voltar(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/MenuPrincipal.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
