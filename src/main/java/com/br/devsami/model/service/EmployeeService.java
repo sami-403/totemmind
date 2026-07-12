@@ -17,27 +17,18 @@ public class EmployeeService {
         this.employeeRepository = new EmployeeRepository();
     }
 
-    public Employee createEmployee(String name, String cpf, EmployeeType type) {
-
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Nome obrigatório");
-        }
-
-        if (cpf == null || cpf.isBlank()) {
-            throw new IllegalArgumentException("CPF obrigatório");
-        }
-
-        if (employeeRepository.existsByCpf(cpf)) {
-            throw new IllegalArgumentException("CPF já cadastrado");
-        }
+    public Employee createEmployee(String name, String cpf, EmployeeType type, String password) {
+        // ... validações de nome e cpf ...
 
         var employee = new Employee();
         employee.setName(name);
         employee.setCpf(cpf);
         employee.setTipo(type);
 
-        employeeRepository.save(employee);
+        // Salva a senha. Se for nulo, o banco aceitará como nulo.
+        employee.setPassword(password);
 
+        employeeRepository.save(employee);
         return employee;
     }
 
@@ -49,7 +40,7 @@ public class EmployeeService {
         return employeeRepository.findByName(name);
     }
 
-    public Employee updateEmployee(long id, String newName, EmployeeType newType) {
+    public Employee updateEmployee(long id, String newName, EmployeeType newType, String senha) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
 
@@ -81,5 +72,27 @@ public class EmployeeService {
         // Troca o status para false (inativo) e atualiza no banco
         employee.setAtivo(false);
         employeeRepository.update(employee);
+    }
+
+    // autenticação geral
+    public void authenticateManager(String cpf, String senha) {
+        // Busca o funcionário pelo CPF
+        Employee employee = employeeRepository.findByCpf(cpf)
+                .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado."));
+
+        // Verifica se o funcionário foi inativado (Soft Delete)
+        if (!employee.isAtivo()) {
+            throw new IllegalStateException("Acesso negado: Funcionário inativo.");
+        }
+
+        // Verifica a senha
+        if (!senha.equals(employee.getPassword())) {
+            throw new IllegalArgumentException("Senha incorreta.");
+        }
+
+        // Verifica se o cargo é GERENTE
+        if (employee.getTipo() != EmployeeType.GERENTE) {
+            throw new SecurityException("Acesso negado: Apenas gerentes podem acessar esta área.");
+        }
     }
 }

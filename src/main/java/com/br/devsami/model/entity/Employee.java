@@ -11,6 +11,11 @@ import lombok.*;
     @AllArgsConstructor
     public class Employee extends Person {
 
+    private String password; // Adicionado
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
