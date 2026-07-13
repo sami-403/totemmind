@@ -5,7 +5,9 @@
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
 
-<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AdminLoginController">
+<StackPane prefHeight="600.0" prefWidth="800.0"
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AdminLoginController">
 
     <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="20.0">
         <padding>
@@ -14,12 +16,11 @@
 
         <!-- Botão Voltar -->
         <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
-            <Button onAction="#voltarParaMenu" text="← Voltar ao Menu"
-                    style="-fx-background-color: #555555; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8px 15px; -fx-background-radius: 5px;"/>
+            <Button onAction="#voltarParaMenu" text="← Voltar ao Menu" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8px 15px; -fx-background-radius: 5px;"/>
         </HBox>
 
         <ImageView fitHeight="160.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="/images/totemMind_logo.png"/>
+            <Image url="@../images/totemMind_logo.png"/>
         </ImageView>
 
         <Label text="Autenticação Restrita" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;">
@@ -31,14 +32,11 @@
         <!-- Formulário de Login -->
         <VBox spacing="15.0" maxWidth="Infinity">
 
-            <TextField fx:id="cpfField" promptText="CPF do Gerente"
-                       style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+            <TextField fx:id="cpfField" promptText="CPF do Gerente" style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
 
-            <PasswordField fx:id="senhaField" promptText="Senha"
-                           style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+            <PasswordField fx:id="senhaField" promptText="Senha" style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
 
-            <Button onAction="#handleLogin" text="Acessar Gerenciamento" maxWidth="Infinity"
-                    style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-font-weight: bold;">
+            <Button onAction="#handleLogin" text="Acessar Gerenciamento" maxWidth="Infinity" style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-font-weight: bold;">
                 <VBox.margin>
                     <Insets top="10.0"/>
                 </VBox.margin>
