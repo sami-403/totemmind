@@ -6,7 +6,9 @@
 <?import javafx.geometry.Insets?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@/css/chat.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.ChatAssistenteController">
+<StackPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@/css/chat.css"
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.ChatAssistenteController">
 
     <SplitPane dividerPositions="0.6" style="-fx-background-color: transparent; -fx-padding: 15px;">
 
@@ -26,7 +28,7 @@
                 <center>
                     <VBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
                         <ImageView fitHeight="120.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="/images/totemMind_logo.png"/>
+                            <Image url="@../images/totemMind_logo.png"/>
                         </ImageView>
                         <Label text="CHAT DO ASSISTENTE" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #aaa;"/>
                     </VBox>

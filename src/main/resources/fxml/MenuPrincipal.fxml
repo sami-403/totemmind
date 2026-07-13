@@ -14,7 +14,7 @@
         </padding>
 
         <ImageView fitHeight="160.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="/images/totemMind_logo.png"/>
+            <Image url="@../images/totemMind_logo.png"/>
         </ImageView>
 
         <VBox spacing="15.0" maxWidth="Infinity">
