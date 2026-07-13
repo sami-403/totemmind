@@ -58,8 +58,19 @@ public class AvaliacaoController {
                 e.printStackTrace();
             }
         } else {
-            // Fluxo de Cadastro de Usuário (quando implementar, lembre de passar o CPF gerado adiante)
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CadastroCliente.fxml"));
+            Parent root = loader.load();
+
+            CadastroClienteController controller = loader.getController();
+            controller.setCpf(cpf);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
     }
 
 }
