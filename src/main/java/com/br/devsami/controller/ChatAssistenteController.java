@@ -38,10 +38,8 @@ public class ChatAssistenteController implements ChartCallback {
     @FXML
     private VBox painelGrafico;
 
-    private int qtdMensagensAntigas = 0;
-
     private final AiOrchestratorService aiService = new AiOrchestratorService();
-    private final ChatHistoryService historyService = new ChatHistoryService(); // Instância movida para cima para organização
+    private final ChatHistoryService historyService = new ChatHistoryService();
 
     @FXML
     public void initialize() {
@@ -54,23 +52,18 @@ public class ChatAssistenteController implements ChartCallback {
             }
         });
 
-        // Carrega o histórico de mensagens guardadas
-        List<MensagemLog> historico = historyService.obterUltimasMensagens(10);
-
-        // Cria a lista em tempo de execução para alimentar o componente visual
+        List<MensagemLog> historico = historyService.obterUltimasMensagens(15);
         List<ChatMessage> mensagensDaSessao = new ArrayList<>();
 
-        // 1. SEMPRE adiciona a saudação inicial no topo
+        // Adiciona sempre a saudação fixa no topo
         mensagensDaSessao.add(new ChatMessage("Olá! Sou o Kicer. Como posso ajudar você hoje?", false));
 
-        // 2. Se existirem dados, adiciona as mensagens antigas logo abaixo
+        // Incorpora todo o histórico salvo abaixo da saudação
         for (MensagemLog log : historico) {
             mensagensDaSessao.add(new ChatMessage(log.texto(), log.isUser()));
         }
 
-        // Alimenta a ListView da interface gráfica de uma só vez
         chatListView.getItems().setAll(mensagensDaSessao);
-
         Platform.runLater(this::scrollBottom);
     }
 
@@ -80,33 +73,29 @@ public class ChatAssistenteController implements ChartCallback {
         if (input == null || input.isBlank())
             return;
 
-        // 1. Cria a mensagem do utilizador, adiciona na tela e SALVA no JSON
         ChatMessage userMsg = new ChatMessage(input, true);
         chatListView.getItems().add(userMsg);
         txtInput.clear();
         scrollBottom();
 
-        historyService.saveToJson(List.of(userMsg)); // SALVAMENTO IMEDIATO AQUI
+        // Salva o envio incremental imediatamente
+        historyService.saveToJson(List.of(userMsg));
 
-        // 2. Processa a IA numa thread separada
         new Thread(() -> {
             try {
                 String resposta = aiService.processMessage(input);
                 Platform.runLater(() -> {
-                    // 3. Cria a mensagem da IA, adiciona na tela e SALVA no JSON
                     ChatMessage aiMsg = new ChatMessage(resposta, false);
                     chatListView.getItems().add(aiMsg);
                     scrollBottom();
-
-                    historyService.saveToJson(List.of(aiMsg)); // SALVAMENTO IMEDIATO AQUI
+                    historyService.saveToJson(List.of(aiMsg));
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    // Cria, exibe e SALVA a mensagem de erro da IA também
                     ChatMessage erroMsg = new ChatMessage("Erro: " + e.getMessage(), false);
                     chatListView.getItems().add(erroMsg);
-                    historyService.saveToJson(List.of(erroMsg));
                     scrollBottom();
+                    historyService.saveToJson(List.of(erroMsg));
                 });
             }
         }).start();
@@ -116,16 +105,13 @@ public class ChatAssistenteController implements ChartCallback {
         chatListView.scrollTo(chatListView.getItems().size() - 1);
     }
 
-    // ||Metodo que recebe os dados e desenha grafico
     @Override
     public void exibirGraficoPizza(String titulo, double[] percentagens) {
         PieChart chart = new PieChart(FXCollections.observableArrayList(
                 new PieChart.Data("Insatisfeito (" + percentagens[2] + "%)", percentagens[2]),
                 new PieChart.Data("Neutro (" + percentagens[1] + "%)", percentagens[1]),
                 new PieChart.Data("Satisfeito (" + percentagens[0] + "%)", percentagens[0])));
-
         chart.setTitle(titulo);
-
         Platform.runLater(() -> {
             painelGrafico.getChildren().clear();
             painelGrafico.getChildren().add(chart);
@@ -139,16 +125,13 @@ public class ChatAssistenteController implements ChartCallback {
         NumberAxis yAxis = new NumberAxis();
         LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.setTitle(titulo);
-
         chart.setCreateSymbols(true);
         chart.setAnimated(true);
 
         XYChart.Series<String, Number> sIns = new XYChart.Series<>();
         sIns.setName("Insatisfeito");
-
         XYChart.Series<String, Number> sNeu = new XYChart.Series<>();
         sNeu.setName("Neutro");
-
         XYChart.Series<String, Number> sSat = new XYChart.Series<>();
         sSat.setName("Satisfeito");
 
@@ -159,7 +142,6 @@ public class ChatAssistenteController implements ChartCallback {
         });
 
         chart.getData().addAll(sIns, sNeu, sSat);
-
         Platform.runLater(() -> {
             painelGrafico.getChildren().clear();
             painelGrafico.getChildren().add(chart);
