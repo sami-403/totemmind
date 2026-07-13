@@ -21,8 +21,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.List;
+
+import com.br.devsami.model.service.ChatHistoryService;
+import com.br.devsami.model.service.ChatHistoryService.MensagemLog;
 
 public class ChatAssistenteController implements ChartCallback {
 
@@ -31,15 +36,16 @@ public class ChatAssistenteController implements ChartCallback {
     @FXML
     private TextField txtInput;
     @FXML
-    private VBox painelGrafico; // O painel da direita no FXML
+    private VBox painelGrafico;
+
+    private int qtdMensagensAntigas = 0;
 
     private final AiOrchestratorService aiService = new AiOrchestratorService();
+    private final ChatHistoryService historyService = new ChatHistoryService(); // Instância movida para cima para organização
 
     @FXML
     public void initialize() {
-        // Registra a tela no gerenciador
         ChartManager.registrarTela(this);
-
         chatListView.setCellFactory(param -> new ChatCell());
 
         txtInput.setOnKeyPressed(event -> {
@@ -48,8 +54,24 @@ public class ChatAssistenteController implements ChartCallback {
             }
         });
 
-        chatListView.getItems().add(
-                new ChatMessage("Olá! Sou o Kicer. Como posso ajudar você hoje?", false));
+        // Carrega o histórico de mensagens guardadas
+        List<MensagemLog> historico = historyService.obterUltimasMensagens(10);
+
+        // Cria a lista em tempo de execução para alimentar o componente visual
+        List<ChatMessage> mensagensDaSessao = new ArrayList<>();
+
+        // 1. SEMPRE adiciona a saudação inicial no topo
+        mensagensDaSessao.add(new ChatMessage("Olá! Sou o Kicer. Como posso ajudar você hoje?", false));
+
+        // 2. Se existirem dados, adiciona as mensagens antigas logo abaixo
+        for (MensagemLog log : historico) {
+            mensagensDaSessao.add(new ChatMessage(log.texto(), log.isUser()));
+        }
+
+        // Alimenta a ListView da interface gráfica de uma só vez
+        chatListView.getItems().setAll(mensagensDaSessao);
+
+        Platform.runLater(this::scrollBottom);
     }
 
     @FXML
@@ -58,19 +80,34 @@ public class ChatAssistenteController implements ChartCallback {
         if (input == null || input.isBlank())
             return;
 
-        chatListView.getItems().add(new ChatMessage(input, true));
+        // 1. Cria a mensagem do utilizador, adiciona na tela e SALVA no JSON
+        ChatMessage userMsg = new ChatMessage(input, true);
+        chatListView.getItems().add(userMsg);
         txtInput.clear();
         scrollBottom();
 
+        historyService.saveToJson(List.of(userMsg)); // SALVAMENTO IMEDIATO AQUI
+
+        // 2. Processa a IA numa thread separada
         new Thread(() -> {
             try {
                 String resposta = aiService.processMessage(input);
                 Platform.runLater(() -> {
-                    chatListView.getItems().add(new ChatMessage(resposta, false));
+                    // 3. Cria a mensagem da IA, adiciona na tela e SALVA no JSON
+                    ChatMessage aiMsg = new ChatMessage(resposta, false);
+                    chatListView.getItems().add(aiMsg);
                     scrollBottom();
+
+                    historyService.saveToJson(List.of(aiMsg)); // SALVAMENTO IMEDIATO AQUI
                 });
             } catch (Exception e) {
-                Platform.runLater(() -> chatListView.getItems().add(new ChatMessage("Erro: " + e.getMessage(), false)));
+                Platform.runLater(() -> {
+                    // Cria, exibe e SALVA a mensagem de erro da IA também
+                    ChatMessage erroMsg = new ChatMessage("Erro: " + e.getMessage(), false);
+                    chatListView.getItems().add(erroMsg);
+                    historyService.saveToJson(List.of(erroMsg));
+                    scrollBottom();
+                });
             }
         }).start();
     }
@@ -108,7 +145,6 @@ public class ChatAssistenteController implements ChartCallback {
 
         XYChart.Series<String, Number> sIns = new XYChart.Series<>();
         sIns.setName("Insatisfeito");
-
 
         XYChart.Series<String, Number> sNeu = new XYChart.Series<>();
         sNeu.setName("Neutro");

@@ -8,20 +8,18 @@ import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
-
 import com.br.devsami.infrastructure.config.ConfigManager;
 import com.br.devsami.model.enums.Feeling;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Properties;
+import dev.langchain4j.memory.ChatMemory;
+import com.br.devsami.model.service.ChatHistoryService;
+import com.br.devsami.model.service.ChatHistoryService.MensagemLog;
 
 public class AiOrchestratorService {
 
-    // 1. Interface para feedbacks rápidos (Sem memória, sem ferramentas, resposta
-    // determinística
-    // Esse carinha só vai analisar um texto e ver se faz sentido ele ter a
-    // classificação do feedback que tem
+    // 1. Interface para feedbacks rápidos
     public interface SentimentValidatorAi {
         @SystemMessage(SentimentEspecialist.SentimentPrompt)
         @UserMessage("Sentimento original: {{originalFeeling}}. Texto do feedback: {{feedbackText}}")
@@ -29,15 +27,14 @@ public class AiOrchestratorService {
                                   @V("feedbackText") String feedbackText);
     }
 
-    // 2. Interface para geração de gráficos e B.I (Com memória e ferramentas,
-    // focada em Chat/BI)
+    // 2. Interface para geração de gráficos e B.I
     public interface TotemAssistant {
         @SystemMessage(SystemPrompt.PROMPT) // O prompt agora foca SÓ em BI
         String chat(@V("dataAtual") String dataAtual, @UserMessage String userMessage);
     }
 
-    private final TotemAssistant assistant; // chat que o gerente vai pedir gráficos etc
-    private final SentimentValidatorAi sentimentValidator; // Novo campo para validação rápida
+    private final TotemAssistant assistant;
+    private final SentimentValidatorAi sentimentValidator;
 
     public AiOrchestratorService() {
         Properties props = ConfigManager.getInstance();
@@ -49,7 +46,7 @@ public class AiOrchestratorService {
 
         String modelBase = props.getProperty("AI_MODEL");
         if (modelBase == null || modelBase.isBlank()) {
-            modelBase = "hf.co/unsloth/gemma-4-E4B-it-qat-GGUF:UD-Q4_K_XL";
+            modelBase = "hf.co/unsloth/gemma-4-12B-it-qat-GGUF:UD-Q4_K_XL";
         }
 
         String modelFeedback = props.getProperty("AI_FEEDBACK");
@@ -57,26 +54,41 @@ public class AiOrchestratorService {
             modelFeedback = "hf.co/ozgurpolat/gemma-4-E4B-it-text-only-GGUF:Q4_K_M";
         }
 
-        // Modelo 1: Focado em Chat e BI (Temperatura 0.2 para ter respostas mais
-        // fluidas, mas controladas)
+        // ==========================================
+        // CARREGAMENTO DO HISTÓRICO DE MEMÓRIA
+
+        ChatHistoryService historyService = new ChatHistoryService();
+        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(15);
+
+        historyService.obterUltimasMensagens(6).forEach((MensagemLog log) -> {
+            if (log.isUser()) {
+
+                chatMemory.add(new dev.langchain4j.data.message.UserMessage(log.texto()));
+            } else {
+                chatMemory.add(new dev.langchain4j.data.message.AiMessage(log.texto()));
+            }
+        });
+
+        // ==========================================
+        // CONFIGURAÇÃO DOS MODELOS DE IA
+        // ==========================================
+
+        // Modelo 1: Focado em Chat e BI
         OllamaChatModel biModel = OllamaChatModel.builder()
                 .baseUrl(baseUrl).modelName(modelBase).temperature(0.2).timeout(Duration.ofMinutes(5)).build();
 
         this.assistant = AiServices.builder(TotemAssistant.class)
                 .chatModel(biModel)
-                .tools(new TotemTools()) // Ferramentas de banco de dados e gráficos injetadas
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(10)) // Mantém o contexto da conversa
+                .tools(new TotemTools())
+                .chatMemory(chatMemory) // Histórico
                 .build();
 
-        // Modelo 2: Focado em Classificação Rápida (Temperatura 0.0 para ser
-        // estritamente determinístico e não alucinar)
+        // Modelo 2: Focado em Classificação Rápida
         OllamaChatModel classificationModel = OllamaChatModel.builder()
                 .baseUrl(baseUrl).modelName(modelFeedback).temperature(0.0).timeout(Duration.ofMinutes(5)).build();
 
         this.sentimentValidator = AiServices.builder(SentimentValidatorAi.class)
                 .chatModel(classificationModel)
-                // NOTA: Sem .tools() e sem .chatMemory() aqui para garantir máxima performance
-                // com menor custo de tokens
                 .build();
     }
 
@@ -85,8 +97,6 @@ public class AiOrchestratorService {
         return assistant.chat(LocalDate.now().toString(), message);
     }
 
-    // Novo metodo exposto para a classificação rápida (usado na hora de salvar o
-    // feedback no banco)
     public Feeling classificarSentimento(Feeling originalFeeling, String text) {
         return sentimentValidator.validateSentiment(originalFeeling.name(), text);
     }
