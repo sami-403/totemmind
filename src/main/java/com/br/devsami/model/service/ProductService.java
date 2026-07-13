@@ -17,8 +17,14 @@ public class ProductService {
     }
 
     //Listar Produtos
-    public List<Product> listProducts(int page){
-        return productRepository.findAll(10, page);
+    public List<Product> listProducts(int page, int pageSize){
+        return productRepository.findAll(pageSize, page);
+    }
+
+    public int countPages(int pageSize){
+        Long entriesCount = productRepository.countEntries();
+
+        return (int) Math.ceil((double) entriesCount / pageSize);
     }
 
     //Buscar Produto
