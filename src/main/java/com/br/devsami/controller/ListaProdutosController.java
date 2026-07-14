@@ -2,6 +2,7 @@ package com.br.devsami.controller;
 
 
 import com.br.devsami.view.components.ProductCell;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,21 +20,28 @@ import java.util.ResourceBundle;
 import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.service.ProductService;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class ListaProdutosController implements Initializable {
 
-    @FXML
-    private Pagination paginacao;
+    @FXML public FontIcon iconSortByBtn;
+    @FXML public FontIcon iconSortOrderBtn;
+    @FXML private Pagination paginacao;
 
     private final int pageSize = 10;
     private final ProductService productService = new ProductService();
+    private String sortBy;
+    private boolean sortDesc;
 
     @Override
         public void initialize(URL location, ResourceBundle resources) {
-        // 1. Defina o total de páginas buscando o COUNT do seu BD
+        //Define o total de páginas
         paginacao.setPageCount(productService.countPages(pageSize));
+        sortBy = "NAME";
+        sortDesc = false;
 
-        // 2. Configura o método que será chamado ao trocar de página
+
+        //Configura o método que será chamado ao trocar de página
         paginacao.setPageFactory(this::criarPaginaDaLista);
     }
 
@@ -41,8 +49,8 @@ public class ListaProdutosController implements Initializable {
     private Node criarPaginaDaLista(int indicePagina) {
         ListView<Product> listView = new ListView<>();
 
-        List<Product> itensDoBanco = productService.listProducts(indicePagina, pageSize);
-        listView.getItems().addAll(itensDoBanco);
+        List<Product> listaProdutos = productService.listProducts(indicePagina, pageSize, sortBy, sortDesc);
+        listView.getItems().addAll(listaProdutos);
 
         // Configura a fábrica de células, passando a referência do próprio Controller
         listView.setCellFactory(param -> new ProductCell(this));
@@ -66,6 +74,30 @@ public class ListaProdutosController implements Initializable {
         } else {
             paginacao.setCurrentPageIndex(paginaAtual);
         }
+    }
+
+    public void handleSortBy(){
+        if (sortBy.equalsIgnoreCase("NAME")){
+            sortBy = "PRICE";
+            iconSortByBtn.setIconLiteral("mdi-sort-numeric");
+        }
+        else {
+            sortBy = "NAME";
+            iconSortByBtn.setIconLiteral("mdi-sort-alphabetical");
+        }
+
+        recarregarLista();
+    }
+
+    public void handleSortOrder(){
+        sortDesc = !sortDesc;
+        if(sortDesc){
+            iconSortOrderBtn.setIconLiteral("mdi-sort-descending");
+        }else{
+            iconSortOrderBtn.setIconLiteral("mdi-sort-ascending");
+        }
+
+        recarregarLista();
     }
 
     @FXML
