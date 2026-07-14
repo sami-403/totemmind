@@ -83,8 +83,8 @@ public class GerenciaProdutoController implements Initializable {
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Produto atualizado!");
                 }
             }
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Erro de Validação", "O ID deve ser um número válido.");
+        } catch (IllegalArgumentException e){
+            showAlert(Alert.AlertType.WARNING, "Erro de Validação", "Campos com valores inválidos ou nulos! Preencha-os e tente novamente");
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
         }
