@@ -13,6 +13,7 @@
         <class>com.br.devsami.model.entity.Person</class>
         <class>com.br.devsami.model.entity.User</class>
         <class>com.br.devsami.model.entity.Employee</class>
+        <class>com.br.devsami.model.entity.Product</class>
 
         <properties>
             <!--  Configurações do Banco H2  -->
