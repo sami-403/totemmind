@@ -2,7 +2,6 @@
 
 **Inteligência de Negócios e IA de Borda para Terminais de Autoatendimento.**
 
----
 
 ---
 
