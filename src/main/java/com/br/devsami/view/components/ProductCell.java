@@ -13,6 +13,7 @@ import javafx.scene.layout.Priority;
 public class ProductCell extends ListCell<Product> {
     private HBox hbox = new HBox(10);
     private Label labelNome = new Label();
+    private Label labelPreco = new Label();
     private Pane espacador = new Pane();
     private Button btnEditar = new Button("Editar");
     private Button btnRemover = new Button("Remover");
@@ -20,7 +21,7 @@ public class ProductCell extends ListCell<Product> {
     public ProductCell(ListaProdutosController controller) {
 
         HBox.setHgrow(espacador, Priority.ALWAYS); // Empurra botões pra direita
-        hbox.getChildren().addAll(labelNome, espacador, btnEditar, btnRemover);
+        hbox.getChildren().addAll(labelNome, labelPreco, espacador, btnEditar, btnRemover);
 
         btnEditar.setOnAction(e -> {
             if (getItem() != null) controller.editarItem(e, getItem());
@@ -39,6 +40,7 @@ public class ProductCell extends ListCell<Product> {
             setGraphic(null);
         } else {
             labelNome.setText(product.getName());
+            labelPreco.setText("R$" + product.getPrice());
             setGraphic(hbox);
         }
     }
