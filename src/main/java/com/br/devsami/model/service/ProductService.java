@@ -2,12 +2,13 @@ package com.br.devsami.model.service;
 
 import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.repository.ProductRepository;
+import javafx.collections.transformation.SortedList;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ProductService {
     private final ProductRepository productRepository;
@@ -22,6 +23,24 @@ public class ProductService {
 
         return productRepository.findAll(pageSize, validatedPage);
     }
+
+    public List<Product> listProducts(int page, int pageSize, String sortBy, boolean reverse){
+        int validatedPage = page < 1 ? 0: page;
+        List<Product> rawList = productRepository.findAll(pageSize, validatedPage);
+        Comparator<Product> comparator = Comparator.comparing(Product::getName);
+
+        if (sortBy.equalsIgnoreCase("price")){
+            comparator = Comparator.comparing(Product::getPrice);
+        }
+        if (reverse){
+            comparator = comparator.reversed();
+        }
+
+        return rawList.stream()
+                .sorted(comparator)
+                .toList();
+    }
+
 
     public int countPages(int pageSize){
         Long entriesCount = productRepository.countEntries();
