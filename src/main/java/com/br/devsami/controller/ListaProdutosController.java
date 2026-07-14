@@ -29,7 +29,7 @@ public class ListaProdutosController implements Initializable {
     private final ProductService productService = new ProductService();
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+        public void initialize(URL location, ResourceBundle resources) {
         // 1. Defina o total de páginas buscando o COUNT do seu BD
         paginacao.setPageCount(productService.countPages(pageSize));
 
@@ -39,7 +39,7 @@ public class ListaProdutosController implements Initializable {
 
     @FXML
     void handleAdicionar(ActionEvent event) {
-        System.out.println("Abrindo modal/tela para adicionar item...");
+        abrirFormulario(event, null);
     }
 
     // Este método retorna o conteúdo visual de uma página específica
@@ -75,9 +75,8 @@ public class ListaProdutosController implements Initializable {
 
     // --- Métodos que a Célula vai chamar ---
 
-    public void editarItem(Product product) {
-        System.out.println("Lógica de edição para o item: " + product.getName());
-        // Atualizar o BD...
+    public void editarItem(ActionEvent event, Product product) {
+        abrirFormulario(event, product);
     }
 
     public void removerItem(Product product) {
@@ -93,6 +92,25 @@ public class ListaProdutosController implements Initializable {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void abrirFormulario(ActionEvent event, Product produtoSelecionado) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GerenciaProduto.fxml"));
+            Parent root = loader.load();
+
+            GerenciaProdutoController formController = loader.getController();
+            formController.setProduct(produtoSelecionado);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle(produtoSelecionado == null ? "Novo Produto" : "Editar Produto");
+            stage.show();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -23,7 +23,7 @@ public class ProductCell extends ListCell<Product> {
         hbox.getChildren().addAll(labelNome, espacador, btnEditar, btnRemover);
 
         btnEditar.setOnAction(e -> {
-            if (getItem() != null) controller.editarItem(getItem());
+            if (getItem() != null) controller.editarItem(e, getItem());
         });
 
         btnRemover.setOnAction(e -> {
