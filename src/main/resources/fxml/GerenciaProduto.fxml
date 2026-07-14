@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.GerenciaProdutoController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="20.0">
+
+
+        <padding>
+            <Insets top="60.0" />
+        </padding>
+
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+            </left>
+        </BorderPane>
+
+
+        <VBox fx:id="formContainer" spacing="15.0" maxWidth="Infinity">
+            <padding>
+                <Insets top="10.0" />
+            </padding>
+
+            <Label fx:id="formTitle" text="Título" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 5px;"/>
+
+            <TextField fx:id="barCodeField" promptText="Código de Barras (Opcional)"
+                       style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+
+            <TextField fx:id="nameField" promptText="Nome"
+                       style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+
+            <TextField fx:id="priceField" promptText="Preço"
+                       style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+
+            <Button fx:id="actionButton" onAction="#handleAction" text="Salvar" maxWidth="Infinity"
+                    style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-font-weight: bold;">
+            </Button>
+        </VBox>
+    </VBox>
+</StackPane>

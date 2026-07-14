@@ -53,7 +53,7 @@ public class ProductRepository {
         try{
             em.getTransaction().begin();
             Product managedProduct = em.contains(product) ? product : em.merge(product);
-            em.persist(managedProduct);
+            em.remove(managedProduct);
             em.getTransaction().commit();
         }
         catch (Exception e){
@@ -115,15 +115,22 @@ public class ProductRepository {
     }
 
     public List<Product> findAll(int pageSize, int page){
-        int zeroBasedPage = page < 1 ? 0: page - 1;
-
         try(EntityManager em = HibernateUtil.getEntityManager();){
             return em.createQuery(
                             "SELECT p FROM Product p",
                             Product.class)
-                    .setFirstResult(zeroBasedPage*pageSize)
+                    .setFirstResult(page*pageSize)
                     .setMaxResults(pageSize)
                     .getResultList();
+        }
+    }
+
+    public Long countEntries(){
+        try(EntityManager em = HibernateUtil.getEntityManager();){
+            return em.createQuery(
+                   "SELECT COUNT(p) FROM Product p",
+                   Long.class)
+                    .getSingleResult();
         }
     }
 
