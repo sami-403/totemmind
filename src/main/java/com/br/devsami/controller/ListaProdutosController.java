@@ -37,11 +37,6 @@ public class ListaProdutosController implements Initializable {
         paginacao.setPageFactory(this::criarPaginaDaLista);
     }
 
-    @FXML
-    void handleAdicionar(ActionEvent event) {
-        abrirFormulario(event, null);
-    }
-
     // Este método retorna o conteúdo visual de uma página específica
     private Node criarPaginaDaLista(int indicePagina) {
         ListView<Product> listView = new ListView<>();
@@ -73,6 +68,11 @@ public class ListaProdutosController implements Initializable {
         }
     }
 
+    @FXML
+    void handleAdicionar(ActionEvent event) {
+        abrirFormulario(event, null);
+    }
+
     // --- Métodos que a Célula vai chamar ---
 
     public void editarItem(ActionEvent event, Product product) {
@@ -80,7 +80,6 @@ public class ListaProdutosController implements Initializable {
     }
 
     public void removerItem(Product product) {
-        System.out.println("Removendo do banco o item: " + product.getName());
         productService.deleteProduct(product.getId());
         recarregarLista();
     }

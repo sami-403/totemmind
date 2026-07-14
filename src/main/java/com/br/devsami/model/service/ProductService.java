@@ -18,7 +18,9 @@ public class ProductService {
 
     //Listar Produtos
     public List<Product> listProducts(int page, int pageSize){
-        return productRepository.findAll(pageSize, page);
+        int validatedPage = page < 1 ? 0: page;
+
+        return productRepository.findAll(pageSize, validatedPage);
     }
 
     public int countPages(int pageSize){
