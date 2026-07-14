@@ -23,7 +23,7 @@ import java.math.BigDecimal;
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 13, unique = true)
+    @Column(nullable = true, length = 13, unique = true)
     private String barCode;
 
     @Column(nullable = false)
