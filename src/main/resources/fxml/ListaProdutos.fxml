@@ -42,9 +42,28 @@
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
             </padding>
 
-            <!-- Botão para adicionar itens, mapeado para o método no Controller -->
-            <Button fx:id="btnAdicionar" mnemonicParsing="false" onAction="#handleAdicionar" text="Adicionar Novo Item"/>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
 
+                <!-- Botão alinhado à esquerda -->
+                <Button fx:id="btnAdicionar" mnemonicParsing="false" onAction="#handleAdicionar" text="Adicionar Novo Item"/>
+
+                <!-- Espaçador flexível: ocupa todo o espaço central e empurra o restante para a direita -->
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Botões alinhados à direita -->
+                <Button onAction="#handleSortBy" style="-fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;">
+                    <graphic>
+                        <FontIcon fx:id="iconSortByBtn" iconLiteral="mdi-sort-alphabetical" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+
+                <Button onAction="#handleSortOrder" style="-fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;">
+                    <graphic>
+                        <FontIcon fx:id="iconSortOrderBtn" iconLiteral="mdi-sort-ascending" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+
+            </HBox>
             <!-- O VBox.vgrow="ALWAYS" faz a paginação ocupar todo o espaço restante -->
             <Pagination fx:id="paginacao" maxPageIndicatorCount="5" VBox.vgrow="ALWAYS"/>
         </VBox>
