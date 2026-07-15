@@ -125,6 +125,20 @@ public class ProductRepository {
         }
     }
 
+    public List<Product> findAllSorted(int pageSize, int page, String sortBy, boolean desc){
+        String orderDirection = desc ? "DESC" : "ASC";
+        String sortField = sortBy.equalsIgnoreCase("price") ? "price" : "name";
+
+        String query = "SELECT p FROM Product p ORDER BY p." + sortField + " " + orderDirection;
+
+        try(EntityManager em = HibernateUtil.getEntityManager();){
+            return em.createQuery(query, Product.class)
+                    .setFirstResult(page * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        }
+    }
+
     public Long countEntries(){
         try(EntityManager em = HibernateUtil.getEntityManager();){
             return em.createQuery(
