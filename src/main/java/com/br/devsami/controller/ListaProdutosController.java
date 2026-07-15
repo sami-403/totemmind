@@ -2,7 +2,6 @@ package com.br.devsami.controller;
 
 
 import com.br.devsami.view.components.ProductCell;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,16 +10,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import javafx.application.Platform;
 
 import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.service.ProductService;
-import javafx.stage.Stage;
-import org.kordamp.ikonli.javafx.FontIcon;
+
 
 public class ListaProdutosController implements Initializable {
 
@@ -35,45 +36,62 @@ public class ListaProdutosController implements Initializable {
 
     @Override
         public void initialize(URL location, ResourceBundle resources) {
-        //Define o total de páginas
-        paginacao.setPageCount(productService.countPages(pageSize));
         sortBy = "NAME";
         sortDesc = false;
 
-
-        //Configura o método que será chamado ao trocar de página
-        paginacao.setPageFactory(this::criarPaginaDaLista);
+        carregarLista();
     }
+
 
     // Este método retorna o conteúdo visual de uma página específica
     private Node criarPaginaDaLista(int indicePagina) {
         ListView<Product> listView = new ListView<>();
-
-        List<Product> listaProdutos = productService.listProducts(indicePagina, pageSize, sortBy, sortDesc);
-        listView.getItems().addAll(listaProdutos);
-
-        // Configura a fábrica de células, passando a referência do próprio Controller
         listView.setCellFactory(param -> new ProductCell(this));
+        listView.setPlaceholder(new Label("Carregando produtos..."));
+
+        // Busca no banco de dados numa thread separada
+        CompletableFuture.supplyAsync(() -> productService.listProducts(indicePagina, pageSize, sortBy, sortDesc)).thenAccept(listaProdutos -> {
+            Platform.runLater(() -> {
+                listView.getItems().clear();
+                listView.getItems().addAll(listaProdutos);
+            });
+
+        }).exceptionally(ex -> {
+            Platform.runLater(() -> {
+                listView.setPlaceholder(new Label("Erro ao carregar os dados."));
+                ex.printStackTrace();
+            });
+            return null;
+        });
 
         return listView;
     }
 
-    public void recarregarLista() {
+    public void carregarLista() {
         int paginaAtual = paginacao.getCurrentPageIndex();
 
-        //Busca no banco se o total de páginas mudou
-        int novoTotalDePaginas = productService.countPages(pageSize);
-        paginacao.setPageCount(novoTotalDePaginas);
+        // Busca no banco a quantidade de páginas mudou
+        CompletableFuture.supplyAsync(() -> {
+            return productService.countPages(pageSize);
 
-        //Definir a PageFactory novamente força a paginação a recarregar
-        paginacao.setPageFactory(this::criarPaginaDaLista);
+        }).thenAccept(novoTotalDePaginas -> {
+            Platform.runLater(() -> {
+                paginacao.setPageCount(novoTotalDePaginas);
 
-        //Volta para a página que o usuário estava
-        if (paginaAtual >= novoTotalDePaginas && novoTotalDePaginas > 0) {
-            paginacao.setCurrentPageIndex(novoTotalDePaginas - 1);
-        } else {
-            paginacao.setCurrentPageIndex(paginaAtual);
-        }
+                // Define o metódo que será chamado ao mudar de página, forçando a view a reiniciar
+                paginacao.setPageFactory(this::criarPaginaDaLista);
+
+                if (paginaAtual >= novoTotalDePaginas && novoTotalDePaginas > 0) {
+                    paginacao.setCurrentPageIndex(novoTotalDePaginas - 1);
+                } else {
+                    paginacao.setCurrentPageIndex(paginaAtual);
+                }
+            });
+
+        }).exceptionally(ex -> {
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     public void handleSortBy(){
@@ -86,7 +104,7 @@ public class ListaProdutosController implements Initializable {
             iconSortByBtn.setIconLiteral("mdi-sort-alphabetical");
         }
 
-        recarregarLista();
+        carregarLista();
     }
 
     public void handleSortOrder(){
@@ -97,7 +115,7 @@ public class ListaProdutosController implements Initializable {
             iconSortOrderBtn.setIconLiteral("mdi-sort-ascending");
         }
 
-        recarregarLista();
+        carregarLista();
     }
 
     @FXML
@@ -112,8 +130,16 @@ public class ListaProdutosController implements Initializable {
     }
 
     public void removerItem(Product product) {
-        productService.deleteProduct(product.getId());
-        recarregarLista();
+        CompletableFuture.runAsync(() -> {
+            productService.deleteProduct(product.getId());
+
+        }).thenRun(() -> {
+            Platform.runLater(this::carregarLista);
+
+        }).exceptionally(ex -> {
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     @FXML
