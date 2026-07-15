@@ -164,7 +164,6 @@ public class ListaProdutosController implements Initializable {
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
-            stage.setTitle(produtoSelecionado == null ? "Novo Produto" : "Editar Produto");
             stage.show();
 
         } catch (Exception e) {
