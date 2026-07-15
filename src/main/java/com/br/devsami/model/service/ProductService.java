@@ -26,19 +26,8 @@ public class ProductService {
 
     public List<Product> listProducts(int page, int pageSize, String sortBy, boolean reverse){
         int validatedPage = page < 1 ? 0: page;
-        List<Product> rawList = productRepository.findAll(pageSize, validatedPage);
-        Comparator<Product> comparator = Comparator.comparing(Product::getName);
 
-        if (sortBy.equalsIgnoreCase("price")){
-            comparator = Comparator.comparing(Product::getPrice);
-        }
-        if (reverse){
-            comparator = comparator.reversed();
-        }
-
-        return rawList.stream()
-                .sorted(comparator)
-                .toList();
+        return productRepository.findAllSorted(pageSize, validatedPage, sortBy, reverse);
     }
 
 
