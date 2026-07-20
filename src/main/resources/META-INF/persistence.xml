@@ -16,6 +16,7 @@
         <class>com.br.devsami.model.entity.Product</class>
         <class>com.br.devsami.model.entity.Feedback</class>
         <class>com.br.devsami.model.entity.EmployeeFeedback</class>
+        <class>com.br.devsami.model.entity.ProductFeedback</class>
 
         <properties>
             <!--  Configurações do Banco H2  -->
