@@ -15,11 +15,12 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "feedbacks")
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class Feedback {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "feedback_type", discriminatorType = DiscriminatorType.STRING)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public abstract class Feedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,10 +44,6 @@ import java.util.UUID;
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -76,14 +73,14 @@ import java.util.UUID;
     }
 
     /**
-     * @return Feelling return the feelling
+     * @return Feeling return the feeling
      */
     public Feeling getFeeling() {
         return feeling;
     }
 
     /**
-     * @param feeling the feelling to set
+     * @param feeling the feeling to set
      */
     public void setFeeling(Feeling feeling) {
         this.feeling = feeling;
@@ -115,20 +112,6 @@ import java.util.UUID;
      */
     public void setUser(User user) {
         this.user = user;
-    }
-
-    /**
-     * @return Employee return the employee
-     */
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    /**
-     * @param employee the employee to set
-     */
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
     }
 
     /**

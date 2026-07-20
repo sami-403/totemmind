@@ -1,6 +1,7 @@
 package com.br.devsami.model.repository;
 
 import com.br.devsami.model.entity.Feedback;
+import com.br.devsami.model.entity.EmployeeFeedback;
 import com.br.devsami.infrastructure.persistence.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
@@ -48,11 +49,11 @@ public class FeedbackRepository {
     }
 
     // Busca os feedbacks pelo ID do funcionário (que é Long)
-    public List<Feedback> findByEmployeeId(Long employeeId) {
+    public List<EmployeeFeedback> findByEmployeeId(Long employeeId) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             return em.createQuery(
-                            "SELECT f FROM Feedback f WHERE f.employee.id = :employeeId", Feedback.class)
+                    "SELECT f FROM EmployeeFeedback f WHERE f.employee.id = :employeeId", EmployeeFeedback.class)
                     .setParameter("employeeId", employeeId)
                     .getResultList();
         } finally {
@@ -61,15 +62,15 @@ public class FeedbackRepository {
     }
 
     // Busca os feedbacks por funcionário (Long) dentro de um período
-    public List<Feedback> findByEmployeeAndPeriod(Long employeeId, LocalDateTime start, LocalDateTime end) {
+    public List<EmployeeFeedback> findByEmployeeAndPeriod(Long employeeId, LocalDateTime start, LocalDateTime end) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             return em.createQuery(
-                            """
-                            SELECT f FROM Feedback f 
-                            WHERE f.employee.id = :employeeId 
+                    """
+                            SELECT f FROM EmployeeFeedback f
+                            WHERE f.employee.id = :employeeId
                             AND f.createdAt BETWEEN :start AND :end
-                            """, Feedback.class)
+                            """, EmployeeFeedback.class)
                     .setParameter("employeeId", employeeId)
                     .setParameter("start", start)
                     .setParameter("end", end)

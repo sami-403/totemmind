@@ -1,7 +1,7 @@
 package com.br.devsami.application;
 
 import com.br.devsami.model.entity.Employee;
-import com.br.devsami.model.entity.Feedback;
+import com.br.devsami.model.entity.EmployeeFeedback;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.service.EmployeeService;
 import com.br.devsami.model.service.FeedbackService;
@@ -11,10 +11,7 @@ import com.br.devsami.model.enums.Feeling;
 
 /**
  * Camada de aplicação responsável por orquestrar o fluxo completo de criação de
- * feedback.
- *
- * Aqui não existe regra de negócio pesada:
- * apenas coordenação entre services.
+ * feedback de atendimento.
  */
 public class FeedbackAppService {
 
@@ -35,15 +32,12 @@ public class FeedbackAppService {
     }
 
     /**
-     * Fluxo principal do sistema de feedback:
+     * Fluxo de feedback de atendimento (funcionário):
      * 1. Busca o usuário pelo CPF
      * 2. Busca o funcionário pelo ID
-     * 3. Cria e salva o feedback
-     *
-     * Essa camada existe para evitar que a UI (JavaFX)
-     * tenha que lidar com múltiplos services diretamente.
+     * 3. Cria e salva o feedback especializado
      */
-    public Feedback registerFeedback(String cpf,
+    public EmployeeFeedback registerEmployeeFeedback(String cpf,
             long employeeId,
             Feeling feeling,
             FeedbackCategory category,
@@ -58,7 +52,7 @@ public class FeedbackAppService {
                 .orElseThrow(() -> new RuntimeException("Employee não encontrado"));
 
         // Cria e persiste o feedback via service especializado
-        return feedbackService.createFeedback(
+        return feedbackService.createEmployeeFeedback(
                 user,
                 employee,
                 feeling,

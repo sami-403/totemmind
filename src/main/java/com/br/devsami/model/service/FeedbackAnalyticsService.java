@@ -2,6 +2,7 @@ package com.br.devsami.model.service;
 
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
+import com.br.devsami.model.entity.EmployeeFeedback;
 import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.model.enums.Feeling;
 
@@ -20,7 +21,7 @@ public class FeedbackAnalyticsService {
     }
 
     public double[] calcularPercentagens(Long employeeId, LocalDateTime start, LocalDateTime end) {
-        List<Feedback> feedbacks;
+        List<EmployeeFeedback> feedbacks;
 
         if (start != null && end != null) {
             feedbacks = feedbackRepository.findByEmployeeAndPeriod(employeeId, start, end);
@@ -70,7 +71,7 @@ public class FeedbackAnalyticsService {
 
     public String obterMaiorTaxa(List<Employee> funcionarios, int indice, LocalDateTime start, LocalDateTime end) {
         Employee campeao = null;
-        double maiorTaxa = 0.0; // Mude de -1 para 0.0
+        double maiorTaxa = 0.0;
 
         for (Employee e : funcionarios) {
             double[] taxas = calcularPercentagens(e.getId(), start, end);
@@ -82,14 +83,13 @@ public class FeedbackAnalyticsService {
 
         String[] nomesSentimentos = { "Satisfação", "Neutralidade", "Insatisfação" };
 
-        // Se campeao continuar nulo, significa que ninguém teve taxa maior que 0%
         return campeao != null
                 ? String.format("%s com %.2f%% de %s", campeao.getName(), maiorTaxa, nomesSentimentos[indice])
                 : "[SEM_DADOS]";
     }
 
     public Map<String, int[]> evolucaoSatisfacao(Long employeeId, LocalDateTime start, LocalDateTime end) {
-        List<Feedback> feedbacks = (start != null && end != null)
+        List<EmployeeFeedback> feedbacks = (start != null && end != null)
                 ? feedbackRepository.findByEmployeeAndPeriod(employeeId, start, end)
                 : feedbackRepository.findByEmployeeId(employeeId);
 
