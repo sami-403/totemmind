@@ -92,7 +92,7 @@ public class AvaliacaoFuncionarioController {
             if (optionalUser.isPresent()) {
                 FeedbackService feedbackService = new FeedbackService();
 
-                feedbackService.createFeedback(
+                feedbackService.createEmployeeFeedback(
                         optionalUser.get(),
                         funcionario,
                         feeling,

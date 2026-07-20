@@ -3,6 +3,7 @@ package com.br.devsami.model.service;
 import com.br.devsami.ai.AiOrchestratorService;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
+import com.br.devsami.model.entity.EmployeeFeedback;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.model.enums.FeedbackCategory;
@@ -18,7 +19,7 @@ public class FeedbackService {
         this.aiService = new AiOrchestratorService();
     }
 
-    public Feedback createFeedback(
+    public EmployeeFeedback createEmployeeFeedback(
             User user,
             Employee employee,
             Feeling feeling,
@@ -29,12 +30,19 @@ public class FeedbackService {
             throw new IllegalArgumentException("User e Employee são obrigatórios");
         }
 
-        var feedback = new Feedback(); // var infere o tipo, não precisa repetir o "Feedback".
+        var feedback = new EmployeeFeedback();
         feedback.setUser(user);
         feedback.setEmployee(employee);
         feedback.setCategory(category);
         feedback.setText(text);
 
+        classifyFeeling(feedback, feeling, text);
+
+        feedbackRepository.save(feedback);
+        return feedback;
+    }
+
+    private void classifyFeeling(Feedback feedback, Feeling feeling, String text) {
         // se não há texto, assume o sentimento do botão clicado para economizar processamento
         if (text == null || text.isBlank()) {
             feedback.setFeeling(feeling);
@@ -56,8 +64,5 @@ public class FeedbackService {
                 e.printStackTrace();
             }
         }
-
-        feedbackRepository.save(feedback);
-        return feedback;
     }
 }
