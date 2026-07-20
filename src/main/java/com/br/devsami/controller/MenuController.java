@@ -31,8 +31,8 @@ public class MenuController {
     }
 
     @FXML
-    void abrirTelaFuncionarios(ActionEvent event){
-        try{
+    void abrirTelaFuncionarios(ActionEvent event) {
+        try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AdminLogin.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
