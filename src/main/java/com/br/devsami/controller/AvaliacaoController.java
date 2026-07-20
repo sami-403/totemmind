@@ -1,6 +1,7 @@
 package com.br.devsami.controller;
 
 import com.br.devsami.model.repository.UserRepository;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class AvaliacaoController {
 
@@ -41,36 +43,49 @@ public class AvaliacaoController {
             return;
         }
 
-        UserRepository userRepository = new UserRepository();
+        // Desabilita temporariamente o campo para evitar cliques duplicados
+        txtCpf.setDisable(true);
 
-        if (userRepository.existsByCpf(cpf)) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FeedbackMenu.fxml"));
-                Parent root = loader.load();
+        CompletableFuture.supplyAsync(() -> {
+            UserRepository userRepository = new UserRepository();
+            return userRepository.existsByCpf(cpf);
+        }).thenAccept(exists -> Platform.runLater(() -> {
+            txtCpf.setDisable(false);
+            if (exists) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FeedbackMenu.fxml"));
+                    Parent root = loader.load();
 
-                // Passa o CPF para o próximo Controller
-                FeedbackMenuController controller = loader.getController();
-                controller.setCpfCliente(cpf);
+                    // Passa o CPF para o próximo Controller
+                    FeedbackMenuController controller = loader.getController();
+                    controller.setCpfCliente(cpf);
 
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(root, 800, 600));
-            } catch (IOException e) {
-                e.printStackTrace();
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(root, 800, 600));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CadastroCliente.fxml"));
+                    Parent root = loader.load();
+
+                    CadastroClienteController controller = loader.getController();
+                    controller.setCpf(cpf);
+
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(root, 800, 600));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CadastroCliente.fxml"));
-            Parent root = loader.load();
-
-            CadastroClienteController controller = loader.getController();
-            controller.setCpf(cpf);
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+        })).exceptionally(ex -> {
+            Platform.runLater(() -> {
+                txtCpf.setDisable(false);
+                ex.printStackTrace();
+            });
+            return null;
+        });
     }
 
 }
