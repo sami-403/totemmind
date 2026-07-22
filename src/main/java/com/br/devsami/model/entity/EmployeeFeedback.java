@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+// Entidade de feedback de funcionário
 public class EmployeeFeedback extends Feedback {
 
     @ManyToOne

@@ -4,6 +4,8 @@ import com.br.devsami.ai.AiOrchestratorService;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.entity.EmployeeFeedback;
+import com.br.devsami.model.entity.Product;
+import com.br.devsami.model.entity.ProductFeedback;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.FeedbackRepository;
 import com.br.devsami.model.enums.FeedbackCategory;
@@ -19,6 +21,7 @@ public class FeedbackService {
         this.aiService = new AiOrchestratorService();
     }
 
+    // Cria feedback de funcionário
     public EmployeeFeedback createEmployeeFeedback(
             User user,
             Employee employee,
@@ -36,7 +39,30 @@ public class FeedbackService {
         feedback.setCategory(category);
         feedback.setText(text);
 
-        classifyFeeling(feedback, feeling, text);
+        classifyFeeling((Feedback) feedback, feeling, text);
+
+        feedbackRepository.save(feedback);
+        return feedback;
+    }
+
+    public ProductFeedback createProductFeedback(
+            User user,
+            Product product,
+            Feeling feeling,
+            FeedbackCategory category,
+            String text) {
+
+        if (user == null || product == null) {
+            throw new IllegalArgumentException("User e Product são obrigatórios");
+        }
+
+        var feedback = new ProductFeedback();
+        feedback.setUser(user);
+        feedback.setProduct(product);
+        feedback.setCategory(category);
+        feedback.setText(text);
+
+        classifyFeeling((Feedback) feedback, feeling, text);
 
         feedbackRepository.save(feedback);
         return feedback;

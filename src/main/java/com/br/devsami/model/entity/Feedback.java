@@ -20,6 +20,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// Entidade base de Feedback
 public abstract class Feedback {
 
     @Id

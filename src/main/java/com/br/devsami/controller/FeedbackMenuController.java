@@ -21,6 +21,18 @@ public class FeedbackMenuController {
 
     @FXML
     void abrirFeedbackProdutos(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AvaliacaoProduto.fxml"));
+            Parent root = loader.load();
+
+            AvaliacaoProdutoController controller = loader.getController();
+            controller.setDadosCliente(this.cpfCliente, false);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
