@@ -54,6 +54,10 @@ public class EmployeeService {
         return employeeRepository.findByName(name);
     }
 
+    public List<Employee> listAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
     public Employee updateEmployee(long id, String newName, String newCpf, EmployeeType newType, String senha) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
