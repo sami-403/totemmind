@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
+import com.br.devsami.util.CpfValidator;
 
 public class TelaGerenciaFuncionariosController {
 
@@ -83,8 +84,14 @@ public class TelaGerenciaFuncionariosController {
 
             switch (currentMode) {
                 case "ADD" -> {
+                    String cpf = cpfField.getText();
+                    String validationError = CpfValidator.validate(cpf);
+                    if (validationError != null) {
+                        showAlert(Alert.AlertType.WARNING, "Erro de Validação", validationError);
+                        return;
+                    }
                     // ATENÇÃO: Verifique se o seu service aceita o 4º parâmetro (senha)
-                    service.createEmployee(nameField.getText(), cpfField.getText(), typeComboBox.getValue(), senha);
+                    service.createEmployee(nameField.getText(), cpf, typeComboBox.getValue(), senha);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário cadastrado!");
                 }
                 case "EDIT" -> {
