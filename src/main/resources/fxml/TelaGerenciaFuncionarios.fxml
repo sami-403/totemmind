@@ -79,6 +79,9 @@
                     <PasswordField fx:id="passwordField" promptText="SENHA (Gerente)"
                                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 10px; -fx-font-size: 13px; -fx-background-radius: 5px;"/>
 
+                    <CheckBox fx:id="chkAtivo" text="Funcionário Ativo" selected="true"
+                              style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+
                     <Button fx:id="actionButton" onAction="#handleAction" text="Confirmar Ação" maxWidth="Infinity"
                             style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 10px; -fx-font-size: 13px; -fx-font-weight: bold;">
                     </Button>
