@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.repository.EmployeeRepository;
 import com.br.devsami.model.enums.EmployeeType;
+import com.br.devsami.util.CpfValidator;
 
 public class EmployeeService {
 
@@ -16,7 +17,22 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(String name, String cpf, EmployeeType type, String password) {
-        // ... validações de nome e cpf ...
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Nome obrigatório.");
+        }
+
+        if (cpf == null || cpf.isBlank()) {
+            throw new IllegalArgumentException("CPF obrigatório.");
+        }
+
+        String validationError = CpfValidator.validate(cpf);
+        if (validationError != null) {
+            throw new IllegalArgumentException(validationError);
+        }
+
+        if (employeeRepository.existsByCpf(cpf)) {
+            throw new IllegalArgumentException("CPF já cadastrado.");
+        }
 
         var employee = new Employee();
         employee.setName(name);
@@ -38,12 +54,29 @@ public class EmployeeService {
         return employeeRepository.findByName(name);
     }
 
-    public Employee updateEmployee(long id, String newName, EmployeeType newType, String senha) {
+    public Employee updateEmployee(long id, String newName, String newCpf, EmployeeType newType, String senha) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
 
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException("Nome obrigatório.");
+        }
+
+        if (newCpf == null || newCpf.isBlank()) {
+            throw new IllegalArgumentException("CPF obrigatório.");
+        }
+
+        String validationError = CpfValidator.validate(newCpf);
+        if (validationError != null) {
+            throw new IllegalArgumentException(validationError);
+        }
+
+        // Se o CPF mudou, verifica se já está em uso por outro funcionário
+        if (!newCpf.equals(employee.getCpf())) {
+            if (employeeRepository.existsByCpf(newCpf)) {
+                throw new IllegalArgumentException("CPF já cadastrado por outro funcionário.");
+            }
+            employee.setCpf(newCpf);
         }
 
         employee.setName(newName);
