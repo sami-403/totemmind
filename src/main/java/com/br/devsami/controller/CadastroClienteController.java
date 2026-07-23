@@ -46,6 +46,13 @@ public class CadastroClienteController {
             return;
         }
 
+        // CPF Validation Check
+        String validationError = com.br.devsami.util.CpfValidator.validate(cpf);
+        if (validationError != null) {
+            showAlert(Alert.AlertType.ERROR, "Erro de Validação", validationError);
+            return;
+        }
+
         try {
             userService.createUser(nome, cpf, nascimento);
             showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Cadastrado com sucesso.");

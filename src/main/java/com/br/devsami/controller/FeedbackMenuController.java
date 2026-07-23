@@ -11,12 +11,27 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
+// Import CPF validator at the top level
+import com.br.devsami.util.CpfValidator;
+
 public class FeedbackMenuController {
 
     private String cpfCliente;
+    private boolean isCpfValid = true; // State to track validation success
 
     public void setCpfCliente(String cpf) {
-        this.cpfCliente = cpf;
+        if (cpf != null && CpfValidator.isValidCpf(cpf)) {
+            this.cpfCliente = cpf;
+            this.isCpfValid = true;
+        } else {
+            // CPF is invalid or null, prevent setting it and set error state
+            this.cpfCliente = null;
+            this.isCpfValid = false;
+        }
+    }
+
+    public boolean isCpfValid() {
+        return this.isCpfValid;
     }
 
     @FXML
