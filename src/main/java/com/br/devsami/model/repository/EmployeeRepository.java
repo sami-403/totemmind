@@ -118,4 +118,13 @@ public class EmployeeRepository {
             em.close();
         }
     }
+
+    public List<Employee> findAllActive() {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT e FROM Employee e WHERE e.ativo = true", Employee.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

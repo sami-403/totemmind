@@ -2,6 +2,7 @@ package com.br.devsami.controller;
 
 import com.br.devsami.model.enums.EmployeeType;
 import com.br.devsami.model.service.EmployeeService;
+import com.br.devsami.model.entity.Employee;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.application.Platform;
+import java.util.concurrent.CompletableFuture;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -24,6 +29,13 @@ public class TelaGerenciaFuncionariosController {
     @FXML private ComboBox<EmployeeType> typeComboBox;
     @FXML private PasswordField passwordField;
     @FXML private Button actionButton;
+    @FXML private CheckBox chkAtivo;
+
+    @FXML private TableView<Employee> tvFuncionarios;
+    @FXML private TableColumn<Employee, Long> colId;
+    @FXML private TableColumn<Employee, String> colNome;
+    @FXML private TableColumn<Employee, String> colTipo;
+    @FXML private TableColumn<Employee, String> colStatus;
 
     private final EmployeeService service = new EmployeeService();
     private String currentMode = "";
@@ -37,6 +49,41 @@ public class TelaGerenciaFuncionariosController {
             boolean isGerente = typeComboBox.getValue() == EmployeeType.GERENTE;
             passwordField.setVisible(isGerente);
             passwordField.setManaged(isGerente);
+        });
+
+        // Configuração das colunas do TableView
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colNome.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colTipo.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getTipo() != null ? cellData.getValue().getTipo().name() : "VENDEDOR"
+        ));
+        colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().isAtivo() ? "Ativo" : "Inativo"
+        ));
+
+        // Listener de seleção da tabela para autopreencher os campos
+        tvFuncionarios.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                idField.setText(String.valueOf(newSelection.getId()));
+                nameField.setText(newSelection.getName());
+                cpfField.setText(newSelection.getCpf());
+                typeComboBox.setValue(newSelection.getTipo());
+                chkAtivo.setSelected(newSelection.isAtivo());
+            }
+        });
+
+        // Carrega os funcionários inicialmente
+        carregarFuncionarios();
+    }
+
+    private void carregarFuncionarios() {
+        CompletableFuture.supplyAsync(() -> {
+            return service.listAllEmployees();
+        }).thenAccept(lista -> Platform.runLater(() -> {
+            tvFuncionarios.getItems().setAll(lista);
+        })).exceptionally(ex -> {
+            ex.printStackTrace();
+            return null;
         });
     }
 
@@ -72,6 +119,10 @@ public class TelaGerenciaFuncionariosController {
         // Senha começa oculta
         passwordField.setVisible(false); passwordField.setManaged(false);
 
+        // CheckBox de status ativo
+        boolean showAtivo = mode.equals("EDIT");
+        chkAtivo.setVisible(showAtivo); chkAtivo.setManaged(showAtivo);
+
         actionButton.setText(btnText);
         actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
     }
@@ -93,6 +144,7 @@ public class TelaGerenciaFuncionariosController {
                     // ATENÇÃO: Verifique se o seu service aceita o 4º parâmetro (senha)
                     service.createEmployee(nameField.getText(), cpf, typeComboBox.getValue(), senha);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário cadastrado!");
+                    carregarFuncionarios();
                 }
                 case "EDIT" -> {
                     long id = Long.parseLong(idField.getText());
@@ -102,14 +154,17 @@ public class TelaGerenciaFuncionariosController {
                         showAlert(Alert.AlertType.WARNING, "Erro de Validação", validationError);
                         return;
                     }
+                    boolean ativo = chkAtivo.isSelected();
                     // ATENÇÃO: Verifique se o seu service aceita a senha na edição também
-                    service.updateEmployee(id, nameField.getText(), cpf, typeComboBox.getValue(), senha);
+                    service.updateEmployee(id, nameField.getText(), cpf, typeComboBox.getValue(), senha, ativo);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário atualizado!");
+                    carregarFuncionarios();
                 }
                 case "REMOVE" -> {
                     long id = Long.parseLong(idField.getText());
                     service.deleteEmployee(id); // Soft Delete
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário inativado!");
+                    carregarFuncionarios();
                 }
             }
             limparCampos(); // Limpa os campos depois do sucesso
@@ -126,6 +181,7 @@ public class TelaGerenciaFuncionariosController {
         cpfField.clear();
         passwordField.clear();
         typeComboBox.setValue(null);
+        chkAtivo.setSelected(true);
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
