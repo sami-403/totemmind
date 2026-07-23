@@ -79,10 +79,6 @@ public class ProductService {
             throw new IllegalArgumentException("Nome do Produto obrigatório");
         }
 
-        if (barCode == null || barCode.isBlank()) {
-            throw new IllegalArgumentException("Código de Barras obrigatório");
-        }
-
         if (price < 0) {
             throw new IllegalArgumentException("Preço do Produto deve ser positivo");
         }
@@ -108,10 +104,6 @@ public class ProductService {
 
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException("Nome do Produto obrigatório");
-        }
-
-        if (newBarCode == null || newBarCode.isBlank()) {
-            throw new IllegalArgumentException("Código de Barras obrigatório");
         }
 
         if (newPrice < 0) {
