@@ -59,7 +59,7 @@ public class EmployeeService {
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
 
         if (!employee.isAtivo()) {
-            throw new IllegalArgumentException("Não é possível editar um funcionário inativo/removido.");
+            employee.setAtivo(true);
         }
 
         if (newName == null || newName.isBlank()) {
