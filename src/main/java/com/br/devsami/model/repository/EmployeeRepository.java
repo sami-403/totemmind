@@ -113,7 +113,7 @@ public class EmployeeRepository {
     public List<Employee> findAll() {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
+            return em.createQuery("SELECT e FROM Employee e WHERE e.ativo = true", Employee.class).getResultList();
         } finally {
             em.close();
         }
