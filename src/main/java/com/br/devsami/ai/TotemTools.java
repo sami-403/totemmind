@@ -51,6 +51,10 @@ public class TotemTools {
          */
         @Tool("Calcula os dados de satisfação e já gera o comando do gráfico. O employeeId é OBRIGATÓRIO. startDate e endDate são OPCIONAIS (YYYY-MM-DD ou 'null').")
         public String gerarRelatorioDeSatisfacao(Long employeeId, String startDate, String endDate) {
+                Employee employee = employeeRepository.findById(employeeId).orElse(null);
+                if (employee == null || !employee.isAtivo()) {
+                        return "Funcionário inativo ou inexistente. Não é possível gerar relatório.";
+                }
 
                 // Conversão das strings enviadas pela IA para datas válidas
                 LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
@@ -63,10 +67,7 @@ public class TotemTools {
                 // Processamento direto (sem devolver vetor solto pra IA)
                 double[] percentagens = analyticsService.calcularPercentagens(employeeId, start, end);
 
-                // Busca o nome real para o título do gráfico
-                String nomeFuncionario = employeeRepository.findById(employeeId)
-                                .map(Employee::getName)
-                                .orElse("Desconhecido");
+                String nomeFuncionario = employee.getName();
 
                 ChartManager.exibirPizza(nomeFuncionario,percentagens);
 
@@ -92,11 +93,16 @@ public class TotemTools {
 
         @Tool("Gera gráfico de LINHAS de evolução temporal. employeeId é OBRIGATÓRIO. startDate e endDate são OPCIONAIS.")
         public String gerarGraficoEvolucaoTemporal(Long employeeId, String startDate, String endDate) {
+                Employee employee = employeeRepository.findById(employeeId).orElse(null);
+                if (employee == null || !employee.isAtivo()) {
+                        return "Funcionário inativo ou inexistente. Não é possível gerar gráfico.";
+                }
+
                 LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null")) ? LocalDate.parse(startDate).atStartOfDay() : null;
                 LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null")) ? LocalDate.parse(endDate).atTime(LocalTime.MAX) : null;
 
                 Map<String, int[]> dados = analyticsService.evolucaoSatisfacao(employeeId, start, end);
-                String nome = employeeRepository.findById(employeeId).map(Employee::getName).orElse("Desconhecido");
+                String nome = employee.getName();
 
                 ChartManager.exibirLinhas("Evolução Temporal - " + nome, dados);
 
