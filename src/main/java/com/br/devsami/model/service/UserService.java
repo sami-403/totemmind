@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.UserRepository;
+import com.br.devsami.util.CpfValidator;
 
 public class UserService {
 
@@ -28,6 +29,11 @@ public class UserService {
 
         if (cpf == null || cpf.isBlank()) {
             throw new IllegalArgumentException("CPF obrigatório");
+        }
+
+        String validationError = CpfValidator.validate(cpf);
+        if (validationError != null) {
+            throw new IllegalArgumentException(validationError);
         }
 
         if (birthDate == null) {

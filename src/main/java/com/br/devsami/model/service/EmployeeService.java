@@ -17,7 +17,22 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(String name, String cpf, EmployeeType type, String password) {
-        // ... validações de nome e cpf ...
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Nome obrigatório.");
+        }
+
+        if (cpf == null || cpf.isBlank()) {
+            throw new IllegalArgumentException("CPF obrigatório.");
+        }
+
+        String validationError = CpfValidator.validate(cpf);
+        if (validationError != null) {
+            throw new IllegalArgumentException(validationError);
+        }
+
+        if (employeeRepository.existsByCpf(cpf)) {
+            throw new IllegalArgumentException("CPF já cadastrado.");
+        }
 
         var employee = new Employee();
         employee.setName(name);
