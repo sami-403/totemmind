@@ -96,8 +96,14 @@ public class TelaGerenciaFuncionariosController {
                 }
                 case "EDIT" -> {
                     long id = Long.parseLong(idField.getText());
+                    String cpf = cpfField.getText();
+                    String validationError = CpfValidator.validate(cpf);
+                    if (validationError != null) {
+                        showAlert(Alert.AlertType.WARNING, "Erro de Validação", validationError);
+                        return;
+                    }
                     // ATENÇÃO: Verifique se o seu service aceita a senha na edição também
-                    service.updateEmployee(id, nameField.getText(), typeComboBox.getValue(), senha);
+                    service.updateEmployee(id, nameField.getText(), cpf, typeComboBox.getValue(), senha);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário atualizado!");
                 }
                 case "REMOVE" -> {
