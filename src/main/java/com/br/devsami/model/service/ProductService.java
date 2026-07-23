@@ -4,6 +4,7 @@ import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.repository.ProductRepository;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,13 +17,23 @@ public class ProductService {
 
     // Listar Produtos
     public List<Product> listProducts(int page, int pageSize) {
+        int pagesCount = countPages(pageSize);
         int validatedPage = page < 1 ? 0 : page;
+
+        if(page > pagesCount){
+            validatedPage = pagesCount;
+        }
 
         return productRepository.findAll(pageSize, validatedPage);
     }
 
     public List<Product> listProducts(int page, int pageSize, String sortBy, boolean reverse) {
-        int validatedPage = page < 1 ? 0 : page;
+       int pagesCount = countPages(pageSize);
+       int validatedPage = page < 1 ? 0 : page;
+
+       if(page > pagesCount){
+           validatedPage = pagesCount;
+       }
 
         return productRepository.findAllSorted(pageSize, validatedPage, sortBy, reverse);
     }
@@ -34,12 +45,28 @@ public class ProductService {
     }
 
     // Buscar Produto
-    public Optional<Product> findByBarCode(String barCode) {
-        return productRepository.findByBarCode(barCode);
+    public Product findByBarCode(String barCode) {
+        Optional<Product> foundProduct = productRepository.findByBarCode(barCode);
+
+        if (barCode.isEmpty()){
+            throw new IllegalArgumentException("Código de barras vazio ou invalido");
+        }
+
+        if(foundProduct.isEmpty()){
+            throw new NoSuchElementException("Produto com este código não encontrado ou inexistente");
+        }
+
+        return foundProduct.get();
     }
 
-    public Optional<Product> findById(UUID id) {
-        return productRepository.findById(id);
+    public Product findById(UUID id) {
+        Optional<Product> foundProduct = productRepository.findById(id);
+
+        if(foundProduct.isEmpty()){
+            throw new NoSuchElementException("Produto com este ID não encontrado ou inexistente");
+        }
+
+        return foundProduct.get();
     }
 
     public List<Product> listAllProducts() {
