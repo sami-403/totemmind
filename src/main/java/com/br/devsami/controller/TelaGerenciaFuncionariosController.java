@@ -29,6 +29,7 @@ public class TelaGerenciaFuncionariosController {
     @FXML private ComboBox<EmployeeType> typeComboBox;
     @FXML private PasswordField passwordField;
     @FXML private Button actionButton;
+    @FXML private CheckBox chkAtivo;
 
     @FXML private TableView<Employee> tvFuncionarios;
     @FXML private TableColumn<Employee, Long> colId;
@@ -67,6 +68,7 @@ public class TelaGerenciaFuncionariosController {
                 nameField.setText(newSelection.getName());
                 cpfField.setText(newSelection.getCpf());
                 typeComboBox.setValue(newSelection.getTipo());
+                chkAtivo.setSelected(newSelection.isAtivo());
             }
         });
 
@@ -117,6 +119,10 @@ public class TelaGerenciaFuncionariosController {
         // Senha começa oculta
         passwordField.setVisible(false); passwordField.setManaged(false);
 
+        // CheckBox de status ativo
+        boolean showAtivo = mode.equals("EDIT");
+        chkAtivo.setVisible(showAtivo); chkAtivo.setManaged(showAtivo);
+
         actionButton.setText(btnText);
         actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
     }
@@ -148,8 +154,9 @@ public class TelaGerenciaFuncionariosController {
                         showAlert(Alert.AlertType.WARNING, "Erro de Validação", validationError);
                         return;
                     }
+                    boolean ativo = chkAtivo.isSelected();
                     // ATENÇÃO: Verifique se o seu service aceita a senha na edição também
-                    service.updateEmployee(id, nameField.getText(), cpf, typeComboBox.getValue(), senha);
+                    service.updateEmployee(id, nameField.getText(), cpf, typeComboBox.getValue(), senha, ativo);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário atualizado!");
                     carregarFuncionarios();
                 }
@@ -174,6 +181,7 @@ public class TelaGerenciaFuncionariosController {
         cpfField.clear();
         passwordField.clear();
         typeComboBox.setValue(null);
+        chkAtivo.setSelected(true);
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
