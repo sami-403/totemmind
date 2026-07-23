@@ -58,6 +58,10 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
 
+        if (!employee.isAtivo()) {
+            throw new IllegalArgumentException("Não é possível editar um funcionário inativo/removido.");
+        }
+
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException("Nome obrigatório.");
         }
