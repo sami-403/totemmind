@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import com.br.devsami.util.CpfValidator;
 import java.io.IOException;
 
 public class AdminLoginController {
@@ -25,6 +26,12 @@ public class AdminLoginController {
 
         if (cpf == null || cpf.isBlank() || senha == null || senha.isBlank()) {
             showAlert(Alert.AlertType.WARNING, "Campos vazios", "Por favor, preencha o CPF e a senha.");
+            return;
+        }
+
+        String validationError = CpfValidator.validate(cpf);
+        if (validationError != null) {
+            showAlert(Alert.AlertType.WARNING, "Erro de Validação", validationError);
             return;
         }
 
