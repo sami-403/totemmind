@@ -118,7 +118,7 @@ public class ProductService {
             throw new IllegalArgumentException("Preço do Produto deve ser positivo");
         }
 
-        if (productRepository.existsByBarCode(newBarCode) && product.getBarCode().equals(newBarCode.strip())) {
+        if (productRepository.existsByBarCode(newBarCode) && !product.getBarCode().equals(newBarCode.strip())) {
             throw new IllegalArgumentException("Já existe um produto com esse código de barras");
         }
 
