@@ -58,13 +58,9 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee updateEmployee(long id, String newName, String newCpf, EmployeeType newType, String senha) {
+    public Employee updateEmployee(long id, String newName, String newCpf, EmployeeType newType, String senha, boolean ativo) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
-
-        if (!employee.isAtivo()) {
-            employee.setAtivo(true);
-        }
 
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException("Nome obrigatório.");
@@ -89,6 +85,7 @@ public class EmployeeService {
 
         employee.setName(newName);
         employee.setTipo(newType);
+        employee.setAtivo(ativo);
 
         employeeRepository.update(employee);
 
