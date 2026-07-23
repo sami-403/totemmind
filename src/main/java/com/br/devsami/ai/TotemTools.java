@@ -79,7 +79,7 @@ public class TotemTools {
         // Tool responsavel por pegar o funcionário com maior indece de X sentimento
         @Tool("Busca o funcionário com maior taxa. Índices: 0=Satisfeito, 1=Neutro, 2=Insatisfeito. Datas opcionais.")
         public String buscarMaiorTaxa(int indice, String startDate, String endDate) {
-                List<Employee> todos = employeeRepository.findAll();
+                List<Employee> todos = employeeRepository.findAllActive();
 
                 LocalDateTime start = (startDate != null && !startDate.equals("null"))
                                 ? LocalDate.parse(startDate).atStartOfDay()

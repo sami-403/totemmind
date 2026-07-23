@@ -54,7 +54,7 @@ public class AvaliacaoFuncionarioController {
     private void carregarFuncionarios() {
         CompletableFuture.supplyAsync(() -> {
             EmployeeRepository employeeRepository = new EmployeeRepository();
-            return employeeRepository.findAll();
+            return employeeRepository.findAllActive();
         }).thenAccept(funcionarios -> Platform.runLater(() -> {
             cbFuncionarios.getItems().clear();
             cbFuncionarios.getItems().addAll(funcionarios);
