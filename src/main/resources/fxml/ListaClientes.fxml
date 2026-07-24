@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.br.devsami.controller.ListaClientesController"
+           prefHeight="400.0" prefWidth="600.0">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="30.0">
+        <padding>
+            <Insets top="60.0" />
+        </padding>
+
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+            </left>
+            <center>
+                <ImageView fitHeight="120.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                    <Image url="/images/totemMind_logo.png"/>
+                </ImageView>
+            </center>
+            <right>
+                <Region prefWidth="40.0" BorderPane.alignment="CENTER"/>
+            </right>
+        </BorderPane>
+
+        <VBox spacing="15.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </padding>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+
+                <!-- Botão alinhado à esquerda -->
+                <Button fx:id="btnAdicionar" mnemonicParsing="false" onAction="#handleAdicionar" text="Adicionar Novo Item"/>
+
+                <!-- Espaçador flexível: ocupa todo o espaço central e empurra o restante para a direita -->
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Botões alinhados à direita -->
+
+                <Button onAction="#handleSortOrder" style="-fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;">
+                    <graphic>
+                        <FontIcon fx:id="iconSortOrderBtn" iconLiteral="mdi-sort-ascending" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="CPFSearch" promptText="CPF" HBox.hgrow="ALWAYS"
+                           style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+                <Button fx:id="searchTryButton" onAction="#handleSearchButton" text="Buscar" maxWidth="Infinity"
+                        style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-font-weight: bold;">
+                </Button>
+            </HBox>
+
+            <!-- O VBox.vgrow="ALWAYS" faz a paginação ocupar todo o espaço restante -->
+            <Pagination fx:id="paginacao" maxPageIndicatorCount="5" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </VBox>
+</StackPane>
