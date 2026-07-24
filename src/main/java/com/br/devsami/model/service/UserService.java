@@ -122,6 +122,10 @@ public class UserService {
         return user;
     }
 
+    public void removeUser(UUID id){
+        userRepository.delete(id);
+    }
+
     // Fluxo principal do totem (ESSA É A PARTE MAIS IMPORTANTE)
     public User findOrCreateUser(String name, String cpf, LocalDate birthDate) {
 
