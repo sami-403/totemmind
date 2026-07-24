@@ -43,6 +43,18 @@ public class AvaliacaoFuncionarioController {
         btnNeutro.setToggleGroup(grupoEmojis);
         btnIncomodado.setToggleGroup(grupoEmojis);
 
+        cbFuncionarios.setConverter(new javafx.util.StringConverter<Employee>() {
+            @Override
+            public String toString(Employee e) {
+                return e == null ? "" : e.getName();
+            }
+
+            @Override
+            public Employee fromString(String string) {
+                return null;
+            }
+        });
+
         carregarFuncionarios();
     }
 
@@ -58,19 +70,11 @@ public class AvaliacaoFuncionarioController {
         }).thenAccept(funcionarios -> Platform.runLater(() -> {
             cbFuncionarios.getItems().clear();
             cbFuncionarios.getItems().addAll(funcionarios);
-
-            cbFuncionarios.setConverter(new javafx.util.StringConverter<Employee>() {
-                @Override
-                public String toString(Employee e) {
-                    return e == null ? "" : e.getName();
-                }
-
-                @Override
-                public Employee fromString(String string) {
-                    return null;
-                }
-            });
-        }));
+        })).exceptionally(ex -> {
+            System.err.println("❌ Erro ao carregar funcionários ativos para avaliação:");
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     @FXML
