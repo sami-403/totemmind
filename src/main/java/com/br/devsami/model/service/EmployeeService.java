@@ -58,39 +58,28 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee updateEmployee(long id, String newName, String newCpf, EmployeeType newType, String senha, boolean ativo) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
+   public Employee updateEmployee(long id, String newName, String newCpf, EmployeeType newType, String senha, boolean ativo) {
+    Employee employee = employeeRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado com o ID fornecido."));
 
-        if (newName == null || newName.isBlank()) {
-            throw new IllegalArgumentException("Nome obrigatório.");
-        }
+    if (newName == null || newName.isBlank()) throw new IllegalArgumentException("Nome obrigatório.");
+    if (newCpf == null || newCpf.isBlank()) throw new IllegalArgumentException("CPF obrigatório.");
+    String validationError = CpfValidator.validate(newCpf);
+    if (validationError != null) throw new IllegalArgumentException(validationError);
 
-        if (newCpf == null || newCpf.isBlank()) {
-            throw new IllegalArgumentException("CPF obrigatório.");
-        }
-
-        String validationError = CpfValidator.validate(newCpf);
-        if (validationError != null) {
-            throw new IllegalArgumentException(validationError);
-        }
-
-        // Se o CPF mudou, verifica se já está em uso por outro funcionário
-        if (!newCpf.equals(employee.getCpf())) {
-            if (employeeRepository.existsByCpf(newCpf)) {
-                throw new IllegalArgumentException("CPF já cadastrado por outro funcionário.");
-            }
-            employee.setCpf(newCpf);
-        }
-
-        employee.setName(newName);
-        employee.setTipo(newType);
-        employee.setAtivo(ativo);
-
-        employeeRepository.update(employee);
-
-        return employee;
+    if (!newCpf.equals(employee.getCpf())) {
+        if (employeeRepository.existsByCpf(newCpf)) throw new IllegalArgumentException("CPF já cadastrado por outro funcionário.");
+        employee.setCpf(newCpf);
     }
+
+    employee.setName(newName);
+    employee.setTipo(newType);
+    employee.setAtivo(ativo);
+    employee.setPassword(senha); 
+
+    employeeRepository.update(employee);
+    return employee;
+}
 
     /*
      * Exclusão Lógica (Soft Delete).
