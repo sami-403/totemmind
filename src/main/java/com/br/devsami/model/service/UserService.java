@@ -1,8 +1,10 @@
 package com.br.devsami.model.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
+import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.UserRepository;
 import com.br.devsami.util.CpfValidator;
@@ -13,6 +15,34 @@ public class UserService {
 
     public UserService() {
         this.userRepository = new UserRepository();
+    }
+
+    public List<User> listUsers(int page, int pageSize) {
+        int pagesCount = countPages(pageSize);
+        int validatedPage = page < 1 ? 0 : page;
+
+        if(page > pagesCount){
+            validatedPage = pagesCount;
+        }
+
+        return userRepository.findAll(pageSize, validatedPage);
+    }
+
+    public List<User> listUsers(int page, int pageSize, boolean reverse) {
+        int pagesCount = countPages(pageSize);
+        int validatedPage = page < 1 ? 0 : page;
+
+        if(page > pagesCount){
+            validatedPage = pagesCount;
+        }
+
+        return userRepository.findAllSorted(pageSize, validatedPage, reverse);
+    }
+
+    public int countPages(int pageSize) {
+        Long entriesCount = userRepository.countEntries();
+
+        return (int) Math.ceil((double) entriesCount / pageSize);
     }
 
     // 1. Buscar usuário
