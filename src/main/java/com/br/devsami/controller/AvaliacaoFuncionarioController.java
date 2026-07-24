@@ -17,6 +17,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -104,9 +105,41 @@ public class AvaliacaoFuncionarioController {
                         feedbackText
                 );
 
-                Platform.runLater(() -> voltar(event));
+                Platform.runLater(() -> irParaTelaAvaliacao(event));
+            } else {
+                System.err.println("❌ Cliente não encontrado ao enviar feedback.");
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Cliente não encontrado na base de dados. Retornando à tela inicial.");
+                    alert.showAndWait();
+                    irParaTelaAvaliacao(event);
+                });
             }
+        }).exceptionally(ex -> {
+            System.err.println("❌ Erro ao processar feedback:");
+            ex.printStackTrace();
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Ocorreu um erro ao salvar o feedback: " + ex.getMessage() + ". Retornando à tela inicial.");
+                alert.showAndWait();
+                irParaTelaAvaliacao(event);
+            });
+            return null;
         });
+    }
+
+    private void irParaTelaAvaliacao(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/TelaAvaliacao.fxml")));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
