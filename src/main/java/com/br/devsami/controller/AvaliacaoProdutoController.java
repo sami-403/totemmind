@@ -43,6 +43,18 @@ public class AvaliacaoProdutoController {
         btnNeutro.setToggleGroup(grupoEmojis);
         btnIncomodado.setToggleGroup(grupoEmojis);
 
+        cbProdutos.setConverter(new javafx.util.StringConverter<Product>() {
+            @Override
+            public String toString(Product p) {
+                return p == null ? "" : p.getName();
+            }
+
+            @Override
+            public Product fromString(String string) {
+                return null;
+            }
+        });
+
         carregarProdutos();
     }
 
@@ -58,19 +70,11 @@ public class AvaliacaoProdutoController {
         }).thenAccept(produtos -> Platform.runLater(() -> {
             cbProdutos.getItems().clear();
             cbProdutos.getItems().addAll(produtos);
-
-            cbProdutos.setConverter(new javafx.util.StringConverter<Product>() {
-                @Override
-                public String toString(Product p) {
-                    return p == null ? "" : p.getName();
-                }
-
-                @Override
-                public Product fromString(String string) {
-                    return null;
-                }
-            });
-        }));
+        })).exceptionally(ex -> {
+            System.err.println("❌ Erro ao carregar produtos para avaliação:");
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     @FXML
