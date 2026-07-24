@@ -3,6 +3,8 @@ package com.br.devsami.model.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.br.devsami.model.entity.User;
 import lombok.NonNull;
 
 import com.br.devsami.model.entity.User;
@@ -59,6 +61,30 @@ public class UserRepository {
     public List<User> findAll() {
         try (EntityManager em = HibernateUtil.getEntityManager()) {
             return em.createQuery("SELECT u FROM User u", User.class)
+                    .getResultList();
+        }
+    }
+
+    public List<User> findAll(int pageSize, int page){
+        try(EntityManager em = HibernateUtil.getEntityManager();){
+            return em.createQuery(
+                            "SELECT u FROM User u",
+                            User.class)
+                    .setFirstResult(page*pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        }
+    }
+
+    public List<User> findAllSorted(int pageSize, int page, boolean desc){
+        String orderDirection = desc ? "DESC" : "ASC";
+
+        String query = "SELECT u FROM User u ORDER BY u.name" + " " + orderDirection;
+
+        try(EntityManager em = HibernateUtil.getEntityManager();){
+            return em.createQuery(query, User.class)
+                    .setFirstResult(page * pageSize)
+                    .setMaxResults(pageSize)
                     .getResultList();
         }
     }
