@@ -74,4 +74,15 @@ public class MenuController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    void abrirListaClientes(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/ListaClientes.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

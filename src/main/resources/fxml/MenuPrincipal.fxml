@@ -40,6 +40,13 @@
                 </graphic>
             </Button>
 
+            <Button maxWidth="Infinity" onAction="#abrirListaClientes" text="Gerenciar Clientes"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-account" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
             <Button maxWidth="Infinity" onAction="#abrirAssistente" text="Assistente"
                     style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
                 <graphic>
