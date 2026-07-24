@@ -81,6 +81,16 @@ public class UserRepository {
         });
     }
 
+    public Long countEntries(){
+        try(EntityManager em = HibernateUtil.getEntityManager();){
+            return em.createQuery(
+                            "SELECT COUNT(u) FROM User u",
+                            Long.class)
+                    .getSingleResult();
+        }
+    }
+
+
     // =========================
     // 🔧 Helpers (limpeza importante)
     // =========================
