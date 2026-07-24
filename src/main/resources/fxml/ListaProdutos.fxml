@@ -64,6 +64,15 @@
                 </Button>
 
             </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="barCodeSearch" promptText="Código de Barras" HBox.hgrow="ALWAYS"
+                           style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;"/>
+                <Button fx:id="searchTryButton" onAction="#handleSearchButton" text="Buscar" maxWidth="Infinity"
+                        style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-font-weight: bold;">
+                </Button>
+            </HBox>
+
             <!-- O VBox.vgrow="ALWAYS" faz a paginação ocupar todo o espaço restante -->
             <Pagination fx:id="paginacao" maxPageIndicatorCount="5" VBox.vgrow="ALWAYS"/>
         </VBox>

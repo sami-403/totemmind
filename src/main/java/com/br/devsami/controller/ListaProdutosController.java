@@ -15,6 +15,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
@@ -27,7 +28,9 @@ public class ListaProdutosController implements Initializable {
 
     @FXML public FontIcon iconSortByBtn;
     @FXML public FontIcon iconSortOrderBtn;
+    @FXML public Button searchTryButton;
     @FXML private Pagination paginacao;
+    @FXML private TextField barCodeSearch;
 
     private final int pageSize = 10;
     private final ProductService productService = new ProductService();
@@ -123,8 +126,22 @@ public class ListaProdutosController implements Initializable {
         abrirFormulario(event, null);
     }
 
-    // --- Métodos que a Célula vai chamar ---
+    @FXML
+    void handleSearchButton(ActionEvent event){
+        String barCode = barCodeSearch.getText();
 
+        try{
+            abrirFormulario(event, productService.findByBarCode(barCode));
+        }catch (IllegalArgumentException e){
+            showAlert(Alert.AlertType.WARNING, "Campos Inválidos", e.getMessage());
+        }
+        catch (NoSuchElementException e){
+            showAlert(Alert.AlertType.WARNING, "Produto Não Encontrado", e.getMessage());
+        }
+
+    }
+
+    // --- Métodos que a Célula vai chamar ---
     public void editarItem(ActionEvent event, Product product) {
         abrirFormulario(event, product);
     }
@@ -169,5 +186,13 @@ public class ListaProdutosController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
