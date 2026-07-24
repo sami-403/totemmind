@@ -23,19 +23,31 @@ import com.br.devsami.util.CpfValidator;
 
 public class TelaGerenciaFuncionariosController {
 
-    @FXML private VBox formContainer;
-    @FXML private Label formTitle;
-    @FXML private TextField idField, nameField, cpfField;
-    @FXML private ComboBox<EmployeeType> typeComboBox;
-    @FXML private PasswordField passwordField;
-    @FXML private Button actionButton;
-    @FXML private CheckBox chkAtivo;
+    @FXML
+    private VBox formContainer;
+    @FXML
+    private Label formTitle;
+    @FXML
+    private TextField idField, nameField, cpfField;
+    @FXML
+    private ComboBox<EmployeeType> typeComboBox;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Button actionButton;
+    @FXML
+    private CheckBox chkAtivo;
 
-    @FXML private TableView<Employee> tvFuncionarios;
-    @FXML private TableColumn<Employee, Long> colId;
-    @FXML private TableColumn<Employee, String> colNome;
-    @FXML private TableColumn<Employee, String> colTipo;
-    @FXML private TableColumn<Employee, String> colStatus;
+    @FXML
+    private TableView<Employee> tvFuncionarios;
+    @FXML
+    private TableColumn<Employee, Long> colId;
+    @FXML
+    private TableColumn<Employee, String> colNome;
+    @FXML
+    private TableColumn<Employee, String> colTipo;
+    @FXML
+    private TableColumn<Employee, String> colStatus;
 
     private final EmployeeService service = new EmployeeService();
     private String currentMode = "";
@@ -44,26 +56,22 @@ public class TelaGerenciaFuncionariosController {
     public void initialize() {
         typeComboBox.getItems().setAll(EmployeeType.values());
 
-        // Listener para mostrar/esconder senha se for Gerente
         typeComboBox.setOnAction(e -> {
             boolean isGerente = typeComboBox.getValue() == EmployeeType.GERENTE;
-            passwordField.setVisible(isGerente);
-            passwordField.setManaged(isGerente);
+            boolean showPassword = isGerente && !currentMode.equals("REMOVE");
+            passwordField.setVisible(showPassword);
+            passwordField.setManaged(showPassword);
         });
 
-        // Configuração das colunas do TableView
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNome.setCellValueFactory(new PropertyValueFactory<>("name"));
         colTipo.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().getTipo() != null ? cellData.getValue().getTipo().name() : "VENDEDOR"
-        ));
+                cellData.getValue().getTipo() != null ? cellData.getValue().getTipo().name() : "VENDEDOR"));
         colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().isAtivo() ? "Ativo" : "Inativo"
-        ));
+                cellData.getValue().isAtivo() ? "Ativo" : "Inativo"));
 
-        // Listener de seleção da tabela para autopreencher os campos
         tvFuncionarios.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
+            if (newSelection != null && !currentMode.equals("ADD")) {
                 idField.setText(String.valueOf(newSelection.getId()));
                 nameField.setText(newSelection.getName());
                 cpfField.setText(newSelection.getCpf());
@@ -72,7 +80,6 @@ public class TelaGerenciaFuncionariosController {
             }
         });
 
-        // Carrega os funcionários inicialmente
         carregarFuncionarios();
     }
 
@@ -98,45 +105,64 @@ public class TelaGerenciaFuncionariosController {
         }
     }
 
-    @FXML public void setModeAdd() { configureForm("ADD", "Adicionar Funcionário", false, true, true, true, "#1A9347", "Cadastrar"); }
-    @FXML public void setModeEdit() { configureForm("EDIT", "Editar Funcionário", true, true, true, true, "#1A9347", "Salvar"); }
-    @FXML public void setModeRemove() { configureForm("REMOVE", "Remover Funcionário", true, false, false, false, "#D32F2F", "Excluir (Inativar)"); }
-
-    private void configureForm(String mode, String title, boolean showId, boolean showName, boolean showCpf, boolean showType, String color, String btnText) {
-    this.currentMode = mode;
-    formContainer.setVisible(true);
-    formContainer.setManaged(true);
-    formTitle.setText(title);
-
-    limparCampos(); 
-
-    Employee selected = tvFuncionarios.getSelectionModel().getSelectedItem();
-    if (selected != null && !mode.equals("ADD")) {
-        idField.setText(String.valueOf(selected.getId()));
-        nameField.setText(selected.getName());
-        cpfField.setText(selected.getCpf());
-        typeComboBox.setValue(selected.getTipo());
-        chkAtivo.setSelected(selected.isAtivo());
+    @FXML
+    public void setModeAdd() {
+        configureForm("ADD", "Adicionar Funcionário", false, true, true, true, "#1A9347", "Cadastrar");
     }
 
-    idField.setVisible(showId); idField.setManaged(showId);
-    nameField.setVisible(showName); nameField.setManaged(showName);
-    cpfField.setVisible(showCpf); cpfField.setManaged(showCpf);
-    typeComboBox.setVisible(showType); typeComboBox.setManaged(showType);
-    
-    passwordField.setVisible(false); passwordField.setManaged(false);
+    @FXML
+    public void setModeEdit() {
+        configureForm("EDIT", "Editar Funcionário", true, true, true, true, "#1A9347", "Salvar");
+    }
 
-    boolean showAtivo = mode.equals("EDIT");
-    chkAtivo.setVisible(showAtivo); chkAtivo.setManaged(showAtivo);
+    @FXML
+    public void setModeRemove() {
+        configureForm("REMOVE", "Remover Funcionário", true, false, false, false, "#D32F2F", "Excluir (Inativar)");
+    }
 
-    actionButton.setText(btnText);
-    actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
-}
+    private void configureForm(String mode, String title, boolean showId, boolean showName, boolean showCpf,
+            boolean showType, String color, String btnText) {
+        this.currentMode = mode;
+        formContainer.setVisible(true);
+        formContainer.setManaged(true);
+        formTitle.setText(title);
+
+        limparCampos();
+
+        Employee selected = tvFuncionarios.getSelectionModel().getSelectedItem();
+        if (selected != null && !mode.equals("ADD")) {
+            idField.setText(String.valueOf(selected.getId()));
+            nameField.setText(selected.getName());
+            cpfField.setText(selected.getCpf());
+            typeComboBox.setValue(selected.getTipo());
+            chkAtivo.setSelected(selected.isAtivo());
+        }
+
+        idField.setVisible(showId);
+        idField.setManaged(showId);
+        nameField.setVisible(showName);
+        nameField.setManaged(showName);
+        cpfField.setVisible(showCpf);
+        cpfField.setManaged(showCpf);
+        typeComboBox.setVisible(showType);
+        typeComboBox.setManaged(showType);
+
+        passwordField.setVisible(false);
+        passwordField.setManaged(false);
+
+        boolean showAtivo = mode.equals("EDIT");
+        chkAtivo.setVisible(showAtivo);
+        chkAtivo.setManaged(showAtivo);
+
+        actionButton.setText(btnText);
+        actionButton.setStyle("-fx-background-color: " + color
+                + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
+    }
 
     @FXML
     private void handleAction() {
         try {
-            // Pega a senha caso o campo esteja visível (ou seja, caso seja Gerente)
+
             String senha = passwordField.isVisible() ? passwordField.getText() : null;
 
             switch (currentMode) {
@@ -147,7 +173,7 @@ public class TelaGerenciaFuncionariosController {
                         showAlert(Alert.AlertType.WARNING, "Erro de Validação", validationError);
                         return;
                     }
-                    // ATENÇÃO: Verifique se o seu service aceita o 4º parâmetro (senha)
+
                     service.createEmployee(nameField.getText(), cpf, typeComboBox.getValue(), senha);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário cadastrado!");
                     carregarFuncionarios();
@@ -161,19 +187,18 @@ public class TelaGerenciaFuncionariosController {
                         return;
                     }
                     boolean ativo = chkAtivo.isSelected();
-                    // ATENÇÃO: Verifique se o seu service aceita a senha na edição também
                     service.updateEmployee(id, nameField.getText(), cpf, typeComboBox.getValue(), senha, ativo);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário atualizado!");
                     carregarFuncionarios();
                 }
                 case "REMOVE" -> {
                     long id = Long.parseLong(idField.getText());
-                    service.deleteEmployee(id); // Soft Delete
+                    service.deleteEmployee(id);
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Funcionário inativado!");
                     carregarFuncionarios();
                 }
             }
-            limparCampos(); // Limpa os campos depois do sucesso
+            limparCampos();
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.WARNING, "Erro de Validação", "O ID deve ser um número válido.");
         } catch (Exception e) {
