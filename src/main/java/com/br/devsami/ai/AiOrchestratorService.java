@@ -85,7 +85,7 @@ public class AiOrchestratorService {
 
         // Modelo 2: Focado em Classificação Rápida
         OllamaChatModel classificationModel = OllamaChatModel.builder()
-                .baseUrl(baseUrl).modelName(modelFeedback).temperature(0.0).timeout(Duration.ofMinutes(5)).build();
+                .baseUrl(baseUrl).modelName(modelFeedback).temperature(0.0).timeout(Duration.ofSeconds(150)).build();
 
         this.sentimentValidator = AiServices.builder(SentimentValidatorAi.class)
                 .chatModel(classificationModel)
