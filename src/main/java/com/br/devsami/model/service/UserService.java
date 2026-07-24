@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.entity.User;
 import com.br.devsami.model.repository.UserRepository;
 import com.br.devsami.util.CpfValidator;
@@ -47,6 +46,10 @@ public class UserService {
 
     // 1. Buscar usuário
     public Optional<User> findByCpf(String cpf) {
+        if (cpf.isEmpty() || CpfValidator.isValidCpf(cpf)){
+            throw new IllegalArgumentException(CpfValidator.validate(cpf));
+        }
+
         return userRepository.findByCpf(cpf);
     }
 
