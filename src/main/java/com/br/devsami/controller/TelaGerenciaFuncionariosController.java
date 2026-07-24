@@ -103,29 +103,35 @@ public class TelaGerenciaFuncionariosController {
     @FXML public void setModeRemove() { configureForm("REMOVE", "Remover Funcionário", true, false, false, false, "#D32F2F", "Excluir (Inativar)"); }
 
     private void configureForm(String mode, String title, boolean showId, boolean showName, boolean showCpf, boolean showType, String color, String btnText) {
-        this.currentMode = mode;
-        formContainer.setVisible(true);
-        formContainer.setManaged(true);
-        formTitle.setText(title);
+    this.currentMode = mode;
+    formContainer.setVisible(true);
+    formContainer.setManaged(true);
+    formTitle.setText(title);
 
-        limparCampos(); // Limpa dados antigos ao trocar de modo
+    limparCampos(); 
 
-        // Aplica visibilidade
-        idField.setVisible(showId); idField.setManaged(showId);
-        nameField.setVisible(showName); nameField.setManaged(showName);
-        cpfField.setVisible(showCpf); cpfField.setManaged(showCpf);
-        typeComboBox.setVisible(showType); typeComboBox.setManaged(showType);
-
-        // Senha começa oculta
-        passwordField.setVisible(false); passwordField.setManaged(false);
-
-        // CheckBox de status ativo
-        boolean showAtivo = mode.equals("EDIT");
-        chkAtivo.setVisible(showAtivo); chkAtivo.setManaged(showAtivo);
-
-        actionButton.setText(btnText);
-        actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
+    Employee selected = tvFuncionarios.getSelectionModel().getSelectedItem();
+    if (selected != null && !mode.equals("ADD")) {
+        idField.setText(String.valueOf(selected.getId()));
+        nameField.setText(selected.getName());
+        cpfField.setText(selected.getCpf());
+        typeComboBox.setValue(selected.getTipo());
+        chkAtivo.setSelected(selected.isAtivo());
     }
+
+    idField.setVisible(showId); idField.setManaged(showId);
+    nameField.setVisible(showName); nameField.setManaged(showName);
+    cpfField.setVisible(showCpf); cpfField.setManaged(showCpf);
+    typeComboBox.setVisible(showType); typeComboBox.setManaged(showType);
+    
+    passwordField.setVisible(false); passwordField.setManaged(false);
+
+    boolean showAtivo = mode.equals("EDIT");
+    chkAtivo.setVisible(showAtivo); chkAtivo.setManaged(showAtivo);
+
+    actionButton.setText(btnText);
+    actionButton.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10px; -fx-background-radius: 5px; -fx-cursor: hand;");
+}
 
     @FXML
     private void handleAction() {
