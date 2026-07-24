@@ -33,7 +33,7 @@
             </right>
         </BorderPane>
 
-        <Label text="SE CADASTRE!" textAlignment="CENTER" styleClass="title-2" style="-fx-font-weight: bold;"/>
+        <Label fx:id="formLabel" text="SE CADASTRE!" textAlignment="CENTER" styleClass="title-2" style="-fx-font-weight: bold;"/>
 
         <TextField fx:id="txtNome" promptText="NOME" maxWidth="Infinity" style="-fx-background-color: #3a3a3c; -fx-text-fill: white; -fx-padding: 10px;"/>
         <TextField fx:id="txtCpf" promptText="CPF" maxWidth="Infinity" style="-fx-background-color: #3a3a3c; -fx-text-fill: white; -fx-padding: 10px;"/>
