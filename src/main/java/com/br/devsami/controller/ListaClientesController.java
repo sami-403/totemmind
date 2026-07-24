@@ -163,7 +163,7 @@ public class ListaClientesController implements Initializable {
             Parent root = loader.load();
 
             CadastroClienteController formController = loader.getController();
-            formController.setCpf(selectedUser.getCpf());
+            formController.setUser(selectedUser);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
