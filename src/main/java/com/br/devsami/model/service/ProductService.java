@@ -99,8 +99,7 @@ public class ProductService {
 
     // Atualiza um Produto
     public Product updateProduct(UUID id, String newName, String newBarCode, double newPrice) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto com esse ID não encontrado."));
+        Product product = productRepository.findById(id).orElseThrow();
 
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException("Nome do Produto obrigatório");
