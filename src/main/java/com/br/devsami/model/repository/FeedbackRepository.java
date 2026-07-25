@@ -81,8 +81,8 @@ public class FeedbackRepository {
         }
     }
 
-    // Busca os feedbacks pelo ID do produto (Long)
-    public List<ProductFeedback> findByProductId(Long productId) {
+    // Busca os feedbacks pelo ID do produto (UUID)
+    public List<ProductFeedback> findByProductId(UUID productId) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             return em.createQuery(
@@ -95,7 +95,7 @@ public class FeedbackRepository {
     }
 
     // Calcula a média das notas de estrelas de um produto
-    public Double findAverageRatingByProduct(Long productId) {
+    public Double findAverageRatingByProduct(UUID productId) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             Double avg = em.createQuery(
@@ -103,6 +103,42 @@ public class FeedbackRepository {
                     .setParameter("productId", productId)
                     .getSingleResult();
             return avg != null ? avg : 0.0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<ProductFeedback> findAllProductFeedbacks(LocalDateTime start, LocalDateTime end) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            if (start != null && end != null) {
+                return em.createQuery(
+                        "SELECT f FROM ProductFeedback f WHERE f.createdAt BETWEEN :start AND :end", ProductFeedback.class)
+                        .setParameter("start", start)
+                        .setParameter("end", end)
+                        .getResultList();
+            } else {
+                return em.createQuery("SELECT f FROM ProductFeedback f", ProductFeedback.class)
+                        .getResultList();
+            }
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<ProductFeedback> findProductFeedbacksByProductAndPeriod(UUID productId, LocalDateTime start, LocalDateTime end) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            if (start != null && end != null) {
+                return em.createQuery(
+                        "SELECT f FROM ProductFeedback f WHERE f.product.id = :productId AND f.createdAt BETWEEN :start AND :end", ProductFeedback.class)
+                        .setParameter("productId", productId)
+                        .setParameter("start", start)
+                        .setParameter("end", end)
+                        .getResultList();
+            } else {
+                return findByProductId(productId);
+            }
         } finally {
             em.close();
         }

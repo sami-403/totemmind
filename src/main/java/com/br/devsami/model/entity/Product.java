@@ -45,5 +45,4 @@ import java.math.BigDecimal;
         this.name = name;
         this.price = price;
     }
-
 }

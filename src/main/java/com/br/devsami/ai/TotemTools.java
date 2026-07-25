@@ -12,9 +12,14 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import com.br.devsami.model.entity.Product;
+import com.br.devsami.model.enums.ProductFeedbackCategory;
+import com.br.devsami.model.repository.ProductRepository;
+
 public class TotemTools {
 
         private final EmployeeRepository employeeRepository = new EmployeeRepository();
+        private final ProductRepository productRepository = new ProductRepository();
         private final FeedbackAnalyticsService analyticsService = new FeedbackAnalyticsService();
 
         /**
@@ -107,5 +112,205 @@ public class TotemTools {
                 ChartManager.exibirLinhas("Evolução Temporal - " + nome, dados);
 
                 return String.format("Gráfico de linhas gerado na tela com sucesso para %s.", nome);
+        }
+
+        // =========================================================================
+        // NOVAS FERRAMENTAS PARA PRODUTOS
+        // =========================================================================
+
+        @Tool("Pesquisa produtos pelo nome. Usar PRIMEIRO para descobrir o ID exato do produto caso não saiba.")
+        public String buscarProdutoPorNome(String nome) {
+                List<Product> produtos = productRepository.findByNameContainingIgnoreCase(nome);
+                if (produtos.isEmpty()) {
+                        return "Nenhum produto encontrado com o nome '" + nome + "'.";
+                }
+
+                com.br.devsami.model.repository.FeedbackRepository feedbackRepo = new com.br.devsami.model.repository.FeedbackRepository();
+                List<com.br.devsami.model.dto.ProductCardData> cardList = new java.util.ArrayList<>();
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < produtos.size(); i++) {
+                        Product p = produtos.get(i);
+                        sb.append(String.format("Opção %d: %s (ID do BD: %s - Preço: R$ %.2f)\n",
+                                        i + 1, p.getName(), p.getId().toString(), p.getPrice()));
+
+                        List<com.br.devsami.model.entity.ProductFeedback> feedbacks = feedbackRepo.findByProductId(p.getId());
+                        double soma = 0.0;
+                        int total = 0;
+                        for (com.br.devsami.model.entity.ProductFeedback pf : feedbacks) {
+                                if (pf.getRating() != null) {
+                                        soma += pf.getRating();
+                                        total++;
+                                }
+                        }
+                        double media = total > 0 ? Math.round((soma / total) * 100.0) / 100.0 : 0.0;
+                        cardList.add(new com.br.devsami.model.dto.ProductCardData(p.getId(), p.getName(), p.getPrice(), media, total));
+                }
+
+                ChartManager.exibirCardsProdutos("Produtos Encontrados (" + produtos.size() + ")", cardList);
+                return sb.toString();
+        }
+
+        @Tool("Busca produtos com média de estrelas dentro de um intervalo (ex: minRating=4.0, maxRating=5.0 para excelentes, ou minRating=0.0, maxRating=3.0 para notas baixas). Datas opcionais (YYYY-MM-DD ou 'null').")
+        public String buscarProdutosPorFaixaDeNota(Double minRating, Double maxRating, String startDate, String endDate) {
+                double min = (minRating != null) ? minRating : 0.0;
+                double max = (maxRating != null) ? maxRating : 5.0;
+
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                List<Product> todos = productRepository.findAll();
+                com.br.devsami.model.repository.FeedbackRepository feedbackRepo = new com.br.devsami.model.repository.FeedbackRepository();
+                List<com.br.devsami.model.dto.ProductCardData> cardList = new java.util.ArrayList<>();
+
+                for (Product p : todos) {
+                        List<com.br.devsami.model.entity.ProductFeedback> feedbacks = feedbackRepo.findProductFeedbacksByProductAndPeriod(p.getId(), start, end);
+                        if (feedbacks.isEmpty()) continue;
+
+                        double soma = 0.0;
+                        int totalVotos = 0;
+                        for (com.br.devsami.model.entity.ProductFeedback pf : feedbacks) {
+                                if (pf.getRating() != null) {
+                                        soma += pf.getRating();
+                                        totalVotos++;
+                                }
+                        }
+
+                        if (totalVotos > 0) {
+                                double media = Math.round((soma / totalVotos) * 100.0) / 100.0;
+                                if (media >= min && media <= max) {
+                                        cardList.add(new com.br.devsami.model.dto.ProductCardData(p.getId(), p.getName(), p.getPrice(), media, totalVotos));
+                                }
+                        }
+                }
+
+                String titulo = String.format("Produtos com Nota %.1f a %.1f ⭐", min, max);
+                ChartManager.exibirCardsProdutos(titulo, cardList);
+
+                return analyticsService.obterProdutosPorFaixaDeNota(min, max, start, end);
+        }
+
+        @Tool("Gera gráfico de PIZZA com a distribuição geral de todas as categorias de produtos (Sabor, Temperatura, Porção, Embalagem, Preço, Elogios). Datas opcionais.")
+        public String gerarGraficoGeralCategoriasProduto(String startDate, String endDate) {
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                Map<ProductFeedbackCategory, Double> distribuicao = analyticsService.calcularDistribuicaoCategoriasProdutoGeral(start, end);
+                if (distribuicao.isEmpty()) {
+                        return "Nenhum feedback de produto cadastrado no período para gerar gráfico.";
+                }
+
+                double[] percentagens = new double[ProductFeedbackCategory.values().length];
+                int idx = 0;
+                for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+                        percentagens[idx++] = distribuicao.getOrDefault(cat, 0.0);
+                }
+
+                ChartManager.exibirPizza("Distribuição Geral de Categorias de Produtos", percentagens);
+
+                StringBuilder sb = new StringBuilder("Gráfico de Pizza gerado na tela com a distribuição de categorias:\n");
+                for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+                        sb.append(String.format("- %s: %.2f%%\n", cat.getDescription(), distribuicao.getOrDefault(cat, 0.0)));
+                }
+
+                return sb.toString();
+        }
+
+        @Tool("Retorna a média de notas em estrelas agrupada por cada categoria de produto (Sabor, Temperatura, Porção, Embalagem, Preço, Elogios). Datas opcionais.")
+        public String obterMediaEstrelasPorCategoriaProduto(String startDate, String endDate) {
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                return analyticsService.calcularMediaEstrelasPorCategoriaProduto(start, end);
+        }
+
+        @Tool("Gera gráfico de PIZZA com a distribuição das categorias para UM PRODUTO ESPECÍFICO. O productId é OBRIGATÓRIO (UUID do banco). Datas opcionais.")
+        public String gerarGraficoCategoriasDoProduto(String productId, String startDate, String endDate) {
+                java.util.UUID uuid;
+                try {
+                        uuid = java.util.UUID.fromString(productId);
+                } catch (Exception e) {
+                        return "ID do produto inválido. Use a busca por nome primeiro.";
+                }
+
+                Product product = productRepository.findById(uuid).orElse(null);
+                if (product == null) {
+                        return "Produto inativo ou inexistente. Não é possível gerar gráfico.";
+                }
+
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                Map<ProductFeedbackCategory, Double> distribuicao = analyticsService.calcularDistribuicaoCategoriasProdutoIndividual(uuid, start, end);
+                if (distribuicao.isEmpty()) {
+                        return "Nenhum feedback registrado para o produto '" + product.getName() + "' no período.";
+                }
+
+                double[] percentagens = new double[ProductFeedbackCategory.values().length];
+                int idx = 0;
+                for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+                        percentagens[idx++] = distribuicao.getOrDefault(cat, 0.0);
+                }
+
+                String titulo = "Categorias - " + product.getName();
+                ChartManager.exibirPizza(titulo, percentagens);
+
+                StringBuilder sb = new StringBuilder("Gráfico de Pizza gerado na tela para o produto '" + product.getName() + "':\n");
+                for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+                        sb.append(String.format("- %s: %.2f%%\n", cat.getDescription(), distribuicao.getOrDefault(cat, 0.0)));
+                }
+
+                return sb.toString();
+        }
+
+        @Tool("Gera gráfico de PIZZA com a distribuição de ESTRELAS (1 a 5 ⭐) de um PRODUTO ESPECÍFICO. O productId é OBRIGATÓRIO (UUID do banco). Datas opcionais.")
+        public String gerarGraficoEstrelasDoProduto(String productId, String startDate, String endDate) {
+                java.util.UUID uuid;
+                try {
+                        uuid = java.util.UUID.fromString(productId);
+                } catch (Exception e) {
+                        return "ID do produto inválido. Use a busca por nome primeiro.";
+                }
+
+                Product product = productRepository.findById(uuid).orElse(null);
+                if (product == null) {
+                        return "Produto inativo ou inexistente. Não é possível gerar gráfico.";
+                }
+
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                double[] percentagens = analyticsService.calcularDistribuicaoEstrelasProduto(uuid, start, end);
+
+                String titulo = "Notas (Estrelas) - " + product.getName();
+                ChartManager.exibirPizza(titulo, percentagens);
+
+                String[] labels = {"5 ⭐ (Excelente)", "4 ⭐ (Muito Bom)", "3 ⭐ (Bom)", "2 ⭐ (Ruim)", "1 ⭐ (Péssimo)"};
+                StringBuilder sb = new StringBuilder("Gráfico de Pizza com a distribuição de notas (estrelas) gerado na tela para '" + product.getName() + "':\n");
+                for (int i = 0; i < percentagens.length; i++) {
+                        sb.append(String.format("- %s: %.2f%%\n", labels[i], percentagens[i]));
+                }
+
+                return sb.toString();
         }
 }
