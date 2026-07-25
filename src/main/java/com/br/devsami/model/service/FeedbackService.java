@@ -41,6 +41,17 @@ public class FeedbackService {
 
         classifyFeeling((Feedback) feedback, feeling, text);
 
+        if (text != null && !text.isBlank()) {
+            try {
+                var empCategory = aiService.inferirCategoriaAtendimento(feedback.getFeeling(), text);
+                feedback.setEmployeeCategory(empCategory);
+            } catch (Exception e) {
+                System.err.println("⚠️ Erro ao inferir categoria de atendimento: " + e.getMessage());
+            }
+        } else {
+            feedback.setEmployeeCategory(com.br.devsami.model.enums.EmployeeFeedbackCategory.OTHER);
+        }
+
         feedbackRepository.save(feedback);
         return feedback;
     }
