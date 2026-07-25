@@ -116,8 +116,6 @@ public class CadastroClienteController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ListaClientes.fxml"));
         Parent root = loader.load();
 
-        ListaClientesController controller = loader.getController();
-
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 800, 600));
     }
