@@ -55,7 +55,7 @@ public class GerenciaProdutoController implements Initializable {
             this.currentMode = "EDIT";
 
             formTitle.setText("Atualizando Produto");
-            barCodeField.setText(managedProduct.getBarCode());
+            barCodeField.setText(managedProduct.getBarCode() != null ? managedProduct.getBarCode() : "");
             nameField.setText(managedProduct.getName());
             priceField.setText(String.valueOf(managedProduct.getPrice()));
             actionButton.setText("Salvar Alterações");
