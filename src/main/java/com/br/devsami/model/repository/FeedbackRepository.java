@@ -2,6 +2,7 @@ package com.br.devsami.model.repository;
 
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.entity.EmployeeFeedback;
+import com.br.devsami.model.entity.ProductFeedback;
 import com.br.devsami.infrastructure.persistence.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
@@ -75,6 +76,33 @@ public class FeedbackRepository {
                     .setParameter("start", start)
                     .setParameter("end", end)
                     .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    // Busca os feedbacks pelo ID do produto (Long)
+    public List<ProductFeedback> findByProductId(Long productId) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT f FROM ProductFeedback f WHERE f.product.id = :productId", ProductFeedback.class)
+                    .setParameter("productId", productId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    // Calcula a média das notas de estrelas de um produto
+    public Double findAverageRatingByProduct(Long productId) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            Double avg = em.createQuery(
+                    "SELECT AVG(f.rating) FROM ProductFeedback f WHERE f.product.id = :productId AND f.rating IS NOT NULL", Double.class)
+                    .setParameter("productId", productId)
+                    .getSingleResult();
+            return avg != null ? avg : 0.0;
         } finally {
             em.close();
         }
