@@ -13,12 +13,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -28,22 +30,30 @@ import java.util.concurrent.CompletableFuture;
 public class AvaliacaoProdutoController {
 
     @FXML private ComboBox<Product> cbProdutos;
-    @FXML private ToggleButton btnFeliz;
-    @FXML private ToggleButton btnNeutro;
-    @FXML private ToggleButton btnIncomodado;
+    @FXML private Button btnEstrela1;
+    @FXML private Button btnEstrela2;
+    @FXML private Button btnEstrela3;
+    @FXML private Button btnEstrela4;
+    @FXML private Button btnEstrela5;
+
+    @FXML private FontIcon iconEstrela1;
+    @FXML private FontIcon iconEstrela2;
+    @FXML private FontIcon iconEstrela3;
+    @FXML private FontIcon iconEstrela4;
+    @FXML private FontIcon iconEstrela5;
+
+    @FXML private Label lblNotaDescricao;
     @FXML private TextArea txtFeedback;
 
-    private ToggleGroup grupoEmojis;
+    private static final String STYLE_ACTIVE = "-fx-background-color: #f39c12; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;";
+    private static final String STYLE_INACTIVE = "-fx-background-color: #3a3a3c; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;";
+
+    private int ratingSelecionado = 0;
     private String cpfCliente;
     private boolean isNovoCliente;
 
     @FXML
     public void initialize() {
-        grupoEmojis = new ToggleGroup();
-        btnFeliz.setToggleGroup(grupoEmojis);
-        btnNeutro.setToggleGroup(grupoEmojis);
-        btnIncomodado.setToggleGroup(grupoEmojis);
-
         cbProdutos.setConverter(new javafx.util.StringConverter<Product>() {
             @Override
             public String toString(Product p) {
@@ -57,6 +67,7 @@ public class AvaliacaoProdutoController {
         });
 
         carregarProdutos();
+        configurarHoverEstrelas();
     }
 
     public void setDadosCliente(String cpf, boolean isNovoCliente) {
@@ -78,17 +89,81 @@ public class AvaliacaoProdutoController {
         });
     }
 
+    private void configurarHoverEstrelas() {
+        Button[] buttons = {btnEstrela1, btnEstrela2, btnEstrela3, btnEstrela4, btnEstrela5};
+        for (int i = 0; i < buttons.length; i++) {
+            final int starCount = i + 1;
+            if (buttons[i] != null) {
+                buttons[i].setOnMouseEntered(e -> renderEstrelas(starCount));
+                buttons[i].setOnMouseExited(e -> renderEstrelas(this.ratingSelecionado));
+            }
+        }
+    }
+
+    private void renderEstrelas(int ratingTemp) {
+        Button[] buttons = {btnEstrela1, btnEstrela2, btnEstrela3, btnEstrela4, btnEstrela5};
+        FontIcon[] icons = {iconEstrela1, iconEstrela2, iconEstrela3, iconEstrela4, iconEstrela5};
+
+        for (int i = 0; i < 5; i++) {
+            if (buttons[i] == null) continue;
+            if (i < ratingTemp) {
+                buttons[i].setStyle(STYLE_ACTIVE);
+                if (icons[i] != null) {
+                    icons[i].setIconColor(Color.WHITE);
+                }
+            } else {
+                buttons[i].setStyle(STYLE_INACTIVE);
+                if (icons[i] != null) {
+                    icons[i].setIconColor(Color.web("#666666"));
+                }
+            }
+        }
+    }
+
+    private void atualizarEstrelas(int rating) {
+        this.ratingSelecionado = rating;
+        renderEstrelas(rating);
+
+        if (lblNotaDescricao != null) {
+            switch (rating) {
+                case 1 -> lblNotaDescricao.setText("1/5 - Péssimo");
+                case 2 -> lblNotaDescricao.setText("2/5 - Ruim");
+                case 3 -> lblNotaDescricao.setText("3/5 - Regular");
+                case 4 -> lblNotaDescricao.setText("4/5 - Bom");
+                case 5 -> lblNotaDescricao.setText("5/5 - Excelente");
+                default -> lblNotaDescricao.setText("Selecione de 1 a 5 estrelas");
+            }
+        }
+    }
+
+    @FXML void selecionarEstrela1() { atualizarEstrelas(1); }
+    @FXML void selecionarEstrela2() { atualizarEstrelas(2); }
+    @FXML void selecionarEstrela3() { atualizarEstrelas(3); }
+    @FXML void selecionarEstrela4() { atualizarEstrelas(4); }
+    @FXML void selecionarEstrela5() { atualizarEstrelas(5); }
+
     @FXML
     void enviar(ActionEvent event) {
         Product produto = cbProdutos.getValue();
-        ToggleButton emojiSelecionado = (ToggleButton) grupoEmojis.getSelectedToggle();
         String feedbackText = txtFeedback.getText();
 
-        if (produto == null || emojiSelecionado == null) return;
+        if (produto == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Atenção");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um produto.");
+            alert.showAndWait();
+            return;
+        }
 
-        Feeling feeling = emojiSelecionado == btnFeliz ? Feeling.SATISFIED :
-                emojiSelecionado == btnNeutro ? Feeling.NEUTRAL :
-                Feeling.DISSATISFIED;
+        if (ratingSelecionado <= 0) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Atenção");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione uma nota de 1 a 5 estrelas para o produto.");
+            alert.showAndWait();
+            return;
+        }
 
         CompletableFuture.runAsync(() -> {
             UserRepository userRepository = new UserRepository();
@@ -100,8 +175,8 @@ public class AvaliacaoProdutoController {
                 feedbackService.createProductFeedback(
                         optionalUser.get(),
                         produto,
-                        feeling,
-                        null, // Ajuste a categoria conforme a tela
+                        ratingSelecionado,
+                        null, // Categoria (a ser inferida por IA futuramente)
                         feedbackText
                 );
 

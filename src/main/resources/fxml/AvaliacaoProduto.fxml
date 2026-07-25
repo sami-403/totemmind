@@ -38,23 +38,37 @@
             <ComboBox fx:id="cbProdutos" maxWidth="Infinity" promptText="Selecione o Produto" style="-fx-background-color: #3a3a3c; -fx-padding: 8px;"/>
         </VBox>
 
-        <HBox alignment="CENTER" spacing="25.0">
-            <ToggleButton fx:id="btnFeliz">
-                <graphic>
-                    <FontIcon iconLiteral="mdi-emoticon-happy" iconColor="#2ecc71" iconSize="50"/>
-                </graphic>
-            </ToggleButton>
-            <ToggleButton fx:id="btnNeutro">
-                <graphic>
-                    <FontIcon iconLiteral="mdi-emoticon-neutral" iconColor="#f39c12" iconSize="50"/>
-                </graphic>
-            </ToggleButton>
-            <ToggleButton fx:id="btnIncomodado">
-                <graphic>
-                    <FontIcon iconLiteral="mdi-emoticon-sad" iconColor="#e74c3c" iconSize="50"/>
-                </graphic>
-            </ToggleButton>
-        </HBox>
+        <VBox alignment="CENTER" spacing="10.0">
+            <Label text="AVALIAÇÃO DO PRODUTO (1 A 5 ESTRELAS)" style="-fx-text-fill: #aaa; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+            <HBox alignment="CENTER" spacing="10.0">
+                <Button fx:id="btnEstrela1" text=" 1" onAction="#selecionarEstrela1" style="-fx-background-color: #3a3a3c; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;">
+                    <graphic>
+                        <FontIcon fx:id="iconEstrela1" iconLiteral="mdi-star" iconColor="#666666" iconSize="22"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnEstrela2" text=" 2" onAction="#selecionarEstrela2" style="-fx-background-color: #3a3a3c; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;">
+                    <graphic>
+                        <FontIcon fx:id="iconEstrela2" iconLiteral="mdi-star" iconColor="#666666" iconSize="22"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnEstrela3" text=" 3" onAction="#selecionarEstrela3" style="-fx-background-color: #3a3a3c; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;">
+                    <graphic>
+                        <FontIcon fx:id="iconEstrela3" iconLiteral="mdi-star" iconColor="#666666" iconSize="22"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnEstrela4" text=" 4" onAction="#selecionarEstrela4" style="-fx-background-color: #3a3a3c; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;">
+                    <graphic>
+                        <FontIcon fx:id="iconEstrela4" iconLiteral="mdi-star" iconColor="#666666" iconSize="22"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnEstrela5" text=" 5" onAction="#selecionarEstrela5" style="-fx-background-color: #3a3a3c; -fx-text-fill: #aaa; -fx-cursor: hand; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-font-size: 15px; -fx-font-weight: bold;">
+                    <graphic>
+                        <FontIcon fx:id="iconEstrela5" iconLiteral="mdi-star" iconColor="#666666" iconSize="22"/>
+                    </graphic>
+                </Button>
+            </HBox>
+            <Label fx:id="lblNotaDescricao" text="Selecione de 1 a 5 estrelas" style="-fx-text-fill: #f39c12; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+        </VBox>
 
         <TextArea fx:id="txtFeedback" promptText="FEEDBACK OPCIONAL" prefHeight="100.0" wrapText="true" style="-fx-control-inner-background: #3a3a3c; -fx-text-fill: white;"/>
 
