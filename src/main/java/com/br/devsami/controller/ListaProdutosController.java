@@ -16,6 +16,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.IOException;
 import java.net.URL;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
@@ -147,16 +148,24 @@ public class ListaProdutosController implements Initializable {
     }
 
     public void removerItem(Product product) {
-        CompletableFuture.runAsync(() -> {
-            productService.deleteProduct(product.getId());
+        Optional<ButtonType> confirmation = showAlert(
+                Alert.AlertType.CONFIRMATION,
+                "Confirmação de Remoção",
+                "Você tem certeza que quer remover esse Produto (Essa ação é permanente e não pode ser desfeita)"
+        );
 
-        }).thenRun(() -> {
-            Platform.runLater(this::carregarLista);
+        if(confirmation.isPresent() && confirmation.get() == ButtonType.OK){
+            CompletableFuture.runAsync(() -> {
+                productService.deleteProduct(product.getId());
 
-        }).exceptionally(ex -> {
-            ex.printStackTrace();
-            return null;
-        });
+            }).thenRun(() -> {
+                Platform.runLater(this::carregarLista);
+
+            }).exceptionally(ex -> {
+                ex.printStackTrace();
+                return null;
+            });
+        }
     }
 
     @FXML
@@ -188,11 +197,11 @@ public class ListaProdutosController implements Initializable {
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
+    private Optional<ButtonType> showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        return alert.showAndWait();
     }
 }
