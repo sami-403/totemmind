@@ -1,6 +1,7 @@
 package com.br.devsami.ai;
 
 import com.br.devsami.infrastructure.charts.ChartManager;
+import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import com.br.devsami.model.repository.EmployeeRepository;
 import com.br.devsami.model.entity.Employee;
@@ -84,7 +85,9 @@ public class TotemTools {
 
         // Tool responsavel por pegar o funcionário com maior indece de X sentimento
         @Tool("Busca o funcionário com maior taxa. Índices: 0=Satisfeito, 1=Neutro, 2=Insatisfeito. Datas opcionais.")
-        public String buscarMaiorTaxa(int indice, String startDate, String endDate) {
+        public String buscarMaiorTaxa(@P("Índice de sentimento: 0=Satisfeito, 1=Neutro, 2=Insatisfeito") int indice,
+                                      @P("Data de início no formato YYYY-MM-DD ou null") String startDate,
+                                      @P("Data de fim no formato YYYY-MM-DD ou null") String endDate) {
                 List<Employee> todos = employeeRepository.findAllActive();
 
                 LocalDateTime start = (startDate != null && !startDate.equals("null"))

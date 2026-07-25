@@ -76,6 +76,9 @@ public class FeedbackAnalyticsService {
     }
 
     public String obterMaiorTaxa(List<Employee> funcionarios, int indice, LocalDateTime start, LocalDateTime end) {
+        if (indice < 0 || indice > 2) {
+            indice = 0;
+        }
         Employee campeao = null;
         double maiorTaxa = 0.0;
 
