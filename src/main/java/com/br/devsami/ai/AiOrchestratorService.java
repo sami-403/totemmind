@@ -23,7 +23,7 @@ public class AiOrchestratorService {
     public interface SentimentValidatorAi {
         @SystemMessage(SentimentEspecialist.SentimentPrompt)
         @UserMessage("Sentimento original: {{originalFeeling}}. Texto do feedback: {{feedbackText}}")
-        Feeling validateSentiment(@V("originalFeeling") String originalFeeling,
+        String validateSentiment(@V("originalFeeling") String originalFeeling,
                                   @V("feedbackText") String feedbackText);
     }
 
@@ -98,6 +98,23 @@ public class AiOrchestratorService {
     }
 
     public Feeling classificarSentimento(Feeling originalFeeling, String text) {
-        return sentimentValidator.validateSentiment(originalFeeling.name(), text);
+        String rawResponse = null;
+        try {
+            rawResponse = sentimentValidator.validateSentiment(originalFeeling.name(), text);
+            if (rawResponse == null || rawResponse.isBlank()) {
+                return originalFeeling;
+            }
+            
+            // Clean up possible special tokens and tags like <|im_end|>, etc.
+            String cleanResponse = rawResponse.trim()
+                    .replaceAll("<\\|.*?\\|>", "") // remove any <|...|> tags
+                    .replaceAll("[^a-zA-Z]", "")   // keep only letters (like SATISFIED, DISSATISFIED, NEUTRAL)
+                    .toUpperCase();
+            
+            return Feeling.valueOf(cleanResponse);
+        } catch (Exception e) {
+            System.err.println("⚠️ Erro ao processar sentimento da IA (resposta original: '" + rawResponse + "'): " + e.getMessage());
+            return originalFeeling;
+        }
     }
 }
