@@ -89,7 +89,7 @@ public class ProductService {
 
         var product = new Product();
         product.setName(name);
-        product.setBarCode(barCode);
+        product.setBarCode(!barCode.isEmpty() ? barCode: null);
         product.setPrice(BigDecimal.valueOf(price));
 
         productRepository.save(product);
