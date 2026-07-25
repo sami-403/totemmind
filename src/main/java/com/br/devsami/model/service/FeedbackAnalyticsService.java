@@ -3,14 +3,20 @@ package com.br.devsami.model.service;
 import com.br.devsami.model.entity.Employee;
 import com.br.devsami.model.entity.Feedback;
 import com.br.devsami.model.entity.EmployeeFeedback;
-import com.br.devsami.model.repository.FeedbackRepository;
+import com.br.devsami.model.entity.Product;
+import com.br.devsami.model.entity.ProductFeedback;
 import com.br.devsami.model.enums.Feeling;
+import com.br.devsami.model.enums.ProductFeedbackCategory;
+import com.br.devsami.model.repository.FeedbackRepository;
+import com.br.devsami.model.repository.ProductRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 public class FeedbackAnalyticsService {
 
@@ -106,8 +112,164 @@ public class FeedbackAnalyticsService {
         return evolucao;
     }
 
-    public double obterMediaEstrelasProduto(Long productId) {
+    public double obterMediaEstrelasProduto(UUID productId) {
         Double media = feedbackRepository.findAverageRatingByProduct(productId);
         return Math.round(media * 100.0) / 100.0;
+    }
+
+    public String obterProdutosPorFaixaDeNota(double minRating, double maxRating, LocalDateTime start, LocalDateTime end) {
+        ProductRepository productRepo = new ProductRepository();
+        List<Product> produtos = productRepo.findAll();
+        if (produtos.isEmpty()) {
+            return "Nenhum produto cadastrado no sistema.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+
+        for (Product p : produtos) {
+            List<ProductFeedback> feedbacks = feedbackRepository.findProductFeedbacksByProductAndPeriod(p.getId(), start, end);
+            if (feedbacks.isEmpty()) continue;
+
+            double soma = 0.0;
+            int totalVotos = 0;
+            for (ProductFeedback pf : feedbacks) {
+                if (pf.getRating() != null) {
+                    soma += pf.getRating();
+                    totalVotos++;
+                }
+            }
+
+            if (totalVotos > 0) {
+                double media = Math.round((soma / totalVotos) * 100.0) / 100.0;
+                if (media >= minRating && media <= maxRating) {
+                    count++;
+                    sb.append(String.format("- %s (ID do BD: %s): Média %.2f ⭐ (%d avaliações)\n",
+                            p.getName(), p.getId().toString(), media, totalVotos));
+                }
+            }
+        }
+
+        if (count == 0) {
+            return String.format("Nenhum produto encontrado com média de notas entre %.1f e %.1f estrelas.", minRating, maxRating);
+        }
+
+        return String.format("Produtos com média de notas entre %.1f e %.1f estrelas (%d encontrados):\n%s", minRating, maxRating, count, sb.toString());
+    }
+
+    public Map<ProductFeedbackCategory, Double> calcularDistribuicaoCategoriasProdutoGeral(LocalDateTime start, LocalDateTime end) {
+        List<ProductFeedback> feedbacks = feedbackRepository.findAllProductFeedbacks(start, end);
+        Map<ProductFeedbackCategory, Double> porcentagens = new HashMap<>();
+        if (feedbacks.isEmpty()) {
+            return porcentagens;
+        }
+
+        Map<ProductFeedbackCategory, Integer> contagem = new HashMap<>();
+        for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+            contagem.put(cat, 0);
+        }
+
+        int total = 0;
+        for (ProductFeedback pf : feedbacks) {
+            if (pf.getProductCategory() != null) {
+                contagem.put(pf.getProductCategory(), contagem.getOrDefault(pf.getProductCategory(), 0) + 1);
+                total++;
+            }
+        }
+
+        if (total > 0) {
+            for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+                double pct = Math.round(((double) contagem.get(cat) / total) * 10000.0) / 100.0;
+                porcentagens.put(cat, pct);
+            }
+        }
+
+        return porcentagens;
+    }
+
+    public String calcularMediaEstrelasPorCategoriaProduto(LocalDateTime start, LocalDateTime end) {
+        List<ProductFeedback> feedbacks = feedbackRepository.findAllProductFeedbacks(start, end);
+        if (feedbacks.isEmpty()) {
+            return "Nenhum feedback de produto registrado no período.";
+        }
+
+        Map<ProductFeedbackCategory, Double> somaNotas = new HashMap<>();
+        Map<ProductFeedbackCategory, Integer> contagem = new HashMap<>();
+
+        for (ProductFeedback pf : feedbacks) {
+            if (pf.getProductCategory() != null && pf.getRating() != null) {
+                somaNotas.put(pf.getProductCategory(), somaNotas.getOrDefault(pf.getProductCategory(), 0.0) + pf.getRating());
+                contagem.put(pf.getProductCategory(), contagem.getOrDefault(pf.getProductCategory(), 0) + 1);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder("Média de notas em estrelas por categoria de produto:\n");
+        for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+            int count = contagem.getOrDefault(cat, 0);
+            if (count > 0) {
+                double media = Math.round((somaNotas.get(cat) / count) * 100.0) / 100.0;
+                sb.append(String.format("- %s: %.2f ⭐ (%d avaliações)\n", cat.getDescription(), media, count));
+            }
+        }
+        return sb.toString();
+    }
+
+    public Map<ProductFeedbackCategory, Double> calcularDistribuicaoCategoriasProdutoIndividual(UUID productId, LocalDateTime start, LocalDateTime end) {
+        List<ProductFeedback> feedbacks = feedbackRepository.findProductFeedbacksByProductAndPeriod(productId, start, end);
+        Map<ProductFeedbackCategory, Double> porcentagens = new HashMap<>();
+        if (feedbacks.isEmpty()) {
+            return porcentagens;
+        }
+
+        Map<ProductFeedbackCategory, Integer> contagem = new HashMap<>();
+        for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+            contagem.put(cat, 0);
+        }
+
+        int total = 0;
+        for (ProductFeedback pf : feedbacks) {
+            if (pf.getProductCategory() != null) {
+                contagem.put(pf.getProductCategory(), contagem.getOrDefault(pf.getProductCategory(), 0) + 1);
+                total++;
+            }
+        }
+
+        if (total > 0) {
+            for (ProductFeedbackCategory cat : ProductFeedbackCategory.values()) {
+                double pct = Math.round(((double) contagem.get(cat) / total) * 10000.0) / 100.0;
+                porcentagens.put(cat, pct);
+            }
+        }
+
+        return porcentagens;
+    }
+
+    public double[] calcularDistribuicaoEstrelasProduto(UUID productId, LocalDateTime start, LocalDateTime end) {
+        List<ProductFeedback> feedbacks = feedbackRepository.findProductFeedbacksByProductAndPeriod(productId, start, end);
+        if (feedbacks.isEmpty()) {
+            return new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
+        }
+
+        int[] contagem = new int[5]; // index 0=5 estrelas, 1=4 estrelas, 2=3 estrelas, 3=2 estrelas, 4=1 estrela
+        int total = 0;
+
+        for (ProductFeedback pf : feedbacks) {
+            if (pf.getRating() != null && pf.getRating() >= 1 && pf.getRating() <= 5) {
+                int starIdx = 5 - pf.getRating();
+                contagem[starIdx]++;
+                total++;
+            }
+        }
+
+        if (total == 0) {
+            return new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
+        }
+
+        double[] porcentagens = new double[5];
+        for (int i = 0; i < 5; i++) {
+            porcentagens[i] = Math.round(((double) contagem[i] / total) * 10000.0) / 100.0;
+        }
+
+        return porcentagens;
     }
 }

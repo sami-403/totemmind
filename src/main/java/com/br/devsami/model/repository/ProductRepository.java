@@ -105,6 +105,42 @@ public class ProductRepository {
         }
     }
 
+    public List<Product> findByNameContainingIgnoreCase(@NonNull String name) {
+        String cleanName = name.trim().toLowerCase()
+                .replace("á", "a").replace("à", "a").replace("ã", "a").replace("â", "a")
+                .replace("é", "e").replace("ê", "e").replace("í", "i")
+                .replace("ó", "o").replace("ô", "o").replace("õ", "o")
+                .replace("ú", "u").replace("ç", "c");
+
+        List<String> terms = new java.util.ArrayList<>();
+        terms.add(cleanName);
+        if (cleanName.contains("hamburguer") || cleanName.contains("burger") || cleanName.contains("burguer")) {
+            terms.add("burguer");
+            terms.add("burger");
+            terms.add("hamburguer");
+        }
+
+        try (EntityManager em = HibernateUtil.getEntityManager()) {
+            List<Product> all = em.createQuery("SELECT p FROM Product p", Product.class).getResultList();
+            List<Product> matches = new java.util.ArrayList<>();
+            for (Product p : all) {
+                String pNameClean = p.getName().toLowerCase()
+                        .replace("á", "a").replace("à", "a").replace("ã", "a").replace("â", "a")
+                        .replace("é", "e").replace("ê", "e").replace("í", "i")
+                        .replace("ó", "o").replace("ô", "o").replace("õ", "o")
+                        .replace("ú", "u").replace("ç", "c");
+
+                for (String term : terms) {
+                    if (pNameClean.contains(term)) {
+                        matches.add(p);
+                        break;
+                    }
+                }
+            }
+            return matches;
+        }
+    }
+
     public List<Product> findAll(){
         try(EntityManager em = HibernateUtil.getEntityManager();){
             return em.createQuery(
