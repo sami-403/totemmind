@@ -120,6 +120,16 @@ public class ChatAssistenteController implements ChartCallback {
                     dataList.add(new PieChart.Data(labels[i] + " (" + percentagens[i] + "%)", percentagens[i]));
                 }
             }
+        } else if (percentagens.length == 6) {
+            // Categorias de Atendimento: COURTESY, SPEED, COMMUNICATION, RESOLUTION, PRAISE, OTHER
+            String[] labels = {
+                    "Cortesia / Falta de Educação", "Agilidade / Tempo de Espera", "Comunicação / Clareza", "Resolução de Problemas", "Elogios Gerais", "Outros"
+            };
+            for (int i = 0; i < percentagens.length; i++) {
+                if (percentagens[i] > 0) {
+                    dataList.add(new PieChart.Data(labels[i] + " (" + percentagens[i] + "%)", percentagens[i]));
+                }
+            }
         } else if (percentagens.length == 5) {
             // Distribuição de Estrelas do Produto: 5 ⭐, 4 ⭐, 3 ⭐, 2 ⭐, 1 ⭐
             String[] labels = {"5 ⭐ (Excelente)", "4 ⭐ (Muito Bom)", "3 ⭐ (Bom)", "2 ⭐ (Ruim)", "1 ⭐ (Péssimo)"};
@@ -224,6 +234,72 @@ public class ChatAssistenteController implements ChartCallback {
                     countLabel.setStyle("-fx-text-fill: #aaaaaa; -fx-font-size: 13px;");
 
                     bottomRow.getChildren().addAll(starIcon, ratingLabel, countLabel);
+
+                    card.getChildren().addAll(topRow, bottomRow);
+                    cardsContainer.getChildren().add(card);
+                }
+            }
+
+            javafx.scene.control.ScrollPane scrollPane = new javafx.scene.control.ScrollPane(cardsContainer);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;");
+            VBox.setVgrow(scrollPane, javafx.scene.layout.Priority.ALWAYS);
+
+            painelGrafico.getChildren().addAll(titleLabel, scrollPane);
+        });
+    }
+
+    @Override
+    public void exibirCardsFuncionarios(String titulo, List<com.br.devsami.model.dto.EmployeeCardData> funcionarios) {
+        Platform.runLater(() -> {
+            painelGrafico.getChildren().clear();
+
+            javafx.scene.control.Label titleLabel = new javafx.scene.control.Label(titulo);
+            titleLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 0 0 10px 0;");
+
+            VBox cardsContainer = new VBox(12);
+            cardsContainer.setPadding(new javafx.geometry.Insets(5));
+
+            if (funcionarios == null || funcionarios.isEmpty()) {
+                javafx.scene.control.Label emptyLabel = new javafx.scene.control.Label("Nenhum funcionário a exibir.");
+                emptyLabel.setStyle("-fx-text-fill: #888888; -fx-font-size: 14px;");
+                cardsContainer.getChildren().add(emptyLabel);
+            } else {
+                for (com.br.devsami.model.dto.EmployeeCardData e : funcionarios) {
+                    VBox card = new VBox(8);
+                    card.setStyle("-fx-background-color: #2c2c2e; -fx-border-color: #444444; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-padding: 12px;");
+
+                    // Linha Superior: Nome e Tipo
+                    HBox topRow = new HBox(10);
+                    topRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+                    javafx.scene.control.Label nameLabel = new javafx.scene.control.Label(e.name());
+                    nameLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 15px; -fx-font-weight: bold; -fx-wrap-text: true;");
+                    HBox.setHgrow(nameLabel, javafx.scene.layout.Priority.ALWAYS);
+
+                    String tipoText = e.tipo() != null ? e.tipo().name() : "FUNCIONÁRIO";
+                    javafx.scene.control.Label typeLabel = new javafx.scene.control.Label(tipoText);
+                    typeLabel.setStyle("-fx-background-color: #2980b9; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 3px 8px; -fx-background-radius: 12px;");
+
+                    topRow.getChildren().addAll(nameLabel, typeLabel);
+
+                    // Linha Inferior: Satisfação e Total
+                    HBox bottomRow = new HBox(10);
+                    bottomRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+                    org.kordamp.ikonli.javafx.FontIcon happyIcon = new org.kordamp.ikonli.javafx.FontIcon("mdi-emoticon-happy");
+                    happyIcon.setIconColor(javafx.scene.paint.Color.web("#2ecc71"));
+                    happyIcon.setIconSize(16);
+
+                    String satText = String.format("%.1f%% Satisfeito", e.pctSatisfied());
+                    javafx.scene.control.Label satLabel = new javafx.scene.control.Label(satText);
+                    satLabel.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 13px; -fx-font-weight: bold;");
+
+                    String countText = String.format("(%d %s)", e.totalFeedbacks(), e.totalFeedbacks() == 1 ? "atendimento" : "atendimentos");
+                    javafx.scene.control.Label countLabel = new javafx.scene.control.Label(countText);
+                    countLabel.setStyle("-fx-text-fill: #aaaaaa; -fx-font-size: 13px;");
+
+                    bottomRow.getChildren().addAll(happyIcon, satLabel, countLabel);
 
                     card.getChildren().addAll(topRow, bottomRow);
                     cardsContainer.getChildren().add(card);

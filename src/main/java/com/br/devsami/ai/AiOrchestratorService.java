@@ -84,11 +84,12 @@ public class AiOrchestratorService {
         ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(15);
 
         historyService.obterUltimasMensagens(6).forEach((MensagemLog log) -> {
-            if (log.isUser()) {
-
-                chatMemory.add(new dev.langchain4j.data.message.UserMessage(log.texto()));
-            } else {
-                chatMemory.add(new dev.langchain4j.data.message.AiMessage(log.texto()));
+            if (log.texto() != null && !log.texto().isBlank()) {
+                if (log.isUser()) {
+                    chatMemory.add(new dev.langchain4j.data.message.UserMessage(log.texto()));
+                } else {
+                    chatMemory.add(new dev.langchain4j.data.message.AiMessage(log.texto()));
+                }
             }
         });
 
