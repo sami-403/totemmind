@@ -11,7 +11,7 @@ public class BarCodeValidator {
         String cleanBarCode = barCode.trim();
 
         if (!cleanBarCode.matches("\\d+")) {
-            throw  new IllegalArgumentException("O código de barras só pode possuir números");
+            throw new IllegalArgumentException("O código de barras só pode possuir números");
         }
 
         // Check length

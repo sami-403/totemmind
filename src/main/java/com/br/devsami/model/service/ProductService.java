@@ -81,6 +81,8 @@ public class ProductService {
             throw new IllegalArgumentException("Preço do Produto deve ser positivo");
         }
 
+        BarCodeValidator.validate(barCode);
+
         if (productRepository.existsByBarCode(barCode)) {
             throw new IllegalArgumentException("Já existe um produto com esse código de barras");
         }
@@ -106,6 +108,8 @@ public class ProductService {
         if (newPrice < 0) {
             throw new IllegalArgumentException("Preço do Produto deve ser positivo");
         }
+
+        BarCodeValidator.validate(newBarCode);
 
         if (productRepository.existsByBarCode(newBarCode) && !BarCodeValidator.compare(product.getBarCode(), newBarCode)) {
             throw new IllegalArgumentException("Já existe um produto com esse código de barras");
