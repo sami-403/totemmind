@@ -31,7 +31,7 @@ public abstract class Feedback {
     private String text;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Feeling feeling;
 
     @Enumerated(EnumType.STRING)
