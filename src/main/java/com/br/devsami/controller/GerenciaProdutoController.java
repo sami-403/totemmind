@@ -43,6 +43,7 @@ public class GerenciaProdutoController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         currentMode = "ADD";
+        formTitle.setText("Cadastrando novo Produto");
         managedProduct = null;
     }
 
