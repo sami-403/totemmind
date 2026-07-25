@@ -1,5 +1,6 @@
 package com.br.devsami.model.entity;
 
+import com.br.devsami.model.enums.ProductFeedbackCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,10 @@ public class ProductFeedback extends Feedback {
     @Column(name = "rating")
     private Integer rating;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_category")
+    private ProductFeedbackCategory productCategory;
+
     public Product getProduct() {
         return product;
     }
@@ -33,5 +38,13 @@ public class ProductFeedback extends Feedback {
 
     public void setRating(Integer rating) {
         this.rating = rating;
+    }
+
+    public ProductFeedbackCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductFeedbackCategory productCategory) {
+        this.productCategory = productCategory;
     }
 }

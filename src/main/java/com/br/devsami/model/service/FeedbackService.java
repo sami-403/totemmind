@@ -65,8 +65,15 @@ public class FeedbackService {
 
         if (text != null && !text.isBlank()) {
             classifyFeeling((Feedback) feedback, Feeling.NEUTRAL, text);
+            try {
+                var prodCategory = aiService.inferirCategoriaProduto(rating, text);
+                feedback.setProductCategory(prodCategory);
+            } catch (Exception e) {
+                System.err.println("⚠️ Erro ao inferir categoria de produto: " + e.getMessage());
+            }
         } else {
             feedback.setReasoning("Voto direto por estrelas sem texto");
+            feedback.setProductCategory(com.br.devsami.model.enums.ProductFeedbackCategory.OTHER);
         }
 
         feedbackRepository.save(feedback);

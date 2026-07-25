@@ -1,5 +1,6 @@
 package com.br.devsami.ai;
 
+import com.br.devsami.ai.systems.ProductSpecialist;
 import com.br.devsami.ai.systems.SentimentEspecialist;
 import com.br.devsami.ai.systems.SystemPrompt;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -10,6 +11,8 @@ import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 import com.br.devsami.infrastructure.config.ConfigManager;
 import com.br.devsami.model.enums.Feeling;
+import com.br.devsami.model.enums.ProductFeedbackCategory;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Properties;
@@ -19,7 +22,7 @@ import com.br.devsami.model.service.ChatHistoryService.MensagemLog;
 
 public class AiOrchestratorService {
 
-    // 1. Interface para feedbacks rápidos
+    // 1. Interface para feedbacks rápidos de atendimento
     public interface SentimentValidatorAi {
         @SystemMessage(SentimentEspecialist.SentimentPrompt)
         @UserMessage("Sentimento original: {{originalFeeling}}. Texto do feedback: {{feedbackText}}")
@@ -27,7 +30,15 @@ public class AiOrchestratorService {
                                   @V("feedbackText") String feedbackText);
     }
 
-    // 2. Interface para geração de gráficos e B.I
+    // 2. Interface para inferência rápida de categoria de produto
+    public interface ProductCategoryValidatorAi {
+        @SystemMessage(ProductSpecialist.ProductCategoryPrompt)
+        @UserMessage("Rating (estrelas): {{rating}}. Texto do feedback: {{feedbackText}}")
+        String validateProductCategory(@V("rating") String rating,
+                                      @V("feedbackText") String feedbackText);
+    }
+
+    // 3. Interface para geração de gráficos e B.I
     public interface TotemAssistant {
         @SystemMessage(SystemPrompt.PROMPT) // O prompt agora foca SÓ em BI
         String chat(@V("dataAtual") String dataAtual, @UserMessage String userMessage);
@@ -35,6 +46,7 @@ public class AiOrchestratorService {
 
     private final TotemAssistant assistant;
     private final SentimentValidatorAi sentimentValidator;
+    private final ProductCategoryValidatorAi productCategoryValidator;
 
     public AiOrchestratorService() {
         Properties props = ConfigManager.getInstance();
@@ -90,6 +102,10 @@ public class AiOrchestratorService {
         this.sentimentValidator = AiServices.builder(SentimentValidatorAi.class)
                 .chatModel(classificationModel)
                 .build();
+
+        this.productCategoryValidator = AiServices.builder(ProductCategoryValidatorAi.class)
+                .chatModel(classificationModel)
+                .build();
     }
 
     // Metodo para o BI (usado pelo gerente no dashboard)
@@ -115,6 +131,30 @@ public class AiOrchestratorService {
         } catch (Exception e) {
             System.err.println("⚠️ Erro ao processar sentimento da IA (resposta original: '" + rawResponse + "'): " + e.getMessage());
             return originalFeeling;
+        }
+    }
+
+    public ProductFeedbackCategory inferirCategoriaProduto(Integer rating, String text) {
+        if (text == null || text.isBlank()) {
+            return ProductFeedbackCategory.OTHER;
+        }
+        String rawResponse = null;
+        try {
+            String ratingStr = (rating != null) ? rating.toString() : "N/A";
+            rawResponse = productCategoryValidator.validateProductCategory(ratingStr, text);
+            if (rawResponse == null || rawResponse.isBlank()) {
+                return ProductFeedbackCategory.OTHER;
+            }
+
+            String cleanResponse = rawResponse.trim()
+                    .replaceAll("<\\|.*?\\|>", "")
+                    .replaceAll("[^a-zA-Z_]", "")
+                    .toUpperCase();
+
+            return ProductFeedbackCategory.valueOf(cleanResponse);
+        } catch (Exception e) {
+            System.err.println("⚠️ Erro ao inferir categoria de produto via IA (resposta original: '" + rawResponse + "'): " + e.getMessage());
+            return ProductFeedbackCategory.OTHER;
         }
     }
 }
