@@ -81,6 +81,29 @@ public class FeedbackRepository {
         }
     }
 
+    public List<EmployeeFeedback> findAllEmployeeFeedbacks() {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT f FROM EmployeeFeedback f", EmployeeFeedback.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<EmployeeFeedback> findAllEmployeeFeedbacksByPeriod(LocalDateTime start, LocalDateTime end) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT f FROM EmployeeFeedback f WHERE f.createdAt BETWEEN :start AND :end", EmployeeFeedback.class)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     // Busca os feedbacks pelo ID do produto (UUID)
     public List<ProductFeedback> findByProductId(UUID productId) {
         EntityManager em = HibernateUtil.getEntityManager();

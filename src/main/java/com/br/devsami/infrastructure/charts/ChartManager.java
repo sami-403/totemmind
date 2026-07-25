@@ -1,5 +1,6 @@
 package com.br.devsami.infrastructure.charts;
 
+import com.br.devsami.model.dto.EmployeeCardData;
 import com.br.devsami.model.dto.ProductCardData;
 import javafx.application.Platform;
 
@@ -28,6 +29,12 @@ public class ChartManager {
     public static void exibirCardsProdutos(String titulo, List<ProductCardData> produtos) {
         if (telaCallback != null) {
             Platform.runLater(() -> telaCallback.exibirCardsProdutos(titulo, produtos));
+        }
+    }
+
+    public static void exibirCardsFuncionarios(String titulo, List<EmployeeCardData> funcionarios) {
+        if (telaCallback != null) {
+            Platform.runLater(() -> telaCallback.exibirCardsFuncionarios(titulo, funcionarios));
         }
     }
 }

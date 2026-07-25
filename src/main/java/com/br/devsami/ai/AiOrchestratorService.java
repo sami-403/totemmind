@@ -81,14 +81,15 @@ public class AiOrchestratorService {
         // CARREGAMENTO DO HISTÓRICO DE MEMÓRIA
 
         ChatHistoryService historyService = new ChatHistoryService();
-        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(15);
+        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(10);
 
-        historyService.obterUltimasMensagens(6).forEach((MensagemLog log) -> {
-            if (log.isUser()) {
-
-                chatMemory.add(new dev.langchain4j.data.message.UserMessage(log.texto()));
-            } else {
-                chatMemory.add(new dev.langchain4j.data.message.AiMessage(log.texto()));
+        historyService.obterUltimasMensagens(4).forEach((MensagemLog log) -> {
+            if (log.texto() != null && !log.texto().isBlank()) {
+                if (log.isUser()) {
+                    chatMemory.add(new dev.langchain4j.data.message.UserMessage(log.texto()));
+                } else {
+                    chatMemory.add(new dev.langchain4j.data.message.AiMessage(log.texto()));
+                }
             }
         });
 
@@ -98,7 +99,7 @@ public class AiOrchestratorService {
 
         // Modelo 1: Focado em Chat e BI
         OllamaChatModel biModel = OllamaChatModel.builder()
-                .baseUrl(baseUrl).modelName(modelBase).temperature(0.2).timeout(Duration.ofSeconds(150)).build();
+                .baseUrl(baseUrl).modelName(modelBase).numCtx(4096).temperature(0.2).timeout(Duration.ofSeconds(150)).build();
 
         this.assistant = AiServices.builder(TotemAssistant.class)
                 .chatModel(biModel)
@@ -125,7 +126,15 @@ public class AiOrchestratorService {
 
     // Metodo para o BI (usado pelo gerente no dashboard)
     public String processMessage(String message) {
-        return assistant.chat(LocalDate.now().toString(), message);
+        String response = assistant.chat(LocalDate.now().toString(), message);
+        if (response != null) {
+            response = response.replaceAll("\\*\\*", "")
+                               .replaceAll("`", "")
+                               .replaceAll("#", "")
+                               .replaceAll("\\(ID do BD:[^)]*\\)", "")
+                               .replaceAll("\\[DB_ID:[^\\]]*\\]", "");
+        }
+        return response;
     }
 
     public Feeling classificarSentimento(Feeling originalFeeling, String text) {

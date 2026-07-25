@@ -54,7 +54,7 @@ public class TotemTools {
          * 3. Tool converte datas, calcula as porcentagens e já devolve a string pronta.
          * 4. IA apenas repassa essa string pro JavaFX interceptar e desenhar o gráfico.
          */
-        @Tool("Calcula os dados de satisfação e já gera o comando do gráfico. O employeeId é OBRIGATÓRIO. startDate e endDate são OPCIONAIS (YYYY-MM-DD ou 'null').")
+        @Tool("Gera o gráfico de PIZZA com a DISTRIBUIÇÃO GERAL DE SATISFAÇÃO (Satisfeito, Neutro, Insatisfeito) de um funcionário. O employeeId é OBRIGATÓRIO. Datas opcionais.")
         public String gerarRelatorioDeSatisfacao(Long employeeId, String startDate, String endDate) {
                 Employee employee = employeeRepository.findById(employeeId).orElse(null);
                 if (employee == null || !employee.isAtivo()) {
@@ -71,14 +71,15 @@ public class TotemTools {
 
                 // Processamento direto (sem devolver vetor solto pra IA)
                 double[] percentagens = analyticsService.calcularPercentagens(employeeId, start, end);
+                if (percentagens[0] == 0.0 && percentagens[1] == 0.0 && percentagens[2] == 0.0) {
+                        return "[SEM_DADOS]";
+                }
 
                 String nomeFuncionario = employee.getName();
+                ChartManager.exibirPizza("Satisfação - " + nomeFuncionario, percentagens);
 
-                ChartManager.exibirPizza(nomeFuncionario,percentagens);
-
-
-                return "Gráfico gerado para %s: %.2f%% satisfação, %.2f%% neutralidade e %.2f%% insatisfação."
-                        .formatted(nomeFuncionario, percentagens[0], percentagens[1], percentagens[2]);
+                return String.format("Gráfico de Pizza gerado na tela para %s: %.2f%% satisfação, %.2f%% neutralidade e %.2f%% insatisfação.",
+                        nomeFuncionario, percentagens[0], percentagens[1], percentagens[2]);
         }
 
         // Tool responsavel por pegar o funcionário com maior indece de X sentimento
@@ -96,7 +97,7 @@ public class TotemTools {
                 return analyticsService.obterMaiorTaxa(todos, indice, start, end);
         }
 
-        @Tool("Gera gráfico de LINHAS de evolução temporal. employeeId é OBRIGATÓRIO. startDate e endDate são OPCIONAIS.")
+        @Tool("Gera o gráfico de LINHAS com a EVOLUÇÃO TEMPORAL ao longo dos dias de um funcionário. O employeeId é OBRIGATÓRIO. Datas opcionais.")
         public String gerarGraficoEvolucaoTemporal(Long employeeId, String startDate, String endDate) {
                 Employee employee = employeeRepository.findById(employeeId).orElse(null);
                 if (employee == null || !employee.isAtivo()) {
@@ -312,5 +313,104 @@ public class TotemTools {
                 }
 
                 return sb.toString();
+        }
+
+        @Tool("Gera gráfico de PIZZA com a distribuição GERAL de categorias de atendimento de toda a equipe (Cortesia, Agilidade, Comunicação, Resolução, Elogios, Outros). Datas opcionais.")
+        public String gerarGraficoGeralCategoriasAtendimento(String startDate, String endDate) {
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Double> distribuicao = analyticsService.calcularDistribuicaoCategoriasAtendimentoGeral(start, end);
+                if (distribuicao.isEmpty()) {
+                        return "Nenhum feedback de atendimento cadastrado no período para gerar gráfico.";
+                }
+
+                double[] percentagens = new double[com.br.devsami.model.enums.EmployeeFeedbackCategory.values().length];
+                int idx = 0;
+                for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+                        percentagens[idx++] = distribuicao.getOrDefault(cat, 0.0);
+                }
+
+                ChartManager.exibirPizza("Distribuição Geral de Categorias de Atendimento", percentagens);
+
+                StringBuilder sb = new StringBuilder("Gráfico de Pizza gerado na tela com a distribuição das categorias de atendimento:\n");
+                for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+                        sb.append(String.format("- %s: %.2f%%\n", cat.getDescription(), distribuicao.getOrDefault(cat, 0.0)));
+                }
+
+                return sb.toString();
+        }
+
+        @Tool("Gera gráfico de PIZZA com a distribuição das categorias de atendimento para UM FUNCIONÁRIO ESPECÍFICO (Cortesia, Agilidade, Comunicação, Resolução, Elogios, Outros). O employeeId é OBRIGATÓRIO. Datas opcionais.")
+        public String gerarGraficoCategoriasDoFuncionario(Long employeeId, String startDate, String endDate) {
+                Employee employee = employeeRepository.findById(employeeId).orElse(null);
+                if (employee == null) {
+                        return "Funcionário inativo ou não encontrado no sistema.";
+                }
+
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Double> distribuicao = analyticsService.calcularDistribuicaoCategoriasAtendimentoIndividual(employeeId, start, end);
+                if (distribuicao.isEmpty()) {
+                        return "Nenhum feedback registrado para o funcionário '" + employee.getName() + "' no período.";
+                }
+
+                double[] percentagens = new double[com.br.devsami.model.enums.EmployeeFeedbackCategory.values().length];
+                int idx = 0;
+                for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+                        percentagens[idx++] = distribuicao.getOrDefault(cat, 0.0);
+                }
+
+                String titulo = "Categorias - " + employee.getName();
+                ChartManager.exibirPizza(titulo, percentagens);
+
+                StringBuilder sb = new StringBuilder("Gráfico de Pizza gerado na tela para o funcionário '" + employee.getName() + "':\n");
+                for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+                        sb.append(String.format("- %s: %.2f%%\n", cat.getDescription(), distribuicao.getOrDefault(cat, 0.0)));
+                }
+
+                return sb.toString();
+        }
+
+        @Tool("Busca funcionários ativos por FAIXA DE SATISFAÇÃO (percentual de 0 a 100). Exibe CARDS VISUAIS no painel lateral. Datas opcionais.")
+        public String buscarFuncionariosPorFaixaDeSatisfacao(Double minPercent, Double maxPercent, String startDate, String endDate) {
+                double min = minPercent != null ? minPercent : 0.0;
+                double max = maxPercent != null ? maxPercent : 100.0;
+
+                LocalDateTime start = (startDate != null && !startDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(startDate).atStartOfDay()
+                                : null;
+                LocalDateTime end = (endDate != null && !endDate.equalsIgnoreCase("null"))
+                                ? LocalDate.parse(endDate).atTime(LocalTime.MAX)
+                                : null;
+
+                List<Employee> todos = employeeRepository.findAllActive();
+                com.br.devsami.model.repository.FeedbackRepository feedbackRepo = new com.br.devsami.model.repository.FeedbackRepository();
+                List<com.br.devsami.model.dto.EmployeeCardData> cardList = new java.util.ArrayList<>();
+
+                for (Employee e : todos) {
+                        double[] taxas = analyticsService.calcularPercentagens(e.getId(), start, end);
+                        double sat = taxas[0];
+                        if (sat >= min && sat <= max) {
+                                List<com.br.devsami.model.entity.EmployeeFeedback> fbs = (start != null && end != null)
+                                                ? feedbackRepo.findByEmployeeAndPeriod(e.getId(), start, end)
+                                                : feedbackRepo.findByEmployeeId(e.getId());
+                                cardList.add(new com.br.devsami.model.dto.EmployeeCardData(e.getId(), e.getName(), e.getTipo(), sat, taxas[1], taxas[2], fbs.size()));
+                        }
+                }
+
+                String titulo = String.format("Funcionários com Satisfação %.0f%% a %.0f%%", min, max);
+                ChartManager.exibirCardsFuncionarios(titulo, cardList);
+
+                return analyticsService.obterFuncionariosPorFaixaDeSatisfacao(min, max, start, end);
         }
 }

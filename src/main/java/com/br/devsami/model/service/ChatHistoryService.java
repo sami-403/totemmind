@@ -22,7 +22,9 @@ public class ChatHistoryService {
         List<MensagemLog> historico = carregarEFiltrarHistorico();
         String hoje = LocalDate.now().toString();
 
-        novasMensagens.forEach(m -> historico.add(new MensagemLog(hoje, m.text(), m.isUser())));
+        novasMensagens.stream()
+                .filter(m -> m.text() != null && !m.text().isBlank())
+                .forEach(m -> historico.add(new MensagemLog(hoje, m.text(), m.isUser())));
 
         try {
             Files.createDirectories(path.getParent());

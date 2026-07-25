@@ -272,4 +272,100 @@ public class FeedbackAnalyticsService {
 
         return porcentagens;
     }
+
+    public Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Double> calcularDistribuicaoCategoriasAtendimentoGeral(LocalDateTime start, LocalDateTime end) {
+        List<EmployeeFeedback> feedbacks = (start != null && end != null)
+                ? feedbackRepository.findAllEmployeeFeedbacksByPeriod(start, end)
+                : feedbackRepository.findAllEmployeeFeedbacks();
+
+        Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Double> porcentagens = new HashMap<>();
+        if (feedbacks.isEmpty()) {
+            return porcentagens;
+        }
+
+        Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Integer> contagem = new HashMap<>();
+        for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+            contagem.put(cat, 0);
+        }
+
+        int total = 0;
+        for (EmployeeFeedback ef : feedbacks) {
+            if (ef.getEmployeeCategory() != null) {
+                contagem.put(ef.getEmployeeCategory(), contagem.getOrDefault(ef.getEmployeeCategory(), 0) + 1);
+                total++;
+            }
+        }
+
+        if (total > 0) {
+            for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+                double pct = Math.round(((double) contagem.get(cat) / total) * 10000.0) / 100.0;
+                porcentagens.put(cat, pct);
+            }
+        }
+
+        return porcentagens;
+    }
+
+    public Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Double> calcularDistribuicaoCategoriasAtendimentoIndividual(Long employeeId, LocalDateTime start, LocalDateTime end) {
+        List<EmployeeFeedback> feedbacks = (start != null && end != null)
+                ? feedbackRepository.findByEmployeeAndPeriod(employeeId, start, end)
+                : feedbackRepository.findByEmployeeId(employeeId);
+
+        Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Double> porcentagens = new HashMap<>();
+        if (feedbacks.isEmpty()) {
+            return porcentagens;
+        }
+
+        Map<com.br.devsami.model.enums.EmployeeFeedbackCategory, Integer> contagem = new HashMap<>();
+        for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+            contagem.put(cat, 0);
+        }
+
+        int total = 0;
+        for (EmployeeFeedback ef : feedbacks) {
+            if (ef.getEmployeeCategory() != null) {
+                contagem.put(ef.getEmployeeCategory(), contagem.getOrDefault(ef.getEmployeeCategory(), 0) + 1);
+                total++;
+            }
+        }
+
+        if (total > 0) {
+            for (com.br.devsami.model.enums.EmployeeFeedbackCategory cat : com.br.devsami.model.enums.EmployeeFeedbackCategory.values()) {
+                double pct = Math.round(((double) contagem.get(cat) / total) * 10000.0) / 100.0;
+                porcentagens.put(cat, pct);
+            }
+        }
+
+        return porcentagens;
+    }
+
+    public String obterFuncionariosPorFaixaDeSatisfacao(double minPercent, double maxPercent, LocalDateTime start, LocalDateTime end) {
+        com.br.devsami.model.repository.EmployeeRepository employeeRepo = new com.br.devsami.model.repository.EmployeeRepository();
+        List<Employee> todos = employeeRepo.findAllActive();
+        if (todos.isEmpty()) {
+            return "Nenhum funcionário ativo encontrado.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+
+        for (Employee e : todos) {
+            double[] taxas = calcularPercentagens(e.getId(), start, end);
+            double sat = taxas[0]; // 0 = Satisfação
+            if (sat >= minPercent && sat <= maxPercent) {
+                count++;
+                List<EmployeeFeedback> fbs = (start != null && end != null)
+                        ? feedbackRepository.findByEmployeeAndPeriod(e.getId(), start, end)
+                        : feedbackRepository.findByEmployeeId(e.getId());
+                sb.append(String.format("- %s (ID do BD: %d - %s): %.2f%% de Satisfação (%d atendimentos)\n",
+                        e.getName(), e.getId(), e.getTipo(), sat, fbs.size()));
+            }
+        }
+
+        if (count == 0) {
+            return String.format("Nenhum funcionário encontrado com taxa de satisfação entre %.1f%% e %.1f%%.", minPercent, maxPercent);
+        }
+
+        return String.format("Funcionários com taxa de satisfação entre %.1f%% e %.1f%% (%d encontrados):\n%s", minPercent, maxPercent, count, sb.toString());
+    }
 }
