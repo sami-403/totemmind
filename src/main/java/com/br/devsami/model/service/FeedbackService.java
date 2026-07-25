@@ -48,7 +48,7 @@ public class FeedbackService {
     public ProductFeedback createProductFeedback(
             User user,
             Product product,
-            Feeling feeling,
+            Integer rating,
             FeedbackCategory category,
             String text) {
 
@@ -59,13 +59,27 @@ public class FeedbackService {
         var feedback = new ProductFeedback();
         feedback.setUser(user);
         feedback.setProduct(product);
+        feedback.setRating(rating);
         feedback.setCategory(category);
         feedback.setText(text);
 
-        classifyFeeling((Feedback) feedback, feeling, text);
+        if (text != null && !text.isBlank()) {
+            classifyFeeling((Feedback) feedback, Feeling.NEUTRAL, text);
+        } else {
+            feedback.setReasoning("Voto direto por estrelas sem texto");
+        }
 
         feedbackRepository.save(feedback);
         return feedback;
+    }
+
+    public ProductFeedback createProductFeedback(
+            User user,
+            Product product,
+            Feeling feeling,
+            FeedbackCategory category,
+            String text) {
+        return createProductFeedback(user, product, (Integer) null, category, text);
     }
 
     private void classifyFeeling(Feedback feedback, Feeling feeling, String text) {

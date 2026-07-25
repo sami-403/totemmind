@@ -105,4 +105,9 @@ public class FeedbackAnalyticsService {
         }
         return evolucao;
     }
+
+    public double obterMediaEstrelasProduto(Long productId) {
+        Double media = feedbackRepository.findAverageRatingByProduct(productId);
+        return Math.round(media * 100.0) / 100.0;
+    }
 }
