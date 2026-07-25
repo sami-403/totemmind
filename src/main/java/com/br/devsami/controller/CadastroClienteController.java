@@ -27,10 +27,15 @@ public class CadastroClienteController {
 
     private UserService userService;
     private boolean isEditMode = false;
+    private boolean isFromAdminMode = false;
     private User selectedUser;
 
     public void initialize() {
         this.userService = new UserService();
+    }
+
+    public void setFromAdminMode(boolean fromAdminMode) {
+        this.isFromAdminMode = fromAdminMode;
     }
 
     public void setCpf(String cpf) {
@@ -97,13 +102,16 @@ public class CadastroClienteController {
 
     private void createUser(ActionEvent event, UserFormData userData) throws IOException {
         userService.createUser(userData.nome, userData.cpf, userData.nascimento);
-        showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Cadastrado com sucesso.");;
+        showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Cadastrado com sucesso.");
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FeedbackMenu.fxml"));
+        String targetFxml = isFromAdminMode ? "/fxml/ListaClientes.fxml" : "/fxml/FeedbackMenu.fxml";
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(targetFxml));
         Parent root = loader.load();
 
-        FeedbackMenuController controller = loader.getController();
-        controller.setCpfCliente(userData.cpf);
+        if (!isFromAdminMode) {
+            FeedbackMenuController controller = loader.getController();
+            controller.setCpfCliente(userData.cpf);
+        }
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root, 800, 600));
@@ -111,7 +119,7 @@ public class CadastroClienteController {
 
     private void editUser(ActionEvent event, UserFormData userData) throws IOException {
         userService.editUser(selectedUser.getId(), userData.nome, userData.cpf, userData.nascimento);
-        showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Cliente Atualizado com sucesso");;
+        showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Cliente Atualizado com sucesso");
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ListaClientes.fxml"));
         Parent root = loader.load();
@@ -123,7 +131,8 @@ public class CadastroClienteController {
     @FXML
     void voltar(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/TelaAvaliacao.fxml")));
+            String targetFxml = isFromAdminMode ? "/fxml/ListaClientes.fxml" : "/fxml/TelaAvaliacao.fxml";
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(targetFxml)));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
