@@ -2,7 +2,8 @@ package com.br.devsami.model.enums;
 
 public enum EmployeeType {
     VENDEDOR("vendedor"),
-    GERENTE("gerente");
+    GERENTE("gerente"),
+    CAIXA("caixa");
 
     private final String tipo;
 
