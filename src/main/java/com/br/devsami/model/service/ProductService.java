@@ -2,11 +2,9 @@ package com.br.devsami.model.service;
 
 import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.repository.ProductRepository;
+import com.br.devsami.util.BarCodeValidator;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class ProductService {
     private final ProductRepository productRepository;
@@ -83,13 +81,15 @@ public class ProductService {
             throw new IllegalArgumentException("Preço do Produto deve ser positivo");
         }
 
+        BarCodeValidator.validate(barCode);
+
         if (productRepository.existsByBarCode(barCode)) {
             throw new IllegalArgumentException("Já existe um produto com esse código de barras");
         }
 
         var product = new Product();
         product.setName(name);
-        product.setBarCode(barCode);
+        product.setBarCode(!barCode.isEmpty() ? barCode: null);
         product.setPrice(BigDecimal.valueOf(price));
 
         productRepository.save(product);
@@ -109,12 +109,14 @@ public class ProductService {
             throw new IllegalArgumentException("Preço do Produto deve ser positivo");
         }
 
-        if (productRepository.existsByBarCode(newBarCode) && !product.getBarCode().equals(newBarCode.strip())) {
+        BarCodeValidator.validate(newBarCode);
+
+        if (productRepository.existsByBarCode(newBarCode) && !BarCodeValidator.compare(product.getBarCode(), newBarCode)) {
             throw new IllegalArgumentException("Já existe um produto com esse código de barras");
         }
 
         product.setName(newName);
-        product.setBarCode(newBarCode);
+        product.setBarCode(!BarCodeValidator.isEmptyOrNull(newBarCode) ? newBarCode : null);
         product.setPrice(BigDecimal.valueOf(newPrice));
 
         productRepository.update(product);

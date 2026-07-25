@@ -35,7 +35,8 @@ public class GerenciaProdutoController implements Initializable {
         double price;
 
         private ProductFormData(String name, String barCode, String price){
-            this.name=name; this.barCode = barCode; this.price = Double.parseDouble(price);
+            this.name=name; this.barCode = barCode;
+            this.price = Double.parseDouble(!price.isEmpty() ? price : "0");
         }
     }
 
@@ -43,6 +44,7 @@ public class GerenciaProdutoController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         currentMode = "ADD";
+        formTitle.setText("Cadastrando novo Produto");
         managedProduct = null;
     }
 
@@ -54,7 +56,7 @@ public class GerenciaProdutoController implements Initializable {
             this.currentMode = "EDIT";
 
             formTitle.setText("Atualizando Produto");
-            barCodeField.setText(managedProduct.getBarCode());
+            barCodeField.setText(managedProduct.getBarCode() != null ? managedProduct.getBarCode() : "");
             nameField.setText(managedProduct.getName());
             priceField.setText(String.valueOf(managedProduct.getPrice()));
             actionButton.setText("Salvar Alterações");
@@ -70,7 +72,7 @@ public class GerenciaProdutoController implements Initializable {
     }
 
     @FXML
-    private void handleAction() {
+    private void handleAction(ActionEvent event) {
         try {
             ProductFormData newProduct = getFormData();
             switch (currentMode) {
@@ -83,8 +85,9 @@ public class GerenciaProdutoController implements Initializable {
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Produto atualizado!");
                 }
             }
+            voltar(event);
         } catch (IllegalArgumentException e){
-            showAlert(Alert.AlertType.WARNING, "Erro de Validação", "Campos com valores inválidos ou nulos! Preencha-os e tente novamente");
+            showAlert(Alert.AlertType.WARNING, "Erro de Validação", "Campos Inválidos: " + e.getMessage());
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
         }

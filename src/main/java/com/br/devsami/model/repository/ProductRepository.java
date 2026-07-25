@@ -2,6 +2,7 @@ package com.br.devsami.model.repository;
 
 import com.br.devsami.model.entity.Product;
 import com.br.devsami.infrastructure.persistence.HibernateUtil;
+import com.br.devsami.util.BarCodeValidator;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 
@@ -84,7 +85,9 @@ public class ProductRepository {
         }
     }
 
-    public boolean existsByBarCode(@NonNull String barCode){
+    public boolean existsByBarCode(String barCode){
+        if(BarCodeValidator.isEmptyOrNull(barCode)) return false;
+
         try(EntityManager em = HibernateUtil.getEntityManager();){
            Long count = em.createQuery(
                             "SELECT COUNT(p) FROM Product p WHERE p.barCode LIKE :barCode",
