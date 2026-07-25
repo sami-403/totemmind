@@ -85,7 +85,7 @@ public class GerenciaProdutoController implements Initializable {
                 }
             }
         } catch (IllegalArgumentException e){
-            showAlert(Alert.AlertType.WARNING, "Erro de Validação", "Campos com valores inválidos ou nulos! Preencha-os e tente novamente");
+            showAlert(Alert.AlertType.WARNING, "Erro de Validação", e.getMessage());
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
         }
