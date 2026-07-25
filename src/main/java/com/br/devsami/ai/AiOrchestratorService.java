@@ -1,5 +1,6 @@
 package com.br.devsami.ai;
 
+import com.br.devsami.ai.systems.EmployeeSpecialist;
 import com.br.devsami.ai.systems.ProductSpecialist;
 import com.br.devsami.ai.systems.SentimentEspecialist;
 import com.br.devsami.ai.systems.SystemPrompt;
@@ -10,6 +11,7 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 import com.br.devsami.infrastructure.config.ConfigManager;
+import com.br.devsami.model.enums.EmployeeFeedbackCategory;
 import com.br.devsami.model.enums.Feeling;
 import com.br.devsami.model.enums.ProductFeedbackCategory;
 
@@ -38,7 +40,15 @@ public class AiOrchestratorService {
                                       @V("feedbackText") String feedbackText);
     }
 
-    // 3. Interface para geração de gráficos e B.I
+    // 3. Interface para inferência rápida de categoria de atendimento ao cliente (Employee)
+    public interface EmployeeCategoryValidatorAi {
+        @SystemMessage(EmployeeSpecialist.EmployeeCategoryPrompt)
+        @UserMessage("Feeling: {{feeling}}. Texto do feedback: {{feedbackText}}")
+        String validateEmployeeCategory(@V("feeling") String feeling,
+                                       @V("feedbackText") String feedbackText);
+    }
+
+    // 4. Interface para geração de gráficos e B.I
     public interface TotemAssistant {
         @SystemMessage(SystemPrompt.PROMPT) // O prompt agora foca SÓ em BI
         String chat(@V("dataAtual") String dataAtual, @UserMessage String userMessage);
@@ -47,6 +57,7 @@ public class AiOrchestratorService {
     private final TotemAssistant assistant;
     private final SentimentValidatorAi sentimentValidator;
     private final ProductCategoryValidatorAi productCategoryValidator;
+    private final EmployeeCategoryValidatorAi employeeCategoryValidator;
 
     public AiOrchestratorService() {
         Properties props = ConfigManager.getInstance();
@@ -106,6 +117,10 @@ public class AiOrchestratorService {
         this.productCategoryValidator = AiServices.builder(ProductCategoryValidatorAi.class)
                 .chatModel(classificationModel)
                 .build();
+
+        this.employeeCategoryValidator = AiServices.builder(EmployeeCategoryValidatorAi.class)
+                .chatModel(classificationModel)
+                .build();
     }
 
     // Metodo para o BI (usado pelo gerente no dashboard)
@@ -155,6 +170,30 @@ public class AiOrchestratorService {
         } catch (Exception e) {
             System.err.println("⚠️ Erro ao inferir categoria de produto via IA (resposta original: '" + rawResponse + "'): " + e.getMessage());
             return ProductFeedbackCategory.OTHER;
+        }
+    }
+
+    public EmployeeFeedbackCategory inferirCategoriaAtendimento(Feeling feeling, String text) {
+        if (text == null || text.isBlank()) {
+            return EmployeeFeedbackCategory.OTHER;
+        }
+        String rawResponse = null;
+        try {
+            String feelingStr = (feeling != null) ? feeling.name() : "NEUTRAL";
+            rawResponse = employeeCategoryValidator.validateEmployeeCategory(feelingStr, text);
+            if (rawResponse == null || rawResponse.isBlank()) {
+                return EmployeeFeedbackCategory.OTHER;
+            }
+
+            String cleanResponse = rawResponse.trim()
+                    .replaceAll("<\\|.*?\\|>", "")
+                    .replaceAll("[^a-zA-Z_]", "")
+                    .toUpperCase();
+
+            return EmployeeFeedbackCategory.valueOf(cleanResponse);
+        } catch (Exception e) {
+            System.err.println("⚠️ Erro ao inferir categoria de atendimento via IA (resposta original: '" + rawResponse + "'): " + e.getMessage());
+            return EmployeeFeedbackCategory.OTHER;
         }
     }
 }
