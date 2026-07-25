@@ -71,7 +71,7 @@ public class GerenciaProdutoController implements Initializable {
     }
 
     @FXML
-    private void handleAction() {
+    private void handleAction(ActionEvent event) {
         try {
             ProductFormData newProduct = getFormData();
             switch (currentMode) {
@@ -84,6 +84,7 @@ public class GerenciaProdutoController implements Initializable {
                     showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Produto atualizado!");
                 }
             }
+            voltar(event);
         } catch (IllegalArgumentException e){
             showAlert(Alert.AlertType.WARNING, "Erro de Validação", e.getMessage());
         } catch (Exception e) {
