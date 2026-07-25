@@ -35,7 +35,8 @@ public class GerenciaProdutoController implements Initializable {
         double price;
 
         private ProductFormData(String name, String barCode, String price){
-            this.name=name; this.barCode = barCode; this.price = Double.parseDouble(price);
+            this.name=name; this.barCode = barCode;
+            this.price = Double.parseDouble(!price.isEmpty() ? price : "0");
         }
     }
 
