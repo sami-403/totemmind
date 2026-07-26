@@ -68,6 +68,10 @@ public class ListaProdutosController implements Initializable {
             return null;
         });
 
+        if(listView.getItems().isEmpty()){
+            listView.setPlaceholder(new Label("Não há produtos cadastrados no banco de dados"));
+        }
+
         return listView;
     }
 
