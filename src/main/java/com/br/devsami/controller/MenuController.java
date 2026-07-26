@@ -31,7 +31,7 @@ public class MenuController {
     }
 
     @FXML
-    void abrirTelaFuncionarios(ActionEvent event) {
+    void abrirTelaGerencia(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AdminLogin.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -57,28 +57,6 @@ public class MenuController {
     void abrirConfiguracoesIA(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AiConfig.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void abrirListaProdutos(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/ListaProdutos.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void abrirListaClientes(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/ListaClientes.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
