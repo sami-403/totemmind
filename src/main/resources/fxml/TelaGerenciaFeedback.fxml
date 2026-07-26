@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.TelaGerenciaFeedbackController">
+
+    <VBox alignment="TOP_CENTER" spacing="15.0">
+        <padding>
+            <Insets top="20.0" left="20.0" right="20.0" bottom="20.0"/>
+        </padding>
+
+        <!-- CABEÇALHO PADRÃO COM BOTÃO VOLTAR E LOGO DESTACADA -->
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 42px; -fx-min-height: 42px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="22"/>
+                    </graphic>
+                </Button>
+            </left>
+            <center>
+                <ImageView fitHeight="120.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../images/totemMind_logo.png"/>
+                </ImageView>
+            </center>
+        </BorderPane>
+
+        <!-- ESTRUTURA DIVIDIDA RESPONSIVA E INTERATIVA (SPLIT PANE) -->
+        <SplitPane dividerPositions="0.46" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color: transparent; -fx-box-border: transparent; -fx-padding: 0;">
+            
+            <!-- LADO ESQUERDO RESPONSIVO: LISTAGEM DE FEEDBACKS -->
+            <VBox spacing="10.0" minWidth="260.0">
+                <padding>
+                    <Insets right="10.0"/>
+                </padding>
+
+                <Label text="Feedbacks Cadastrados" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <!-- BARRA DE FILTROS RÁPIDOS RESPONSIVA -->
+                <HBox spacing="6.0" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="cbFilterTipo" promptText="Tipo" prefWidth="110.0" minHeight="36.0"
+                              style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    <ComboBox fx:id="cbFilterSentimento" promptText="Sentimento" prefWidth="120.0" minHeight="36.0"
+                              style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    <TextField fx:id="txtBusca" promptText="Buscar..." HBox.hgrow="ALWAYS" minHeight="36.0"
+                               style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 6px 10px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                </HBox>
+
+                <!-- TABELA DE FEEDBACKS COM REDIMENSIONAMENTO AUTOMÁTICO DAS COLUNAS (CONSTRAINED_RESIZE_POLICY) -->
+                <TableView fx:id="tvFeedbacks" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: #333333; -fx-text-fill: white;">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colData" text="Data" minWidth="70.0" prefWidth="75.0" />
+                        <TableColumn fx:id="colTipo" text="Tipo" minWidth="65.0" prefWidth="75.0" />
+                        <TableColumn fx:id="colAlvo" text="Alvo" minWidth="80.0" prefWidth="95.0" />
+                        <TableColumn fx:id="colCliente" text="Cliente" minWidth="75.0" prefWidth="85.0" />
+                        <TableColumn fx:id="colSentimento" text="Sentimento / Nota" minWidth="85.0" prefWidth="95.0" />
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- LADO DIREITO RESPONSIVO: BOTÕES DE AÇÃO E FORMULÁRIO COMPLETO -->
+            <VBox spacing="10.0" minWidth="280.0" alignment="TOP_CENTER">
+                <padding>
+                    <Insets left="10.0"/>
+                </padding>
+
+                <HBox spacing="8.0" alignment="CENTER" maxWidth="Infinity">
+                    <Button onAction="#setModeAdd" text="Adicionar" maxWidth="Infinity" HBox.hgrow="ALWAYS" minHeight="38.0"
+                            style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 6px;">
+                        <graphic><FontIcon iconLiteral="mdi-plus" iconColor="white" iconSize="16"/></graphic>
+                    </Button>
+                    <Button onAction="#setModeEdit" text="Editar" maxWidth="Infinity" HBox.hgrow="ALWAYS" minHeight="38.0"
+                            style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 6px;">
+                        <graphic><FontIcon iconLiteral="mdi-pencil" iconColor="white" iconSize="16"/></graphic>
+                    </Button>
+                    <Button onAction="#setModeRemove" text="Remover" maxWidth="Infinity" HBox.hgrow="ALWAYS" minHeight="38.0"
+                            style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 6px;">
+                        <graphic><FontIcon iconLiteral="mdi-delete" iconColor="white" iconSize="16"/></graphic>
+                    </Button>
+                </HBox>
+
+                <!-- CONTAINER DO FORMULÁRIO DE CRIÇÃO E EDIÇÃO -->
+                <VBox fx:id="formContainer" spacing="8.0" maxWidth="Infinity" visible="false" managed="false">
+                    <Label fx:id="formTitle" text="Formulário de Feedback" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+                    <!-- TIPO DE FEEDBACK (EXIBIDO NO MODO ADICIONAR) -->
+                    <VBox fx:id="boxTipoFeedback" spacing="4.0" visible="false" managed="false">
+                        <Label text="Tipo de Feedback:" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="cbTipoFeedback" promptText="Selecione o Tipo" maxWidth="Infinity" minHeight="34.0"
+                                  style="-fx-background-color: #333333; -fx-text-fill: white; -fx-padding: 4px 8px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    </VBox>
+
+                    <!-- PAINEL DE SELEÇÃO DA DATA E HORA DO FEEDBACK -->
+                    <Label text="Data e Hora do Registro:" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                    <HBox spacing="8.0" alignment="CENTER_LEFT">
+                        <DatePicker fx:id="dpData" promptText="Selecione a Data" HBox.hgrow="ALWAYS" minHeight="34.0" maxWidth="Infinity"
+                                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                        <TextField fx:id="txtHora" promptText="HH:mm" prefWidth="90.0" minHeight="34.0"
+                                   style="-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-padding: 6px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    </HBox>
+
+                    <!-- CLIENTE / AUTOR -->
+                    <VBox spacing="4.0">
+                        <Label text="Cliente / Autor:" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="cbCliente" promptText="Selecione o Cliente" maxWidth="Infinity" minHeight="34.0"
+                                  style="-fx-background-color: #333333; -fx-text-fill: white; -fx-padding: 4px 8px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    </VBox>
+
+                    <!-- ALVO (PRODUTO / FUNCIONÁRIO) -->
+                    <VBox spacing="4.0">
+                        <Label fx:id="lblAlvoTitle" text="Alvo (Produto / Funcionário):" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="cbAlvo" promptText="Selecione o Alvo" maxWidth="Infinity" minHeight="34.0"
+                                  style="-fx-background-color: #333333; -fx-text-fill: white; -fx-padding: 4px 8px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    </VBox>
+
+                    <HBox spacing="8.0">
+                        <!-- SENTIMENTO -->
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label text="Sentimento:" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                            <ComboBox fx:id="cbFeeling" promptText="Sentimento" maxWidth="Infinity" minHeight="34.0"
+                                      style="-fx-background-color: #333333; -fx-text-fill: white; -fx-padding: 4px 8px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                        </VBox>
+
+                        <!-- CATEGORIA -->
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label text="Categoria:" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                            <ComboBox fx:id="cbCategory" promptText="Categoria" maxWidth="Infinity" minHeight="34.0"
+                                      style="-fx-background-color: #333333; -fx-text-fill: white; -fx-padding: 4px 8px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- NOTA (APENAS PRODUTO) -->
+                    <VBox fx:id="boxRating" spacing="4.0" visible="false" managed="false">
+                        <Label text="Nota (1 a 5 ⭐):" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="cbRating" promptText="Nota em Estrelas" maxWidth="Infinity" minHeight="34.0"
+                                  style="-fx-background-color: #333333; -fx-text-fill: white; -fx-padding: 4px 8px; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    </VBox>
+
+                    <!-- COMENTÁRIO DO CLIENTE -->
+                    <VBox spacing="4.0" VBox.vgrow="ALWAYS">
+                        <Label text="Comentário do Cliente:" style="-fx-text-fill: #cccccc; -fx-font-size: 12px;"/>
+                        <TextArea fx:id="txtComment" promptText="Texto do feedback" prefRowCount="3" wrapText="true" VBox.vgrow="ALWAYS"
+                                  style="-fx-control-inner-background: #333333; -fx-text-fill: white; -fx-prompt-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-background-radius: 6px;"/>
+                    </VBox>
+
+                    <Button fx:id="actionButton" onAction="#handleAction" text="Salvar Alterações" maxWidth="Infinity" minHeight="38.0"
+                            style="-fx-background-color: #1A9347; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6px;">
+                    </Button>
+                </VBox>
+            </VBox>
+        </SplitPane>
+    </VBox>
+</StackPane>

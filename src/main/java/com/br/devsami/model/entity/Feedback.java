@@ -122,11 +122,16 @@ public abstract class Feedback {
         return createdAt;
     }
 
-    /**
-     * @return LocalDateTime return the updatedAt
-     */
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     /**
