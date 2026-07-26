@@ -21,7 +21,7 @@
         <properties>
             <!--  Configurações do Banco H2  -->
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:./dados/bd"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:~/.totemassets/dados/bd"/>
             <property name="jakarta.persistence.jdbc.user" value="sa"/>
             <property name="jakarta.persistence.jdbc.password" value=""/>
 
