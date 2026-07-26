@@ -32,11 +32,10 @@ public class GerenciaProdutoController implements Initializable {
     private static class ProductFormData{
         String name;
         String barCode;
-        double price;
+        String price;
 
         private ProductFormData(String name, String barCode, String price){
-            this.name=name; this.barCode = barCode;
-            this.price = Double.parseDouble(!price.isEmpty() ? price : "0");
+            this.name=name; this.barCode = barCode; this.price = price;
         }
     }
 

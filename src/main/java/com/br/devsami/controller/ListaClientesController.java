@@ -66,6 +66,10 @@ public class ListaClientesController implements Initializable {
             return null;
         });
 
+        if (listView.getItems().isEmpty()){
+            listView.setPlaceholder(new Label("Não há clientes cadastrados no banco de dados"));
+        }
+
         return listView;
     }
 
@@ -157,7 +161,7 @@ public class ListaClientesController implements Initializable {
     @FXML
     void voltar(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/MenuPrincipal.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/TelaGerenciaSeletor.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
         } catch (IOException e) {
