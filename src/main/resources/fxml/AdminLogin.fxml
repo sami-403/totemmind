@@ -5,9 +5,10 @@
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
 
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <StackPane prefHeight="600.0" prefWidth="800.0"
-    xmlns="http://javafx.com/javafx/21"
-    xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AdminLoginController">
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.AdminLoginController">
 
     <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="20.0">
         <padding>
@@ -16,7 +17,11 @@
 
         <!-- Botão Voltar -->
         <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
-            <Button onAction="#voltarParaMenu" text="← Voltar ao Menu" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8px 15px; -fx-background-radius: 5px;"/>
+            <Button onAction="#voltarParaMenu" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
         </HBox>
 
         <ImageView fitHeight="160.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
