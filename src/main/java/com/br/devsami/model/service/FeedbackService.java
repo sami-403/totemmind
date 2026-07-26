@@ -123,4 +123,29 @@ public class FeedbackService {
             }
         }
     }
+
+    public void createFeedback(Feedback feedback) {
+        if (feedback == null) {
+            throw new IllegalArgumentException("Feedback não pode ser nulo");
+        }
+        feedbackRepository.save(feedback);
+    }
+
+    public void updateFeedback(Feedback feedback) {
+        if (feedback == null) {
+            throw new IllegalArgumentException("Feedback não pode ser nulo");
+        }
+        feedbackRepository.update(feedback);
+    }
+
+    public void deleteFeedback(Feedback feedback) {
+        if (feedback == null) {
+            throw new IllegalArgumentException("Feedback não pode ser nulo");
+        }
+        feedbackRepository.delete(feedback);
+    }
+
+    public java.util.List<Feedback> findAllFeedbacks() {
+        return feedbackRepository.findAll();
+    }
 }

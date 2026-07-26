@@ -29,6 +29,45 @@ public class FeedbackRepository {
         }
     }
 
+    public void update(Feedback feedback) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(feedback);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void delete(Feedback feedback) {
+        if (feedback == null || feedback.getId() == null) return;
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Feedback managed = em.find(Feedback.class, feedback.getId());
+            if (managed != null) {
+                if (managed.getUser() != null && managed.getUser().getFeedbacks() != null) {
+                    managed.getUser().getFeedbacks().remove(managed);
+                }
+                em.remove(managed);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     // O Feedback em si usa UUID
     public Optional<Feedback> findById(UUID id) {
         EntityManager em = HibernateUtil.getEntityManager();
