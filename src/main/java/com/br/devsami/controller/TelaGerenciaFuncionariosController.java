@@ -97,7 +97,7 @@ public class TelaGerenciaFuncionariosController {
     @FXML
     void voltar(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/MenuPrincipal.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/TelaGerenciaSeletor.fxml")));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600)); // Ajuste as dimensões se necessário
         } catch (IOException e) {
