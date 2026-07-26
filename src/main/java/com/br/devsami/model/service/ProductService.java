@@ -38,8 +38,9 @@ public class ProductService {
 
     public int countPages(int pageSize) {
         Long entriesCount = productRepository.countEntries();
+        int pagesCount = (int) Math.ceil((double) entriesCount / pageSize);
 
-        return (int) Math.ceil((double) entriesCount / pageSize);
+        return pagesCount > 0 ? pagesCount: 1;
     }
 
     // Buscar Produto
