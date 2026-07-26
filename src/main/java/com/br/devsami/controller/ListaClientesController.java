@@ -66,6 +66,10 @@ public class ListaClientesController implements Initializable {
             return null;
         });
 
+        if (listView.getItems().isEmpty()){
+            listView.setPlaceholder(new Label("Não há clientes cadastrados no banco de dados"));
+        }
+
         return listView;
     }
 
