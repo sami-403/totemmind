@@ -41,8 +41,8 @@ public class UserService {
 
     public int countPages(int pageSize) {
         Long entriesCount = userRepository.countEntries();
-
-        return (int) Math.ceil((double) entriesCount / pageSize);
+        int pagesCount = (int) Math.ceil((double) entriesCount / pageSize);
+        return pagesCount > 0 ? pagesCount : 1;
     }
 
     // Buscar usuário
