@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.devsami.controller.TelaGerenciaSeletorController">
+
+    <VBox alignment="TOP_CENTER" maxWidth="400.0" spacing="30.0">
+        <padding>
+            <Insets top="30.0" />
+        </padding>
+
+        <!-- BOTÃO DE VOLTAR NO TOPO ESQUERDO -->
+        <BorderPane>
+            <left>
+                <Button onAction="#voltar" style="-fx-background-radius: 50em; -fx-min-width: 40px; -fx-min-height: 40px; -fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 50em; -fx-cursor: hand;" BorderPane.alignment="CENTER">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi-arrow-left" iconColor="white" iconSize="20"/>
+                    </graphic>
+                </Button>
+            </left>
+        </BorderPane>
+
+        <ImageView fitHeight="160.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../images/totemMind_logo.png"/>
+        </ImageView>
+
+        <VBox spacing="15.0" maxWidth="Infinity">
+
+            <!-- Botão 1: Funcionários -->
+            <Button maxWidth="Infinity" onAction="#abrirGerenciaFuncionarios" text="Gerência de Funcionários"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-account-multiple" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+            <!-- Botão 2: Produtos -->
+            <Button maxWidth="Infinity" onAction="#abrirGerenciaProdutos" text="Gerência de Produtos"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-cube" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+            <!-- Botão 3: Feedbacks -->
+            <Button maxWidth="Infinity" onAction="#abrirGerenciaFeedback" text="Gerência de Feedback"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-monitor" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
+        </VBox>
+    </VBox>
+</StackPane>
