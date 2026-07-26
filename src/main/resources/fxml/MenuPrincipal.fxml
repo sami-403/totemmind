@@ -26,7 +26,7 @@
                 </graphic>
             </Button>
 
-            <Button maxWidth="Infinity" onAction="#abrirTelaFuncionarios" text="Gerenciar Funcionário"
+            <Button maxWidth="Infinity" onAction="#abrirTelaFuncionarios" text="Gerenciar"
                     style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px;">
                 <graphic>
                     <FontIcon iconLiteral="mdi-account-multiple" iconColor="white" iconSize="20"/>

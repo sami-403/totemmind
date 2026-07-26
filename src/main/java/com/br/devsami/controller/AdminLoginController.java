@@ -53,7 +53,7 @@ public class AdminLoginController {
         try {
             Stage stage = (Stage) cpfField.getScene().getWindow();
             // AQUI: Certifique-se de que o caminho aponta para a tela FXML correta que criamos anteriormente
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TelaGerenciaFuncionarios.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TelaGerenciaSeletor.fxml"));
             Parent root = loader.load();
 
             stage.setScene(new Scene(root));
