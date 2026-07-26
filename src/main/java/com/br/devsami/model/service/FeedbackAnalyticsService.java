@@ -93,7 +93,7 @@ public class FeedbackAnalyticsService {
         String[] nomesSentimentos = { "Satisfação", "Neutralidade", "Insatisfação" };
 
         return campeao != null
-                ? String.format("%s com %.2f%% de %s", campeao.getName(), maiorTaxa, nomesSentimentos[indice])
+                ? String.format("%s (ID do BD: %d) com %.2f%% de %s", campeao.getName(), campeao.getId(), maiorTaxa, nomesSentimentos[indice])
                 : "[SEM_DADOS]";
     }
 
