@@ -25,12 +25,17 @@ public class TelaGerenciaSeletorController {
 
     @FXML
     private void abrirGerenciaProdutos(ActionEvent event) {
-        carregarTela(event, "/fxml/GerenciaProduto.fxml");
+        carregarTela(event, "/fxml/ListaProdutos.fxml");
     }
 
     @FXML
     private void abrirGerenciaFeedback(ActionEvent event) {
         carregarTela(event, "/fxml/TelaGerenciaFeedback.fxml");
+    }
+
+    @FXML
+    private void abrirGerenciaClientes(ActionEvent event) {
+        carregarTela(event, "/fxml/ListaClientes.fxml");
     }
 
     private void carregarTela(ActionEvent event, String caminhoFxml) {

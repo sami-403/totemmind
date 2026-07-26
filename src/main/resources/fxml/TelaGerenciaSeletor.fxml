@@ -54,6 +54,14 @@
                 </graphic>
             </Button>
 
+            <!-- Botão 4: Clientes -->
+            <Button maxWidth="Infinity" onAction="#abrirGerenciaClientes" text="Gerência de Clientes"
+                    style="-fx-background-color: #333333; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 12px; -fx-font-size: 14px; -fx-background-radius: 5px;">
+                <graphic>
+                    <FontIcon iconLiteral="mdi-account" iconColor="white" iconSize="20"/>
+                </graphic>
+            </Button>
+
         </VBox>
     </VBox>
 </StackPane>
