@@ -3,6 +3,7 @@ package com.br.devsami.model.service;
 import com.br.devsami.model.entity.Product;
 import com.br.devsami.model.repository.ProductRepository;
 import com.br.devsami.util.BarCodeValidator;
+import com.br.devsami.util.PriceValidator;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -73,15 +74,12 @@ public class ProductService {
     }
 
     // Criar Produto
-    public Product createProduct(String name, String barCode, double price) {
+    public Product createProduct(String name, String barCode, String price) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Nome do Produto obrigatório");
         }
 
-        if (price < 0) {
-            throw new IllegalArgumentException("Preço do Produto deve ser positivo");
-        }
-
+        PriceValidator.validate(price);
         BarCodeValidator.validate(barCode);
 
         if (productRepository.existsByBarCode(barCode)) {
@@ -91,7 +89,7 @@ public class ProductService {
         var product = new Product();
         product.setName(name);
         product.setBarCode(!barCode.isEmpty() ? barCode: null);
-        product.setPrice(BigDecimal.valueOf(price));
+        product.setPrice(PriceValidator.parsePrice(price));
 
         productRepository.save(product);
 
@@ -99,17 +97,14 @@ public class ProductService {
     }
 
     // Atualiza um Produto
-    public Product updateProduct(UUID id, String newName, String newBarCode, double newPrice) {
+    public Product updateProduct(UUID id, String newName, String newBarCode, String newPrice) {
         Product product = productRepository.findById(id).orElseThrow();
 
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException("Nome do Produto obrigatório");
         }
 
-        if (newPrice < 0) {
-            throw new IllegalArgumentException("Preço do Produto deve ser positivo");
-        }
-
+        PriceValidator.validate(newPrice);
         BarCodeValidator.validate(newBarCode);
 
         if (productRepository.existsByBarCode(newBarCode) && !BarCodeValidator.compare(product.getBarCode(), newBarCode)) {
@@ -118,7 +113,7 @@ public class ProductService {
 
         product.setName(newName);
         product.setBarCode(!BarCodeValidator.isEmptyOrNull(newBarCode) ? newBarCode : null);
-        product.setPrice(BigDecimal.valueOf(newPrice));
+        product.setPrice(PriceValidator.parsePrice(newPrice));
 
         productRepository.update(product);
 
